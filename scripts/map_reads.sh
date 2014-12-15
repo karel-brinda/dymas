@@ -14,6 +14,7 @@ set -ef -o pipefail
 set +u
 
 dn=`dirname $0`
+dn="${dn}/../bin"
 
 
 #number_of_threads

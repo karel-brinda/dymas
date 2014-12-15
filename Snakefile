@@ -10,6 +10,10 @@ ruleorder: d_init > d_call_variants
 
 shell.prefix(" set -euf -o pipefail; ")
 
+shell("git submodule init")
+shell("git submodule update")
+
+
 #d_output_file = ".d.tmp"
 #s_output_file = ".s.tmp"
 
@@ -18,13 +22,14 @@ shell.prefix(" set -euf -o pipefail; ")
 ## PROGRAM NAMES ##
 ###################
 
-MAPREADS        = "bin/map_reads.sh"
+ALTREF          = "scripts/alt_ref.sh"
+MAPREADS        = "scripts/map_reads.sh"
 BWA             = "bin/bwa"
 DWGSIM          = "bin/dwgsim"
 SAMTOOLS        = "bin/samtools"
 TABIX           = "bin/tabix"
 BGZIP           = "bin/bgzip"
-CALLVARIANTS    = "call_variants"
+CALLVARIANTS    = "bin/call_variants"
 
 #
 # BASIC RULES
@@ -65,7 +70,8 @@ rule d_call_variants:
 			d_bam( int(str(wildcards.iteration)) -1 )
 		],
 		SAMTOOLS,
-		CALLVARIANTS
+		CALLVARIANTS,
+		ALTREF
 	output:
 		d_fa("{iteration}"),
 		d_vcf("{iteration}")
@@ -95,7 +101,8 @@ rule d_map_reads:
 		BWA,
 		SAMTOOLS,
 		d_fa("{iteration}"),
-		fq_file()
+		fq_file(),
+		MAPREADS
 	params:
 		output_prefix=d_bam("{iteration}")[:-4],
 		MAPREADS=MAPREADS,
@@ -144,7 +151,8 @@ rule s_call_variants:
 			s_bam( int(str(wildcards.iteration)) -1 )
 		],
 		SAMTOOLS,
-		CALLVARIANTS
+		CALLVARIANTS,
+		ALTREF
 	output:
 		s_fa("{iteration}"),
 		s_vcf("{iteration}")
@@ -174,6 +182,7 @@ rule s_map_reads:
 		fq_file(),
 		BWA,
 		SAMTOOLS,
+		MAPREADS
 	params:
 		output_prefix=s_bam("{iteration}")[:-4],
 		MAPREADS=MAPREADS
@@ -257,12 +266,6 @@ rule conf:
 # PROGRAMS
 #
 
-
-# SAMTOOLS
-
-# DWGSIM
-
-
 rule prog_dwgsim:
 	message:
 		"Compiling DwgSim"
@@ -270,12 +273,14 @@ rule prog_dwgsim:
 		DWGSIM
 	shell:
 		"""
-			cd DWGSIM
+			cd src_ext
+			cd dwgsim
 			git submodule init
 			git submodule update
 			make
 			cd ..
-			cp dwgsim/dwgsim {output[0]}
+			cd ..
+			cp src_ext/dwgsim/dwgsim {output[0]}
 		"""
 
 rule prog_samtools:
@@ -285,10 +290,12 @@ rule prog_samtools:
 		SAMTOOLS
 	shell:
 		"""
+			cd src_ext
 			cd samtools
 			make
 			cd ..
-			cp samtools/samtools {output[0]}
+			cd ..
+			cp src_ext/samtools/samtools {output[0]}
 		"""
 
 rule prog_htslib:
@@ -299,11 +306,13 @@ rule prog_htslib:
 		BGZIP
 	shell:
 		"""
+			cd src_ext
 			cd htslib
 			make
 			cd ..
-			cp htslib/tabix {output[0]}
-			cp htslib/bgzip {output[1]}
+			cd ..
+			cp src_ext/htslib/tabix {output[0]}
+			cp src_ext/htslib/bgzip {output[1]}
 		"""
 
 
@@ -316,10 +325,12 @@ rule prog_bwa:
 		BWA
 	run:
 		shell("""
+			cd src_ext
 			cd bwa
 			make
 			cd ..
-			cp bwa/bwa {output[0]}
+			cd ..
+			cp src_ext/bwa/bwa {output[0]}
 		""")
 
 # CALL VARIANTS
