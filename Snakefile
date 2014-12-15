@@ -2,6 +2,9 @@ import os,sys
 
 configfile: "conf.json"
 
+include: "inc_filenames.py"
+include: "inc_proc.py"
+
 ruleorder: s_init > s_call_variants
 ruleorder: d_init > d_call_variants
 
@@ -11,66 +14,36 @@ shell.prefix(" set -euf -o pipefail; ")
 #s_output_file = ".s.tmp"
 
 
+###################
+## PROGRAM NAMES ##
+###################
+
+DWGSIM          = "bin/dwgsim"
+SAMTOOLS        = "bin/samtools"
+TABIX           = "bin/tabix"
+BGZIP           = "bin/bgzip"
+
 
 #
-# CONFIGURATION TEST
+# BASIC RULES
 #
 
-
-def message(x):
-	return """
-	==========================================================================================
-	{x}
-		input:	{{input}}
-		output:	{{output}}
-	==========================================================================================
-	
-	""".format(x=x)
-		
-def format_nb(x):
-	return str(x).zfill(4) if isinstance(x,int) else x
-	
-def fq_file():
-	return os.path.join(config["G_experiment_name"],"reads","{}__{}_{}_{}.fq".format(
-		config["G_reference"],
-		config["R_read_length"],
-		config["R_rate_of_mutations"],
-		config["R_error_rate"] ) 
-	)
-
-def config_file():
-	return ".{}.conf".format(
-			config["G_experiment_name"],
-		)
-	
-def report_file():
-	return "report__{}__{}".format(
-				config["G_experiment_name"],
-				config["G_mapper"]
-			)
-	
-	
 rule all:
 	input: report_file()
 
+rule static:
+	run:
+		pass
 
-	#
+rule dynamic:
+	run:
+		pass
+
+
+
+#
 # DYNAMIC MAPPING
 #
-
-
-
-def d_prefix():
-	return os.path.join(config["G_experiment_name"],config["G_mapper"],"dynamic")
-
-def d_bam(it):
-	return os.path.join(d_prefix(),"bam","{}.{}.d_{}.bam".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
-
-def d_fa(it):
-	return os.path.join(d_prefix(),"fa","{}.{}.d_{}.fa".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
-
-def d_vcf(it):
-	return os.path.join(d_prefix(),"vcf","{}.{}.d_{}.vcf".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
 
 rule d_init:
 	input:
@@ -80,7 +53,10 @@ rule d_init:
 	message:
 		message("D - init "+config["G_reference"])
 	shell:
-		"cp bact.fasta {}".format(d_fa(0))
+		"cp {} {}".format(
+			config["G_reference"],
+			d_fa(0)
+		)
 
 
 rule d_call_variants:
@@ -116,8 +92,6 @@ rule d_map_reads:
 		fq_file()
 	params:
 		output_prefix=d_bam("{iteration}")[:-4],
-	benchmark:
-		"test.json"
 	message:
 		message("D - mapping reads")
 	run:
@@ -135,27 +109,6 @@ rule d_map_reads:
 # STATIC MAPPING
 #
 
-def s_prefix():
-	return os.path.join(config["G_experiment_name"],config["G_mapper"],"static")
-
-def s_bam(it):
-	return os.path.join(s_prefix(),"bam","{}.{}.s_{}.bam".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
-
-def s_fa(it):
-	return os.path.join(s_prefix(),"fa","{}.{}.s_{}.fa".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
-
-def s_vcf(it):
-	return os.path.join(s_prefix(),"vcf","{}.{}.s_{}.vcf".format(config["G_experiment_name"],config["G_mapper"],format_nb(it)) )
-
-#rule s_all:
-#	input:
-#		s_bam(int(config["S_number_of_iterations"]))
-#	output:
-#		s_output_file
-#	shell:
-#		"touch "+s_output_file
-
-	
 rule s_init:
 	input:
 		config["G_reference"]
@@ -164,7 +117,10 @@ rule s_init:
 	message:
 		message("S - init "+config["G_reference"])
 	shell:
-		"cp bact.fasta {}".format(s_fa(0))
+		"cp {} {}".format(
+			config["G_reference"],
+			s_fa(0)
+		)
 
 
 rule s_call_variants:
@@ -211,6 +167,9 @@ rule s_map_reads:
 #
 		
 rule simulate_reads:
+	input:
+		DWGSIM,
+		config["G_reference"]
 	output:
 		fq_file(),
 		temp(fq_file()+".bwa.read1.fastq"),
@@ -271,3 +230,84 @@ rule conf:
 			for x in config.keys():
 				print("{}={}".format(x,repr(config[x]).replace("'","\"")),file=f)
 	
+
+
+#
+# PROGRAMS
+#
+
+
+# SAMTOOLS
+
+# DWGSIM
+
+
+rule prog_dwgsim:
+	message:
+		"Compiling DwgSim"
+	output:
+		DWGSIM
+	shell:
+		"""
+			cd DWGSIM
+			git submodule init
+			git submodule update
+			make
+			cp dwgsim {DWGSIM}
+			cd ..
+		""".format(
+			DWGSIM=os.path.join("..",DWGSIM)
+		)
+
+rule prog_samtools:
+	message:
+		"Compiling SamTools"
+	output:
+		SAMTOOLS
+	shell:
+		"""
+			cd samtools
+			make
+			cp samtools {SAMTOOLS}
+			cd ..
+		""".format(
+			SAMTOOLS=os.path.join("..",SAMTOOLS)
+		)
+
+rule prog_htslib:
+	message:
+		"Compiling HtsLib"
+	output:
+		TABIX,
+		BGZIP
+	shell:
+		"""
+			cd htslib
+			make
+			cp tabix {TABIX}
+			cp bgzip {BGZIP}
+			cd ..
+		""".format(
+			TABIX=os.path.join("..",TABIX),
+			BGZIP=os.path.join("..",BGZIP)
+		)
+
+
+# LAVEnder
+
+#
+# DATA
+#
+
+rule data_reference:
+	output:
+		config["G_reference"]
+	run:
+		shell("curl --insecure -o {} {}".format(
+			config["G_reference"],
+			config["G_reference_address"],
+		))
+
+
+
+
