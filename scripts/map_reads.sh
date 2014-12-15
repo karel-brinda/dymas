@@ -4,11 +4,17 @@
 
 set -x
 set -ef -o pipefail
+#set -v
+
+#trap 'printf %s\\n "$BASH_COMMAND" >&2' DEBUG
 
 
 . _pipelinelib.sh
 
 set +u
+
+dn=`dirname $0`
+
 
 #number_of_threads
 if [ -n "$G_number_of_threads" ];
@@ -52,13 +58,13 @@ case $method in
 		cat $reads > $fq_file
 
 		#index
-		bwa index $reference
+		${dn}/bwa index $reference
 		
 		#mapping
-		bwa aln -t $number_of_threads $reference $fq_file > $sai_file
-		bwa samse $reference $sai_file $fq_file \
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+		${dn}/bwa aln -t $number_of_threads $reference $fq_file > $sai_file
+		${dn}/bwa samse $reference $sai_file $fq_file \
+			| ${dn}/samtools view -Shu - \
+			| ${dn}/samtools sort - $prefix
 		rm $sai_file $fq_file
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 		
@@ -66,24 +72,24 @@ case $method in
 
 	bwa-mem)
 		#index
-		bwa index $reference
+		${dn}/bwa index $reference
 		
 		#mapping
-		bwa mem -t $number_of_threads $reference $reads \
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+		${dn}/bwa mem -t $number_of_threads $reference $reads \
+			| ${dn}/samtools view -Shu - \
+			| ${dn}/samtools sort - $prefix
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 		
 		;;
 
 	bwa-sw)
 		#index
-		bwa index $reference
+		${dn}/bwa index $reference
 		
 		#mapping
-		bwa bwasw -t $number_of_threads $reference $reads \
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+		${dn}/bwa bwasw -t $number_of_threads $reference $reads \
+			| ./samtools view -Shu - \
+			| ./samtools sort - $prefix
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 
 		;;
@@ -94,8 +100,8 @@ case $method in
 		
 		mkfifo $tmp_pipe
 		storm-nucleotide -g $reference -r $reads -s "####-#--##-#--###-###" \
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+			| ${dn}/samtools view -Shu - \
+			| ${dn}/samtools sort - $prefix
 		;;
 
 		#storm-nucleotide -g $reference -r $reads \
@@ -114,8 +120,8 @@ case $method in
 		#mapping
 		gem-mapper -T $number_of_threads -q 'offset-33' -I ${tmp_gem_index}.gem -i $reads -o $tmp_gem_map
 		gem-2-sam -l -T $number_of_threads --expect-single-end-reads -q 'offset-33' -I ${tmp_gem_index}.gem -i ${tmp_gem_map}.map\
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+			| ${dn}/samtools view -Shu - \
+			| ${dn}/samtools sort - $prefix
 		rm ${tmp_gem_index}.gem ${tmp_gem_map}.map ${tmp_gem_index}.log
 	
 		;;
@@ -124,16 +130,16 @@ case $method in
 		tmp_index=${reference}.hdf5
 		peanut index $reference $tmp_index
 		peanut map --threads $number_of_threads $tmp_index $reads \
-			| samtools view -Shu - \
-                        | samtools sort - $prefix
+			| ${dn}/samtools view -Shu - \
+            | ${dn}/samtools sort - $prefix
 		rm $tmp_index
 		;;
 
 	tigermap)
 		#mapping
 		tigermap.py $reference $reads \
-			| samtools view -Shu - \
-			| samtools sort - $prefix
+			| ${dn}/samtools view -Shu - \
+			| ${dn}/samtools sort - $prefix
 		;;
 
 	*)
@@ -141,5 +147,5 @@ case $method in
 		;;
 esac
 
-samtools index ${prefix}.bam
+${dn}/samtools index ${prefix}.bam
 
