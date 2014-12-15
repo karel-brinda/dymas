@@ -18,26 +18,29 @@ shell.prefix(" set -euf -o pipefail; ")
 ## PROGRAM NAMES ##
 ###################
 
+MAPREADS        = "bin/map_reads.sh"
+BWA             = "bin/bwa"
 DWGSIM          = "bin/dwgsim"
 SAMTOOLS        = "bin/samtools"
 TABIX           = "bin/tabix"
 BGZIP           = "bin/bgzip"
-
+CALLVARIANTS    = "call_variants"
 
 #
 # BASIC RULES
 #
 
 rule all:
-	input: report_file()
+	input:
+		report_file()
 
 rule static:
-	run:
-		pass
+	input:
+		s_bam(int(config["S_number_of_iterations"])),
 
 rule dynamic:
-	run:
-		pass
+	input:
+		d_bam(int(config["_DU_number_of_iterations"])),
 
 
 
@@ -51,30 +54,31 @@ rule d_init:
 	output:
 		d_fa(0)
 	message:
-		message("D - init "+config["G_reference"])
+		message("D - init " + config["G_reference"])
 	shell:
-		"cp {} {}".format(
-			config["G_reference"],
-			d_fa(0)
-		)
-
+		"cp {input[0]} {output[0]}"
 
 rule d_call_variants:
 	input:
 		lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
 			d_fa( int(str(wildcards.iteration)) -1 ),
 			d_bam( int(str(wildcards.iteration)) -1 )
-		]		
+		],
+		SAMTOOLS,
+		CALLVARIANTS
 	output:
 		d_fa("{iteration}"),
 		d_vcf("{iteration}")
 	message:
 		message("S - calling variants")
+	params:
+		SAMTOOLS=SAMTOOLS,
+		CALLVARIANTS=CALLVARIANTS
 	shell:
-		"""(samtools mpileup\
+		"""({params.SAMTOOLS} mpileup\
                         --min-MQ 0 \
                         {input[1]} | \
-                call_variants\
+                {params.CALLVARIANTS}\
                         --calling-alg parikh \
                         --reference {input[0]} \
                         --min-coverage 2 \
@@ -88,21 +92,34 @@ rule d_map_reads:
 	output:
 		d_bam("{iteration}")
 	input:
+		BWA,
+		SAMTOOLS,
 		d_fa("{iteration}"),
 		fq_file()
 	params:
 		output_prefix=d_bam("{iteration}")[:-4],
+		MAPREADS=MAPREADS,
+		mapper="bwa-mem",
+		fq=fq_file(),
+		#output_prefix=d_bam(int(wildcards.iteration))[:-4]
+
 	message:
 		message("D - mapping reads")
 	run:
-		ln_start=int(wildcards.iteration) * 4 * config["_DU_reads_per_iteration"] + 1
-		ln_end=ln_start + 4 * config['_DU_reads_per_iteration']  - 1
-		shell("map_reads.sh {mapper} {fa} <(sed -n 1,{ln_end}p {fq}) {output_prefix}".format(
-			mapper="bwa-mem",
-			fa=d_fa(int(wildcards.iteration)),
-			ln_end=ln_end,
-			fq=fq_file(),
-			output_prefix=d_bam(int(wildcards.iteration))[:-4]
+		fa=d_fa(int(wildcards.iteration))
+		ln_start= int(wildcards.iteration) * 4 * config["_DU_reads_per_iteration"] + 1
+		ln_end= int(ln_start) + 4 * config['_DU_reads_per_iteration']  - 1
+
+		shell("""
+			{{params.MAPREADS}}\
+				{{params.mapper}}\
+				{fa}\
+				<(sed -n 1,{ln_end}p {{params.fq}})\
+				{{params.output_prefix}}
+		""".format(
+			fa=fa,
+			ln_start=ln_start,
+			ln_end=ln_end
 		))
 
 #
@@ -115,12 +132,9 @@ rule s_init:
 	output:
 		s_fa(0)
 	message:
-		message("S - init "+config["G_reference"])
+		message("S - init " + config["G_reference"])
 	shell:
-		"cp {} {}".format(
-			config["G_reference"],
-			s_fa(0)
-		)
+		"""cp {config[G_reference]} {output[0]}"""
 
 
 rule s_call_variants:
@@ -128,23 +142,28 @@ rule s_call_variants:
 		lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
 			s_fa( int(str(wildcards.iteration)) -1 ),
 			s_bam( int(str(wildcards.iteration)) -1 )
-		]		
+		],
+		SAMTOOLS,
+		CALLVARIANTS
 	output:
 		s_fa("{iteration}"),
 		s_vcf("{iteration}")
 	message:
 		message("S - calling variants")
+	params:
+		CALLVARIANTS=CALLVARIANTS,
+		SAMTOOLS=SAMTOOLS
 	shell:
-		"""samtools mpileup\
+		"""{params.SAMTOOLS} mpileup\
                         --min-MQ 0 \
                         {input[1]} | \
-                call_variants\
+                {params.CALLVARIANTS}\
                         --calling-alg parikh \
                         --reference {input[0]} \
                         --min-coverage 2 \
                         --min-base-qual 0 \
                         --accept-level 0.6 \
-			--vcf {output[1]} \
+						--vcf {output[1]} \
                 > {output[0]} """
 
 rule s_map_reads:
@@ -152,15 +171,18 @@ rule s_map_reads:
 		s_bam("{iteration}")
 	input:
 		s_fa("{iteration}"),
-		fq_file()
+		fq_file(),
+		BWA,
+		SAMTOOLS,
 	params:
-		output_prefix=s_bam("{iteration}")[:-4]
+		output_prefix=s_bam("{iteration}")[:-4],
+		MAPREADS=MAPREADS
 	log:
 		"test.txt"
 	message:
 		message("S - mapping reads")
 	shell:
-		"map_reads.sh bwa-mem {input[0]} {input[1]} {params.output_prefix}"
+		"{params.MAPREADS} bwa-mem {input[0]} {input[1]} {params.output_prefix}"
 
 #
 # OTHER
@@ -177,29 +199,29 @@ rule simulate_reads:
 		temp(fq_file()+".mutations.txt"),
 	message:
 		message("Simulating reads")
+	params:
+		error_rate=str(config['R_error_rate']),
+		number_of_reads=str(config["_G_number_of_reads"]),
+		read_length=str(config["R_read_length"]),
+		rate_of_mutations=str(config["R_rate_of_mutations"]),
+		fraction_of_indels=str(config["R_fraction_of_indels"]),
+		reference=config["G_reference"],
+		fq=fq_file()
 	shell:
 		"""
 			dwgsim \
-				-e {error_rate} \
-				-N {number_of_reads} \
-				-1 {read_length} \
+				-e {params.error_rate} \
+				-N {params.number_of_reads} \
+				-1 {params.read_length} \
 				-2 0 \
-				-r {rate_of_mutations} \
-				-R {fraction_of_indels} \
+				-r {params.rate_of_mutations} \
+				-R {params.fraction_of_indels} \
 				-z 1 \
-				{reference} \
-				{fq}
+				{params.reference} \
+				{params.fq}
                 
-				mv {fq}.bfast.fastq {fq}
-		""".format(
-			error_rate=config['R_error_rate'],
-			number_of_reads=config["_G_number_of_reads"],
-			read_length=config["R_read_length"],
-			rate_of_mutations=config["R_rate_of_mutations"],
-			fraction_of_indels=config["R_fraction_of_indels"],
-			reference=config["G_reference"],
-			fq=fq_file()
-		)
+				mv {params.fq}.bfast.fastq {params.fq}
+		"""
 
 
 #
@@ -213,14 +235,13 @@ rule reports:
 		config_file()
 	output:
 		report_file()
+	params:
+		i1=os.path.dirname(d_bam(0)),
+		i2=os.path.dirname(s_bam(0)),
+		o=report_file(),
+		c=config_file()
 	shell:
-		"lavender_report.py -i {i1} {i2} -o {o} -c {c}".format(
-			i1=os.path.dirname(d_bam(0)),
-			i2=os.path.dirname(s_bam(0)),
-			o=report_file(),
-			c=config_file()
-
-		)
+		"lavender_report.py -i {params.i1} {params.i2} -o {params.o} -c {params.c}"
 	
 rule conf:
 	output:
@@ -253,11 +274,9 @@ rule prog_dwgsim:
 			git submodule init
 			git submodule update
 			make
-			cp dwgsim {DWGSIM}
 			cd ..
-		""".format(
-			DWGSIM=os.path.join("..",DWGSIM)
-		)
+			cp dwgsim/dwgsim {output[0]}
+		"""
 
 rule prog_samtools:
 	message:
@@ -268,11 +287,9 @@ rule prog_samtools:
 		"""
 			cd samtools
 			make
-			cp samtools {SAMTOOLS}
 			cd ..
-		""".format(
-			SAMTOOLS=os.path.join("..",SAMTOOLS)
-		)
+			cp samtools/samtools {output[0]}
+		"""
 
 rule prog_htslib:
 	message:
@@ -284,13 +301,43 @@ rule prog_htslib:
 		"""
 			cd htslib
 			make
-			cp tabix {TABIX}
-			cp bgzip {BGZIP}
 			cd ..
-		""".format(
-			TABIX=os.path.join("..",TABIX),
-			BGZIP=os.path.join("..",BGZIP)
-		)
+			cp htslib/tabix {output[0]}
+			cp htslib/bgzip {output[1]}
+		"""
+
+
+# BWA
+
+rule prog_bwa:
+	message:
+		"Compiling BWA "
+	output:
+		BWA
+	run:
+		shell("""
+			cd bwa
+			make
+			cd ..
+			cp bwa/bwa {output[0]}
+		""")
+
+# CALL VARIANTS
+
+rule prog_call_variants:
+	message:
+		"Compiling CallVariants "
+	output:
+		CALLVARIANTS
+	run:
+		shell("""
+			cd call_variants
+			cmake .
+			make
+			cd ..
+			cp call_variants/call_variants {output[0]}
+		""")
+
 
 
 # LAVEnder
@@ -303,10 +350,7 @@ rule data_reference:
 	output:
 		config["G_reference"]
 	run:
-		shell("curl --insecure -o {} {}".format(
-			config["G_reference"],
-			config["G_reference_address"],
-		))
+		shell("curl --insecure -o {output[0]} {config[G_reference_address]}")
 
 
 
