@@ -10,8 +10,8 @@ ruleorder: d_init > d_call_variants
 
 shell.prefix(" set -euf -o pipefail; ")
 
-shell("git submodule init")
-shell("git submodule update")
+#shell("git submodule init")
+#shell("git submodule update")
 
 
 #d_output_file = ".d.tmp"
@@ -25,6 +25,7 @@ shell("git submodule update")
 ALTREF          = "scripts/alt_ref.sh"
 MAPREADS        = "scripts/map_reads.sh"
 BWA             = "bin/bwa"
+BCFTOOLS        = "bin/bcftools"
 DWGSIM          = "bin/dwgsim"
 SAMTOOLS        = "bin/samtools"
 TABIX           = "bin/tabix"
@@ -71,9 +72,11 @@ rule d_call_variants:
         ],
         SAMTOOLS,
         CALLVARIANTS,
-        ALTREF
+        ALTREF,
+        BCFTOOLS
     output:
         d_fa("{iteration}"),
+        d_chain("{iteration}"),
         d_vcf("{iteration}")
     message:
         message("S - calling variants")
@@ -97,7 +100,8 @@ rule d_call_variants:
         """{params.ALTREF} \
             {input[0]} \
             {output[1]} \
-            > {output[0]}
+            {output[2]} \
+            {output[0]}
         """
 
 rule d_map_reads:
@@ -158,10 +162,12 @@ rule s_call_variants:
         ],
         SAMTOOLS,
         CALLVARIANTS,
-        ALTREF
+        ALTREF,
+        BCFTOOLS
     output:
         s_fa("{iteration}"),
-        s_vcf("{iteration}")
+        s_vcf("{iteration}"),
+        s_chain("{iteration}")
     message:
         message("S - calling variants")
     params:
@@ -184,7 +190,8 @@ rule s_call_variants:
         """{params.ALTREF} \
             {input[0]} \
             {output[1]} \
-            > {output[0]}
+            {output[2]} \
+            {output[0]}
         """
 
 #       """{params.SAMTOOLS} mpileup\
@@ -338,6 +345,21 @@ rule prog_htslib:
             cd ..
             cp src_ext/htslib/tabix {output[0]}
             cp src_ext/htslib/bgzip {output[1]}
+        """
+
+rule prog_bcftools:
+    message:
+        "Compiling BcfTools"
+    output:
+        BCFTOOLS
+    shell:
+        """
+            cd src_ext
+            cd bcftools
+            make
+            cd ..
+            cd ..
+            cp src_ext/bcftools/bcftools {output[0]}
         """
 
 

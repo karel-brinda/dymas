@@ -60,6 +60,16 @@ def s_vcf(it):
 			format_nb(it)
 		))
 
+def s_chain(it):
+	return os.path.join(
+		s_prefix(),
+		"chain",
+		"{}.{}.s_{}.chain".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
+
 
 def d_prefix():
 	return os.path.join(
@@ -97,6 +107,15 @@ def d_vcf(it):
 			format_nb(it)
 		))
 
+def d_chain(it):
+	return os.path.join(
+		d_prefix(),
+		"chain",
+		"{}.{}.d_{}.chain".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
 
 def message(x):
 	return """
