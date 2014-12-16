@@ -60,6 +60,26 @@ def s_vcf(it):
 			format_nb(it)
 		))
 
+def s_vcf_c(it):
+	return os.path.join(
+		s_prefix(),
+		"vcf",
+		"{}.{}.s_{}.vcf.gz".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
+
+def s_vcf_c_i(it):
+	return os.path.join(
+		s_prefix(),
+		"vcf",
+		"{}.{}.s_{}.vcf.gz.tbi".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
+
 def s_chain(it):
 	return os.path.join(
 		s_prefix(),
@@ -102,6 +122,26 @@ def d_vcf(it):
 		d_prefix(),
 		"vcf",
 		"{}.{}.d_{}.vcf".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
+
+def d_vcf_c(it):
+	return os.path.join(
+		d_prefix(),
+		"vcf",
+		"{}.{}.d_{}.vcf.gz".format(
+			config["G_experiment_name"],
+			config["G_mapper"],
+			format_nb(it)
+		))
+
+def d_vcf_c_i(it):
+	return os.path.join(
+		d_prefix(),
+		"vcf",
+		"{}.{}.d_{}.vcf.gz.tbi".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
 			format_nb(it)

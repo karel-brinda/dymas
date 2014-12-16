@@ -5,8 +5,8 @@ configfile: "conf.json"
 include: "inc_filenames.py"
 include: "inc_proc.py"
 
-ruleorder: s_init > s_call_variants
-ruleorder: d_init > d_call_variants
+ruleorder: s_init > s_consensus
+ruleorder: d_init > d_consensus
 
 shell.prefix(" set -euf -o pipefail; ")
 
@@ -22,7 +22,6 @@ shell.prefix(" set -euf -o pipefail; ")
 ## PROGRAM NAMES ##
 ###################
 
-ALTREF          = "scripts/alt_ref.sh"
 MAPREADS        = "scripts/map_reads.sh"
 BWA             = "bin/bwa"
 BCFTOOLS        = "bin/bcftools"
@@ -72,20 +71,15 @@ rule d_call_variants:
         ],
         SAMTOOLS,
         CALLVARIANTS,
-        ALTREF,
-        BCFTOOLS
     output:
-        d_fa("{iteration}"),
-        d_chain("{iteration}"),
         d_vcf("{iteration}")
     message:
-        message("S - calling variants")
+        message("D - calling variants")
     params:
-        ALTREF=ALTREF,
         SAMTOOLS=SAMTOOLS,
-        CALLVARIANTS=CALLVARIANTS
-    shell:
-        """{params.SAMTOOLS} mpileup\
+        CALLVARIANTS=CALLVARIANTS,
+    run:
+        shell("""{params.SAMTOOLS} mpileup\
                         --min-MQ 0 \
                         {input[1]} | \
                 {params.CALLVARIANTS}\
@@ -94,14 +88,27 @@ rule d_call_variants:
                         --min-coverage 2 \
                         --min-base-qual 0 \
                         --accept-level 0.6 \
-                        --vcf {output[1]} \
-                > /dev/null """
+                        > {output[0]}""")
 
-        """{params.ALTREF} \
-            {input[0]} \
-            {output[1]} \
-            {output[2]} \
-            {output[0]}
+rule d_consensus:
+    input:
+        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
+            d_fa( int(str(wildcards.iteration)) -1 ),
+        ],
+        d_vcf_c("{iteration}"),
+        d_vcf_c_i("{iteration}"),
+        BCFTOOLS,
+    output:
+        d_fa("{iteration}"),
+        d_chain("{iteration}"),
+    params:
+        BCFTOOLS=BCFTOOLS
+    shell:
+        """{params.BCFTOOLS} consensus \
+            -f {input[0]}\
+            -c {output[1]} \
+            {input[1]} \
+            > {output[0]}
         """
 
 rule d_map_reads:
@@ -153,7 +160,6 @@ rule s_init:
     shell:
         """cp {config[G_reference]} {output[0]}"""
 
-
 rule s_call_variants:
     input:
         lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
@@ -162,18 +168,15 @@ rule s_call_variants:
         ],
         SAMTOOLS,
         CALLVARIANTS,
-        ALTREF,
-        BCFTOOLS
+        BGZIP,
+        TABIX
     output:
-        s_fa("{iteration}"),
         s_vcf("{iteration}"),
-        s_chain("{iteration}")
     message:
         message("S - calling variants")
     params:
-        ALTREF=ALTREF,
+        SAMTOOLS=SAMTOOLS,
         CALLVARIANTS=CALLVARIANTS,
-        SAMTOOLS=SAMTOOLS
     shell:
         """{params.SAMTOOLS} mpileup\
                         --min-MQ 0 \
@@ -184,27 +187,28 @@ rule s_call_variants:
                         --min-coverage 2 \
                         --min-base-qual 0 \
                         --accept-level 0.6 \
-                        --vcf {output[1]} \
-                > /dev/null """
+                        > {output[0]}"""
 
-        """{params.ALTREF} \
-            {input[0]} \
-            {output[1]} \
-            {output[2]} \
-            {output[0]}
+rule s_consensus:
+    input:
+        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
+            d_fa( int(str(wildcards.iteration)) -1 ),
+        ],
+        s_vcf_c("{iteration}"),
+        s_vcf_c_i("{iteration}"),
+        BCFTOOLS,
+    output:
+        s_fa("{iteration}"),
+        s_chain("{iteration}"),
+    params:
+        BCFTOOLS=BCFTOOLS
+    shell:
+        """{params.BCFTOOLS} consensus \
+            -f {input[0]}\
+            -c {output[1]} \
+            {input[1]} \
+            > {output[0]}
         """
-
-#       """{params.SAMTOOLS} mpileup\
-#                        --min-MQ 0 \
-#                        {input[1]} | \
-#                {params.CALLVARIANTS}\
-#                        --calling-alg parikh \
-#                        --reference {input[0]} \
-#                        --min-coverage 2 \
-#                        --min-base-qual 0 \
-#                        --accept-level 0.6 \
-#                       --vcf {output[1]} \
-#                > {output[0]} """
 
 rule s_map_reads:
     output:
@@ -214,6 +218,8 @@ rule s_map_reads:
         fq_file(),
         BWA,
         SAMTOOLS,
+        BGZIP,
+        TABIX,
         MAPREADS
     params:
         output_prefix=s_bam("{iteration}")[:-4],
@@ -264,7 +270,30 @@ rule simulate_reads:
                 mv {params.fq}.bfast.fastq {params.fq}
         """
 
+rule vcf_compress:
+    input:
+        "{vcffile}.vcf",
+        BGZIP
+    output:
+        "{vcffile}.vcf.gz"
+    params:
+        BGZIP=BGZIP
+    shell:
+        """{params.BGZIP} \
+            {input[0]} \
+            -c > {output[0]}
+        """
 
+rule vcf_index:
+    input:
+        "{vcffile}.vcf.gz",
+        TABIX
+    output:
+        "{vcffile}.vcf.gz.tbi"
+    params:
+        TABIX=TABIX
+    shell:
+        """{params.TABIX} {input[0]}"""
 #
 # REPORTS
 #

@@ -8,7 +8,7 @@ int main(int argc, const char* argv[])
 	int minBaseQ=0;
 	int minCoverage=3;
 	float acceptanceLevel=0.6;
-	string vcfFn="";
+	//string vcfFn="";
 
     bool debug=false;
 
@@ -31,7 +31,7 @@ int main(int argc, const char* argv[])
                 ("min-coverage,c", po::value<int>(&minCoverage), "Minimal coverage [3]")
                 ("min-base-qual,b", po::value<int>(&minBaseQ), "Minimal base quality [0]")
                 ("accept-level,l", po::value<float>(&acceptanceLevel), "Acceptance level [0.60]")
-                ("vcf,v", po::value<string>(&vcfFn), "VCF file for called variants")
+                //("vcf,v", po::value<string>(&vcfFn), "VCF file for called variants")
                 ("debug,d", "Debug (print information about every position)")
 		;
 
@@ -66,14 +66,15 @@ int main(int argc, const char* argv[])
 
 
 	ifstream &iFa=openIfStream(oldRefFn);
-    ofstream *oVcf;
-    if(vcfFn != ""){
+    //ofstream *oVcf;
+    /*if(vcfFn != ""){
         oVcf = new ofstream(vcfFn.c_str());
         if (oVcf->fail()) {
             error_message_exit("Unable to open file '" + vcfFn + "'");
         }
         *oVcf << vcf_header();
-    }
+    }*/
+    cout << vcf_header();
 
 	istream &iPileup=cin;
 
@@ -117,7 +118,7 @@ int main(int argc, const char* argv[])
 
 				seqName = iFaLine.substr(1, spacePos - 1);
 				oFaPosition = 0;
-				cout << ">" << seqName << endl;
+				//cout << ">" << seqName << endl;
 			}
 			else
 			{
@@ -167,9 +168,10 @@ int main(int argc, const char* argv[])
                                     There was an update.
                                  */
                                 //cerr << "update at pos " << oFaPosition << endl;
-                                if(oVcf!= 0){
+                                /*if(oVcf!= 0){
 							        *oVcf << vcf_line(seqName, oFaPosition, oldChar, newChar) << endl;
-                                }
+                                }*/
+						        cout << vcf_line(seqName, oFaPosition, oldChar, newChar) << endl;
 							}
 
 							/* modify corresponding part of buffer, load next line from pileup */
@@ -188,7 +190,7 @@ int main(int argc, const char* argv[])
 						/* fasta columning :) */
 						if (oFaPosition % FASTA_WIDTH == 0)
 						{
-							cout << oFaLine << endl;
+							//cout << oFaLine << endl;
 						}
 					}
 				} // for i
@@ -196,7 +198,7 @@ int main(int argc, const char* argv[])
 		}
 	}
 	/* the rest of the last line (flushing the buffer) */
-	cout << oFaLine.substr(0, oFaPosition % FASTA_WIDTH) << endl;
+	//cout << oFaLine.substr(0, oFaPosition % FASTA_WIDTH) << endl;
 
     if (!iPileup.eof()){
         cerr<<"Some lines of the pileup were not read, e.g.,:" << endl;
@@ -212,7 +214,7 @@ int main(int argc, const char* argv[])
         error_message_exit("Error appered.");
     }
 	iFa.close();
-    oVcf->close();
+    //oVcf->close();
 
 	return 0;
 }
