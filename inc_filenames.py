@@ -1,6 +1,3 @@
-def format_nb(x):
-	return str(x).zfill(4) if isinstance(x,int) else x
-	
 def fq_file():
 	return os.path.join(
 		config["G_experiment_name"],
@@ -23,150 +20,93 @@ def report_file():
 		config["G_mapper"]
 	)
 
-def s_prefix():
+def bam_file(method,it):
+	if __debug__:
+		print("Required bam_file",method,it)
 	return os.path.join(
 		config["G_experiment_name"],
 		config["G_mapper"],
-		"static"
-	)
-
-def s_bam(it):
-	return os.path.join(
-		s_prefix(),
+		method,
 		"bam",
-		"{}.{}.s_{}.bam".format(
+		"{}.{}.{}_{}.bam".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 	))
 
-def s_fa(it):
-	return os.path.join(
-		s_prefix(),
-		"fa",
-		"{}.{}.s_{}.fa".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-def s_vcf(it):
-	return os.path.join(
-		s_prefix(),
-		"vcf",
-		"{}.{}.s_{}.vcf".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-def s_vcf_c(it):
-	return os.path.join(
-		s_prefix(),
-		"vcf",
-		"{}.{}.s_{}.vcf.gz".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-def s_vcf_c_i(it):
-	return os.path.join(
-		s_prefix(),
-		"vcf",
-		"{}.{}.s_{}.vcf.gz.tbi".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-def s_chain(it):
-	return os.path.join(
-		s_prefix(),
-		"chain",
-		"{}.{}.s_{}.chain".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-
-def d_prefix():
+def fa_file(method,it):
+	if __debug__:
+		print("Required fa_file",method,it)
 	return os.path.join(
 		config["G_experiment_name"],
 		config["G_mapper"],
-		"dynamic")
-
-def d_bam(it):
-	return os.path.join(
-		d_prefix(),
-		"bam",
-		"{}.{}.d_{}.bam".format(
-			config["G_experiment_name"],
-			config["G_mapper"],
-			format_nb(it)
-		))
-
-def d_fa(it):
-	return os.path.join(
-		d_prefix(),
+		method,
 		"fa",
-		"{}.{}.d_{}.fa".format(
+		"{}.{}.{}_{}.fa".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 		))
 
-def d_vcf(it):
+
+def vcf_file(method,it):
+	if __debug__:
+		print("Required vcf_file",method,it)
 	return os.path.join(
-		d_prefix(),
+		config["G_experiment_name"],
+		config["G_mapper"],
+		method,
 		"vcf",
-		"{}.{}.d_{}.vcf".format(
+		"{}.{}.{}_{}.vcf".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 		))
 
-def d_vcf_c(it):
+def vcf_c_file(method,it):
+	if __debug__:
+		print("Required vcf_c_file",method,it)
 	return os.path.join(
-		d_prefix(),
+		config["G_experiment_name"],
+		config["G_mapper"],
+		method,
 		"vcf",
-		"{}.{}.d_{}.vcf.gz".format(
+		"{}.{}.{}_{}.vcf.gz".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 		))
 
-def d_vcf_c_i(it):
+def vcf_c_i_file(method,it):
+	if __debug__:
+		print("Required vcf_c_i_file",method,it)
 	return os.path.join(
-		d_prefix(),
+		config["G_experiment_name"],
+		config["G_mapper"],
+		method,
 		"vcf",
-		"{}.{}.d_{}.vcf.gz.tbi".format(
+		"{}.{}.{}_{}.vcf.gz.tbi".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 		))
 
-def d_chain(it):
+def chain_file(method,it):
+	if __debug__:
+		print("Required chain_file",method,it)
 	return os.path.join(
-		d_prefix(),
+		config["G_experiment_name"],
+		config["G_mapper"],
+		method,
 		"chain",
-		"{}.{}.d_{}.chain".format(
+		"{}.{}.{}_{}.chain".format(
 			config["G_experiment_name"],
 			config["G_mapper"],
+			method,
 			format_nb(it)
 		))
-
-def message(x):
-	return """
-==========================================================================================
-{x}
-
-	input:	{{input}}
-
-	output:	{{output}}
-==========================================================================================
-	
-	""".format(x=x)
-		
-	

@@ -2,21 +2,26 @@ import os,sys
 
 configfile: "conf.json"
 
+###################
+## METHODS ##
+###################
+
+DYNAMIC="stat"
+STATIC="dyn"
+
+###################
+## CONFIGURATION ##
+###################
+
+DEBUG = False
+
 include: "inc_filenames.py"
 include: "inc_proc.py"
 
-ruleorder: s_init > s_consensus
-ruleorder: d_init > d_consensus
+ruleorder:
+    init > consensus
 
 shell.prefix(" set -euf -o pipefail; ")
-
-#shell("git submodule init")
-#shell("git submodule update")
-
-
-#d_output_file = ".d.tmp"
-#s_output_file = ".s.tmp"
-
 
 ###################
 ## PROGRAM NAMES ##
@@ -37,42 +42,51 @@ CALLVARIANTS    = "bin/call_variants"
 
 rule all:
     input:
-        report_file()
+        #bam_file(STATIC,50)
+        #"experiment/bwa-mem/s/bam/experiment.bwa-mem.s_0001.bam",
+        #report_file()
+        bam_file(STATIC, int(config["S_number_of_iterations"])),
+        bam_file(DYNAMIC, int(config["_DU_number_of_iterations"])),
 
 rule static:
     input:
-        s_bam(int(config["S_number_of_iterations"])),
+        bam_file(STATIC, int(config["S_number_of_iterations"])),
 
 rule dynamic:
     input:
-        d_bam(int(config["_DU_number_of_iterations"])),
-
-
+        bam_file(DYNAMIC, int(config["_DU_number_of_iterations"])),
 
 #
-# DYNAMIC MAPPING
+# SHARED RULES
 #
 
-rule d_init:
+rule init:
     input:
         config["G_reference"]
     output:
-        d_fa(0)
+        fa_file("{method}",0)
     message:
         message("D - init " + config["G_reference"])
     shell:
         "cp {input[0]} {output[0]}"
 
-rule d_call_variants:
+def f_call_variants(wildcards):
+    cur_it=int(str(wildcards.iteration))
+    if cur_it==0:
+        return []
+    else:
+        return [
+            fa_file(wildcards.method, cur_it -1),
+            bam_file(wildcards.method, cur_it -1)
+        ]
+
+rule call_variants:
     input:
-        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
-            d_fa( int(str(wildcards.iteration)) -1 ),
-            d_bam( int(str(wildcards.iteration)) -1 )
-        ],
+        f_call_variants,
         SAMTOOLS,
         CALLVARIANTS,
     output:
-        d_vcf("{iteration}")
+        vcf_file("{method}","{iteration}")
     message:
         message("D - calling variants")
     params:
@@ -90,17 +104,22 @@ rule d_call_variants:
                         --accept-level 0.6 \
                         > {output[0]}""")
 
-rule d_consensus:
+def f_consensus(wildcards):
+    cur_it=int(str(wildcards.iteration))
+    if int(str(wildcards.iteration))==0:
+        return []
+    else:
+        return fa_file(wildcards.method, cur_it -1),
+
+rule consensus:
     input:
-        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
-            d_fa( int(str(wildcards.iteration)) -1 ),
-        ],
-        d_vcf_c("{iteration}"),
-        d_vcf_c_i("{iteration}"),
+        f_consensus,
+        vcf_c_file("{method}","{iteration}"),
+        vcf_c_i_file("{method}","{iteration}"),
         BCFTOOLS,
     output:
-        d_fa("{iteration}"),
-        d_chain("{iteration}"),
+        fa_file("{method}","{iteration}"),
+        chain_file("{method}","{iteration}"),
     params:
         BCFTOOLS=BCFTOOLS
     shell:
@@ -111,26 +130,28 @@ rule d_consensus:
             > {output[0]}
         """
 
+#
+# DYNAMIC MAPPING
+#
+
 rule d_map_reads:
     output:
-        d_bam("{iteration}")
+        bam_file(DYNAMIC,"{iteration}")
     input:
         BWA,
         SAMTOOLS,
-        d_fa("{iteration}"),
+        fa_file(DYNAMIC,"{iteration}"),
         fq_file(),
         MAPREADS
     params:
-        output_prefix=d_bam("{iteration}")[:-4],
+        output_prefix=bam_file(DYNAMIC,"{iteration}")[:-4],
         MAPREADS=MAPREADS,
-        mapper="bwa-mem",
+        mapper=config["G_mapper"],
         fq=fq_file(),
-        #output_prefix=d_bam(int(wildcards.iteration))[:-4]
-
     message:
         message("D - mapping reads")
     run:
-        fa=d_fa(int(wildcards.iteration))
+        faf=fa_file(DYNAMIC,int(wildcards.iteration))
         ln_start= int(wildcards.iteration) * 4 * config["_DU_reads_per_iteration"] + 1
         ln_end= int(ln_start) + 4 * config['_DU_reads_per_iteration']  - 1
 
@@ -141,7 +162,7 @@ rule d_map_reads:
                 <(sed -n 1,{ln_end}p {{params.fq}})\
                 {{params.output_prefix}}
         """.format(
-            fa=fa,
+            fa=faf,
             ln_start=ln_start,
             ln_end=ln_end
         ))
@@ -150,71 +171,11 @@ rule d_map_reads:
 # STATIC MAPPING
 #
 
-rule s_init:
-    input:
-        config["G_reference"]
-    output:
-        s_fa(0)
-    message:
-        message("S - init " + config["G_reference"])
-    shell:
-        """cp {config[G_reference]} {output[0]}"""
-
-rule s_call_variants:
-    input:
-        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
-            s_fa( int(str(wildcards.iteration)) -1 ),
-            s_bam( int(str(wildcards.iteration)) -1 )
-        ],
-        SAMTOOLS,
-        CALLVARIANTS,
-        BGZIP,
-        TABIX
-    output:
-        s_vcf("{iteration}"),
-    message:
-        message("S - calling variants")
-    params:
-        SAMTOOLS=SAMTOOLS,
-        CALLVARIANTS=CALLVARIANTS,
-    shell:
-        """{params.SAMTOOLS} mpileup\
-                        --min-MQ 0 \
-                        {input[1]} | \
-                {params.CALLVARIANTS}\
-                        --calling-alg parikh \
-                        --reference {input[0]} \
-                        --min-coverage 2 \
-                        --min-base-qual 0 \
-                        --accept-level 0.6 \
-                        > {output[0]}"""
-
-rule s_consensus:
-    input:
-        lambda wildcards: [] if int(str(wildcards.iteration))==0 else [
-            d_fa( int(str(wildcards.iteration)) -1 ),
-        ],
-        s_vcf_c("{iteration}"),
-        s_vcf_c_i("{iteration}"),
-        BCFTOOLS,
-    output:
-        s_fa("{iteration}"),
-        s_chain("{iteration}"),
-    params:
-        BCFTOOLS=BCFTOOLS
-    shell:
-        """{params.BCFTOOLS} consensus \
-            -f {input[0]}\
-            -c {output[1]} \
-            {input[1]} \
-            > {output[0]}
-        """
-
 rule s_map_reads:
     output:
-        s_bam("{iteration}")
+        bam_file(STATIC, "{iteration}")
     input:
-        s_fa("{iteration}"),
+        fa_file(STATIC, "{iteration}"),
         fq_file(),
         BWA,
         SAMTOOLS,
@@ -222,14 +183,15 @@ rule s_map_reads:
         TABIX,
         MAPREADS
     params:
-        output_prefix=s_bam("{iteration}")[:-4],
-        MAPREADS=MAPREADS
+        output_prefix=bam_file(STATIC, "{iteration}")[:-4],
+        MAPREADS=MAPREADS,
+        mapper=config["G_mapper"],
     log:
         "test.txt"
     message:
         message("S - mapping reads")
     shell:
-        "{params.MAPREADS} bwa-mem {input[0]} {input[1]} {params.output_prefix}"
+        "{params.MAPREADS} {params.mapper} {input[0]} {input[1]} {params.output_prefix}"
 
 #
 # OTHER
@@ -300,14 +262,14 @@ rule vcf_index:
 
 rule reports:
     input:
-        d_bam(int(config["_DU_number_of_iterations"])),
-        s_bam(int(config["S_number_of_iterations"])),
+        bam_file(DYNAMIC, int(config["_DU_number_of_iterations"])),
+        bam_file(STATIC, int(config["S_number_of_iterations"])),
         config_file()
     output:
         report_file()
     params:
-        i1=os.path.dirname(d_bam(0)),
-        i2=os.path.dirname(s_bam(0)),
+        i1=os.path.dirname(bam_file(DYNAMIC, 0)),
+        i2=os.path.dirname(bam_file(STATIC, 0)),
         o=report_file(),
         c=config_file()
     shell:
