@@ -72,7 +72,7 @@ rule init:
     output:
         fa_file("{method}",0)
     message:
-        message("D - init " + config["G_reference"])
+        message("Reference init")
     shell:
         "cp {input[0]} {output[0]}"
 
@@ -94,7 +94,7 @@ rule call_variants:
     output:
         vcf_file("{method}","{iteration}")
     message:
-        message("D - calling variants")
+        message("Calling variants")
     params:
         SAMTOOLS=SAMTOOLS,
         CALLVARIANTS=CALLVARIANTS,
@@ -128,6 +128,8 @@ rule consensus:
         chain_file("{method}","{iteration}"),
     params:
         BCFTOOLS=BCFTOOLS
+    message:
+        message("Creating consensus")
     shell:
         """{params.BCFTOOLS} consensus \
             -f {input[0]}\
@@ -144,6 +146,8 @@ rule vcf_compress:
         "{vcffile}.vcf.gz"
     params:
         BGZIP=BGZIP
+    message:
+        message("Compressing VCF")
     shell:
         """{params.BGZIP} \
             {input[0]} \
@@ -158,6 +162,8 @@ rule vcf_index:
         "{vcffile}.vcf.gz.tbi"
     params:
         TABIX=TABIX
+    message:
+        message("Indexing VCF")
     shell:
         """{params.TABIX} {input[0]}"""
 
@@ -181,7 +187,7 @@ rule d_map_reads:
         mapper=config["G_mapper"],
         fq=fq_file(),
     message:
-        message("D - mapping reads")
+        message("Mapping reads dynamically")
     run:
         faf=fa_file(DYNAMIC,int(wildcards.iteration))
         ln_start= int(wildcards.iteration) * 4 * config["_DU_reads_per_iteration"] + 1
@@ -219,10 +225,8 @@ rule s_map_reads:
         output_prefix=bam_file(STATIC, "{iteration}")[:-4],
         MAPREADS=MAPREADS,
         mapper=config["G_mapper"],
-    log:
-        "test.txt"
     message:
-        message("S - mapping reads")
+        message("Mapping reads statically (iterative referencing)")
     shell:
         "{params.MAPREADS} {params.mapper} {input[0]} {input[1]} {params.output_prefix}"
 
@@ -234,6 +238,8 @@ rule s_map_reads:
 rule data_reference:
     output:
         config["G_reference"]
+    message:
+        message("Downloading reference: {output[0]}")
     run:
         shell("curl --insecure -o {output[0]} {config[G_reference_address]}")
 
@@ -289,6 +295,8 @@ rule reports:
         i2=os.path.dirname(bam_file(STATIC, 0)),
         o=report_file(),
         c=config_file()
+    message:
+        message("Creating report")
     shell:
         "lavender_report.py -i {params.i1} {params.i2} -o {params.o} -c {params.c}"
     
