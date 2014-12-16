@@ -2,26 +2,14 @@ import os,sys
 
 configfile: "conf.json"
 
-###################
+
+#############
 ## METHODS ##
-###################
+#############
 
 DYNAMIC="stat"
 STATIC="dyn"
 
-###################
-## CONFIGURATION ##
-###################
-
-DEBUG = False
-
-include: "inc_filenames.py"
-include: "inc_proc.py"
-
-ruleorder:
-    init > consensus
-
-shell.prefix(" set -euf -o pipefail; ")
 
 ###################
 ## PROGRAM NAMES ##
@@ -36,9 +24,26 @@ TABIX           = "bin/tabix"
 BGZIP           = "bin/bgzip"
 CALLVARIANTS    = "bin/call_variants"
 
-#
-# BASIC RULES
-#
+
+###################
+## CONFIGURATION ##
+###################
+
+DEBUG = False
+
+include: "inc_filenames.py"
+include: "inc_proc.py"
+include: "inc_progs.py"
+
+ruleorder:
+    init > consensus
+
+shell.prefix(" set -euf -o pipefail; ")
+
+
+#################
+## BASIC RULES ##
+#################
 
 rule all:
     input:
@@ -56,9 +61,10 @@ rule dynamic:
     input:
         bam_file(DYNAMIC, int(config["_DU_number_of_iterations"])),
 
-#
-# SHARED RULES
-#
+
+##################
+## SHARED RULES ##
+##################
 
 rule init:
     input:
@@ -130,9 +136,35 @@ rule consensus:
             > {output[0]}
         """
 
-#
-# DYNAMIC MAPPING
-#
+rule vcf_compress:
+    input:
+        "{vcffile}.vcf",
+        BGZIP
+    output:
+        "{vcffile}.vcf.gz"
+    params:
+        BGZIP=BGZIP
+    shell:
+        """{params.BGZIP} \
+            {input[0]} \
+            -c > {output[0]}
+        """
+
+rule vcf_index:
+    input:
+        "{vcffile}.vcf.gz",
+        TABIX
+    output:
+        "{vcffile}.vcf.gz.tbi"
+    params:
+        TABIX=TABIX
+    shell:
+        """{params.TABIX} {input[0]}"""
+
+
+#####################
+## DYNAMIC MAPPING ##
+#####################
 
 rule d_map_reads:
     output:
@@ -167,9 +199,10 @@ rule d_map_reads:
             ln_end=ln_end
         ))
 
-#
-# STATIC MAPPING
-#
+
+####################
+## STATIC MAPPING ##
+####################
 
 rule s_map_reads:
     output:
@@ -193,9 +226,21 @@ rule s_map_reads:
     shell:
         "{params.MAPREADS} {params.mapper} {input[0]} {input[1]} {params.output_prefix}"
 
-#
-# OTHER
-#
+    
+###################
+## DATA DOWNLOAD ##
+###################
+
+rule data_reference:
+    output:
+        config["G_reference"]
+    run:
+        shell("curl --insecure -o {output[0]} {config[G_reference_address]}")
+
+
+###########
+## OTHER ##
+###########
         
 rule simulate_reads:
     input:
@@ -232,34 +277,6 @@ rule simulate_reads:
                 mv {params.fq}.bfast.fastq {params.fq}
         """
 
-rule vcf_compress:
-    input:
-        "{vcffile}.vcf",
-        BGZIP
-    output:
-        "{vcffile}.vcf.gz"
-    params:
-        BGZIP=BGZIP
-    shell:
-        """{params.BGZIP} \
-            {input[0]} \
-            -c > {output[0]}
-        """
-
-rule vcf_index:
-    input:
-        "{vcffile}.vcf.gz",
-        TABIX
-    output:
-        "{vcffile}.vcf.gz.tbi"
-    params:
-        TABIX=TABIX
-    shell:
-        """{params.TABIX} {input[0]}"""
-#
-# REPORTS
-#
-
 rule reports:
     input:
         bam_file(DYNAMIC, int(config["_DU_number_of_iterations"])),
@@ -282,125 +299,3 @@ rule conf:
         with open(config_file(),"w+") as f:
             for x in config.keys():
                 print("{}={}".format(x,repr(config[x]).replace("'","\"")),file=f)
-    
-
-
-#
-# PROGRAMS
-#
-
-rule prog_dwgsim:
-    message:
-        "Compiling DwgSim"
-    output:
-        DWGSIM
-    shell:
-        """
-            cd src_ext
-            cd dwgsim
-            git submodule init
-            git submodule update
-            make
-            cd ..
-            cd ..
-            cp src_ext/dwgsim/dwgsim {output[0]}
-        """
-
-rule prog_samtools:
-    message:
-        "Compiling SamTools"
-    output:
-        SAMTOOLS
-    shell:
-        """
-            cd src_ext
-            cd samtools
-            make
-            cd ..
-            cd ..
-            cp src_ext/samtools/samtools {output[0]}
-        """
-
-rule prog_htslib:
-    message:
-        "Compiling HtsLib"
-    output:
-        TABIX,
-        BGZIP
-    shell:
-        """
-            cd src_ext
-            cd htslib
-            make
-            cd ..
-            cd ..
-            cp src_ext/htslib/tabix {output[0]}
-            cp src_ext/htslib/bgzip {output[1]}
-        """
-
-rule prog_bcftools:
-    message:
-        "Compiling BcfTools"
-    output:
-        BCFTOOLS
-    shell:
-        """
-            cd src_ext
-            cd bcftools
-            make
-            cd ..
-            cd ..
-            cp src_ext/bcftools/bcftools {output[0]}
-        """
-
-
-# BWA
-
-rule prog_bwa:
-    message:
-        "Compiling BWA "
-    output:
-        BWA
-    run:
-        shell("""
-            cd src_ext
-            cd bwa
-            make
-            cd ..
-            cd ..
-            cp src_ext/bwa/bwa {output[0]}
-        """)
-
-# CALL VARIANTS
-
-rule prog_call_variants:
-    message:
-        "Compiling CallVariants "
-    output:
-        CALLVARIANTS
-    run:
-        shell("""
-            cd call_variants
-            cmake .
-            make
-            cd ..
-            cp call_variants/call_variants {output[0]}
-        """)
-
-
-
-# LAVEnder
-
-#
-# DATA
-#
-
-rule data_reference:
-    output:
-        config["G_reference"]
-    run:
-        shell("curl --insecure -o {output[0]} {config[G_reference_address]}")
-
-
-
-

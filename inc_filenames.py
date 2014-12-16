@@ -1,5 +1,6 @@
 def fq_file():
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		"reads",
 		"{}__{}_{}_{}.fq".format(
@@ -10,20 +11,26 @@ def fq_file():
 		)
 
 def config_file():
-	return ".{}.conf".format(
-			config["G_experiment_name"],
-		)
+	return os.path.join(
+		"experiments",
+		".{}.conf".format(config["G_experiment_name"])
+	)
 	
 def report_file():
-	return "report__{}__{}".format(
-		config["G_experiment_name"],
-		config["G_mapper"]
-	)
+	return os.path.join(
+		"experiments",
+		"report__{}__{}".format(
+				config["G_experiment_name"],
+				config["G_mapper"]
+			)
+		)
 
 def bam_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required bam_file",method,it)
+
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
@@ -36,9 +43,11 @@ def bam_file(method,it):
 	))
 
 def fa_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required fa_file",method,it)
+
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
@@ -52,9 +61,10 @@ def fa_file(method,it):
 
 
 def vcf_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required vcf_file",method,it)
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
@@ -67,9 +77,11 @@ def vcf_file(method,it):
 		))
 
 def vcf_c_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required vcf_c_file",method,it)
+
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
@@ -82,9 +94,11 @@ def vcf_c_file(method,it):
 		))
 
 def vcf_c_i_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required vcf_c_i_file",method,it)
+
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
@@ -97,9 +111,11 @@ def vcf_c_i_file(method,it):
 		))
 
 def chain_file(method,it):
-	if __debug__:
+	if DEBUG:
 		print("Required chain_file",method,it)
+
 	return os.path.join(
+		"experiments",
 		config["G_experiment_name"],
 		config["G_mapper"],
 		method,
