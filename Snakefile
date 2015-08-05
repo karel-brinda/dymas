@@ -1,4 +1,5 @@
 import os,sys
+import smbl
 
 configfile: "conf.json"
 
@@ -18,7 +19,6 @@ STATIC="dyn"
 MAPREADS        = "scripts/map_reads.sh"
 BWA             = "bin/bwa"
 BCFTOOLS        = "bin/bcftools"
-DWGSIM          = "bin/dwgsim"
 SAMTOOLS        = "bin/samtools"
 TABIX           = "bin/tabix"
 BGZIP           = "bin/bgzip"
@@ -33,7 +33,7 @@ DEBUG = False
 
 include: "inc_filenames.py"
 include: "inc_proc.py"
-include: "inc_progs.py"
+#include: "inc_progs.py"
 
 ruleorder:
     init > consensus
@@ -89,7 +89,7 @@ def f_call_variants(wildcards):
 rule call_variants:
     input:
         f_call_variants,
-        SAMTOOLS,
+        smbl.prog.SAMTOOLS,
         CALLVARIANTS,
     output:
         vcf_file("{method}","{iteration}")
@@ -122,7 +122,7 @@ rule consensus:
         f_consensus,
         vcf_c_file("{method}","{iteration}"),
         vcf_c_i_file("{method}","{iteration}"),
-        BCFTOOLS,
+        smbl.prog.BCFTOOLS,
     output:
         fa_file("{method}","{iteration}"),
         chain_file("{method}","{iteration}"),
@@ -141,11 +141,11 @@ rule consensus:
 rule vcf_compress:
     input:
         "{vcffile}.vcf",
-        BGZIP
+        smbl.prog.BGZIP
     output:
         "{vcffile}.vcf.gz"
     params:
-        BGZIP=BGZIP
+        BGZIP=smbl.prog.BGZIP
     message:
         message("Compressing VCF")
     shell:
@@ -157,11 +157,11 @@ rule vcf_compress:
 rule vcf_index:
     input:
         "{vcffile}.vcf.gz",
-        TABIX
+        smbl.prog.TABIX,
     output:
         "{vcffile}.vcf.gz.tbi"
     params:
-        TABIX=TABIX
+        TABIX=smbl.prog.TABIX
     message:
         message("Indexing VCF")
     shell:
@@ -176,8 +176,8 @@ rule d_map_reads:
     output:
         bam_file(DYNAMIC,"{iteration}")
     input:
-        BWA,
-        SAMTOOLS,
+        smbl.prog.BWA,
+        smbl.prog.SAMTOOLS,
         fa_file(DYNAMIC,"{iteration}"),
         fq_file(),
         MAPREADS
@@ -216,10 +216,10 @@ rule s_map_reads:
     input:
         fa_file(STATIC, "{iteration}"),
         fq_file(),
-        BWA,
-        SAMTOOLS,
-        BGZIP,
-        TABIX,
+        smbl.prog.BWA,
+        smbl.prog.SAMTOOLS,
+        smbl.prog.BGZIP,
+        smbl.prog.TABIX,
         MAPREADS
     params:
         output_prefix=bam_file(STATIC, "{iteration}")[:-4],
@@ -250,7 +250,7 @@ rule data_reference:
         
 rule simulate_reads:
     input:
-        DWGSIM,
+        smbl.prog.DWGSIM,
         config["G_reference"]
     output:
         fq_file(),
@@ -266,10 +266,11 @@ rule simulate_reads:
         rate_of_mutations=str(config["R_rate_of_mutations"]),
         fraction_of_indels=str(config["R_fraction_of_indels"]),
         reference=config["G_reference"],
-        fq=fq_file()
+        fq=fq_file(),
+        DWGSIM=smbl.prog.DWGSIM,
     shell:
         """
-            dwgsim \
+            {params.DWGSIM} \
                 -e {params.error_rate} \
                 -N {params.number_of_reads} \
                 -1 {params.read_length} \
@@ -307,3 +308,22 @@ rule conf:
         with open(config_file(),"w+") as f:
             for x in config.keys():
                 print("{}={}".format(x,repr(config[x]).replace("'","\"")),file=f)
+
+
+rule prog_call_variants:
+    message:
+        "Compiling CallVariants "
+    output:
+        CALLVARIANTS
+    run:
+        shell("""
+            cd call_variants
+            cmake .
+            make
+            cd ..
+            cp call_variants/call_variants {output[0]}
+        """)
+
+
+
+
