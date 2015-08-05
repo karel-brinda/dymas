@@ -59,13 +59,13 @@ case $method in
 		cat $reads > $fq_file
 
 		#index
-		${dn}/bwa index $reference
+		~/.smbl/bin/bwa index $reference
 		
 		#mapping
-		${dn}/bwa aln -t $number_of_threads $reference $fq_file > $sai_file
-		${dn}/bwa samse $reference $sai_file $fq_file \
-			| ${dn}/samtools view -Shu - \
-			| ${dn}/samtools sort - $prefix
+		~/.smbl/bin/bwa aln -t $number_of_threads $reference $fq_file > $sai_file
+		~/.smbl/bin/bwa samse $reference $sai_file $fq_file \
+			| ~/.smbl/bin/samtools view -Shu - \
+			| ~/.smbl/bin/samtools sort - $prefix
 		rm $sai_file $fq_file
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 		
@@ -73,24 +73,24 @@ case $method in
 
 	bwa-mem)
 		#index
-		${dn}/bwa index $reference
+		~/.smbl/bin/bwa index $reference
 		
 		#mapping
-		${dn}/bwa mem -t $number_of_threads $reference $reads \
-			| ${dn}/samtools view -Shu - \
-			| ${dn}/samtools sort - $prefix
+		~/.smbl/bin/bwa mem -t $number_of_threads $reference $reads \
+			| ~/.smbl/bin/samtools view -Shu - \
+			| ~/.smbl/bin/samtools sort - $prefix
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 		
 		;;
 
 	bwa-sw)
 		#index
-		${dn}/bwa index $reference
+		~/.smbl/bin/bwa index $reference
 		
 		#mapping
-		${dn}/bwa bwasw -t $number_of_threads $reference $reads \
-			| ./samtools view -Shu - \
-			| ./samtools sort - $prefix
+		~/.smbl/bin/bwa bwasw -t $number_of_threads $reference $reads \
+			| ~/.smbl/bin/samtools view -Shu - \
+			| ~/.smbl/bin/samtools sort - $prefix
 		rm ${reference}.amb ${reference}.ann ${reference}.bwt ${reference}.pac ${reference}.sa
 
 		;;
@@ -148,5 +148,5 @@ case $method in
 		;;
 esac
 
-${dn}/samtools index ${prefix}.bam
+~/.smbl/bin/samtools index ${prefix}.bam
 
