@@ -61,9 +61,20 @@ class Reads:
 		self._iterations=value
 		self._reads_per_iteration=(self.reads+value-1)//value
 
+	## Reads.required
+
+	@property
+	def required(self):
+		return [
+				self.fastq_1_fn,
+				self.fastq_2_fn if self.fastq_2_fn is not None,
+			]
+
+
 
 	####################################
 
 	@abc.abstractmethods
 	def create_fastq_iteration(self,fastq_fn,iteration):
 		return
+

@@ -2,6 +2,9 @@ import os
 import smbl
 import snakemake
 import functools
+import shutil
+
+# todo: tabix
 
 class Experiment:
 
@@ -31,57 +34,112 @@ class Experiment:
 	###########
 
 	def fasta_fn(self,iteration):
-		return os.path.join(experiment_name,"reference",self._iteration(iteration,".fa"))
+		return os.path.join(experiment_name,"1_reference",self._iteration(iteration,".fa"))
 
 	def fastq_fn(self,iteration):
-		return os.path.join(experiment_name,"reads",self._iteration(iteration,".fq"))
+		return os.path.join(experiment_name,"2_reads",self._iteration(iteration,".fq"))
 
 	def unsorted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"unsorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(experiment_name,"3_unsorted_bam",self._iteration(iteration,".bam"))
 
 	def sorted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"sorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(experiment_name,"4_sorted_bam",self._iteration(iteration,".bam"))
 
 	def converted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"converted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(experiment_name,"5_converted_bam",self._iteration(iteration,".bam"))
+
+	def pileup_fn(self,iteration):
+		return os.path.join(experiment_name,"6_pileup",self._iteration(iteration,".pileup"))
+
+	def vcf_fn(self,iteration):
+		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".vcf"))
+
+	def bcf_fn(self,iteration):
+		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".bcf"))
 
 	def chain_fn(self,iteration):
-		return os.path.join(experiment_name,"chain",self._iteration(iteration,".chain"))
+		return os.path.join(experiment_name,"8_chain",self._iteration(iteration,".chain"))
 
 	def full_inverted_chain_fn(self,iteration):
-		return os.path.join(experiment_name,"full_inverted_chain",self._iteration(iteration,".chain"))
+		return os.path.join(experiment_name,"9_full_inverted_chain",self._iteration(iteration,".chain"))
 
 	###########
 
 	def register_smbl_rules(self):
+		smbl.utils.Rule(
+				input=self.starting_reference_fasta_fn,
+				output=self.fasta_fn(0),
+				run=lambda: shutil.copyfile(self.starting_reference_fasta_fn,self.fasta_fn(0)),
+			)
+
+
 		for iteration in range(self.iterations):
 
 			# create_reads
 			smbl.utils.Rule(
-				input=self.reads_object.fastq_1_fn,
+				input=[
+						self.reads_object.required
+					],
 				output=self.fastq_fn(iteration),
 				run=functools.partial(self.create_reads,iteration=iteration),
 			)
 
 			# map_reads
 			smbl.utils.Rule(
-				input=[self.fasta_fn(iteration),self.fastq_fn(iteration)],
+				input=[
+						self.fasta_fn(iteration),
+						self.fastq_fn(iteration),
+						self.mapping_object.required,
+					],
 				output=self.unsorted_bam_fn(iteration),
 				run=functools.partial(self.map_reads,iteration=iteration),
 			)
 
 			# sort_bam
 			smbl.utils.Rule(
-				input=self.unsorted_bam_fn(iteration),
+				input=[
+						self.unsorted_bam_fn(iteration),
+						smbl.prog.SAMTOOLS,
+					],
 				output=self.sorted_bam_fn(iteration),
 				run=functools.partial(self.sort_bam,iteration=iteration),
 			)
 
-			# call_consensus
+			# create_pileup
 			smbl.utils.Rule(
-				input=self.sorted_bam_fn,
+				input=[
+						self.consensus_object.required,
+						self.fasta_fn(iteration),
+						self.unsorted_bam_fn(iteration),
+						self.sorted_bam_fn(iteration),
+					],
+				output=self.pileup_fn(iteration),
+				run=functools.partial(self.create_pileup,iteration=iteration),
+			)
+
+			# create_vcf
+			smbl.utils.Rule(
+				input=[
+						self.consensus_object.required,
+						self.fasta_fn(iteration),
+						self.pileup_fn(iteration),
+					],
+				output=[
+						self.vcf_fn(iteration),
+						self.bcf_fn(iteration),
+					]
+				run=functools.partial(self.create_vcf,iteration=iteration),
+			)
+
+			# update_reference
+			smbl.utils.Rule(
+				input=[
+						self.consensus_object.required,
+						self.fasta_fn(iteration),
+						self.vcf_fn(iteration),
+					],
 				output=self.fasta_fn(iteration+1),
-				run=functools.partial(self.consensus_object.call_consensus,iteration=iteration),
+				run=functools.partial(self.update_reference,iteration=iteration),
 			)
 
 	###########
@@ -114,11 +172,48 @@ class Experiment:
 					)
 			)
 
-	def call_consensus(self, iteration):
-		self.consensus_object.call_consensus(
-				old_fasta_fn=self.fasta_fn(iteration),
-				new_fasta_fn=self.fasta_fn(iteration+1),
+	def create_pileup(self,iteration):
+		self.consensus_object.create_pileup(
+				fasta_fn=self.fasta_fn(iteration),				
+				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 				sorted_bam_fn=self.sorted_bam_fn(iteration),
+			)
+
+	def create_vcf(self, iteration):
+		self.consensus_object.create_vcf(
+				fasta_fn=self.fasta_fn(iteration),				
+				pileup_fn=self.pileup_fn(iteration),
+				vcf_fn=self.vcf_fn(iteration),
+			)
+		self.create_bcf(iteration)
+
+	def create_bcf(self, iteration):
+		snakemake.shell(
+				"""
+					{BGZIP} \
+					{vcf]} \
+					-c > {bcf}
+				""".format(
+						BGZIP=smbl.prog.BGZIP,
+						vcf=self.vcf_fn,
+						bcf=self.bcf_fn,
+					)
+			)
+
+	def update_reference(self,iteration):
+		#new_fasta_fn=self.fasta_fn(iteration+1),
+		snakemake.shell(
+				"""
+					{BCFTOOLS} consensus \
+					-f {input[0]}\
+					-c {output[1]} \ 
+					{input[1]} \
+					> {output[0]}
+				""".format(
+						BCFTOOLS=smbl.prog.BCFTOOLS,
+						unsorted_bam_fn=self.unsorted_bam_fn(iteration),
+						sorted_bam_fn=self.sorted_bam_fn(iteration),
+					)
 			)
 
 	def lift_alignments(self, iteration):

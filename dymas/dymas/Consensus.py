@@ -1,18 +1,35 @@
 import abc
+import smbl
 
 class Consensus(object):
 
 	__metaclass__ = abc.ABCmeta
 
 	def __init__(self,
-				a,
 			):
 		pass
 
+	@property
+	def required(self):
+		return [
+				smbl.prog.SAMTOOLS,
+				smbl.prog.BCFTOOLS,
+				smbl.prog.BGZIP,
+				smbl.prog.TABIX,
+			]
+
 	@abc.abstractmethod
-	def call_consensus(
-				old_fasta_fn,
-				new_fasta_fn,
+	def create_pileup(self,
+				fasta_fn,
+				unsorted_bam_fn,
 				sorted_bam_fn,
+			):
+		return ""
+
+	@abc.abstractmethod
+	def create_vcf(self,
+				fasta_fn,
+				pileup_fn,
+				vcf_fn,
 			):
 		return ""
