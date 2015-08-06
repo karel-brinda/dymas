@@ -3,7 +3,7 @@ import smbl
 
 class Consensus(object):
 
-	__metaclass__ = abc.ABCmeta
+	__metaclass__ = abc.ABCMeta
 
 	def __init__(self,
 			):

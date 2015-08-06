@@ -1,7 +1,7 @@
 from .Experiment import *
 
 from .Consensus import *
-from .Consensus_SamTools.py import *
+from .Consensus_SamTools import *
 
 from .Mapping import *
 from .Mapping_BwaMem import *

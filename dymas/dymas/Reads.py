@@ -2,18 +2,20 @@ import abc
 
 class Reads:
 
-	__metaclass__=abc.ABCmeta
+	__metaclass__=abc.ABCMeta
 
-	def __init(self,
+	def __init__(self,
+				reads,
 				fastq_1_fn,
-				reads_per_iteration,
+				reads_per_iteration=None,
 				iterations=None,
 				fastq_2_fn=None,
 			):
-		with open(fq1) as f:
-			for i, l in enumerate(f):
-				pass
-		self.reads=(i+1)//4
+
+		assert iterations is not None or reads_per_iteration is not None
+		assert reads>0
+
+		self.reads=reads
 
 		if iterations is not None:
 			self.iterations=iterations
@@ -23,7 +25,6 @@ class Reads:
 		self.fastq_1_fn=fastq_1_fn
 		self.fastq_2_fn=fastq_2_fn
 	
-
 	## Reads.reads
 
 	@property
@@ -65,16 +66,22 @@ class Reads:
 
 	@property
 	def required(self):
-		return [
-				self.fastq_1_fn,
-				self.fastq_2_fn if self.fastq_2_fn is not None,
-			]
+		print("Reads require",self.fastq_1_fn)
+		if self.fastq_2_fn is None:
+			return [
+					self.fastq_1_fn,
+				]
+		else:
+			return [
+					self.fastq_1_fn,
+					self.fastq_2_fn ,
+				]
 
 
 
 	####################################
 
-	@abc.abstractmethods
+	@abc.abstractmethod
 	def create_fastq_iteration(self,fastq_fn,iteration):
 		return
 

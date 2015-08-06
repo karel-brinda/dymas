@@ -23,6 +23,13 @@ class Experiment:
 		self.reads_object=reads_object
 		self.consensus_object=consensus_object
 
+		self.register_smbl_rules()
+
+	def input(self):
+		return [
+				self.fasta_fn(self.iterations)
+			]
+
 	@property
 	def iterations(self):
 	    return self.reads_object.iterations
@@ -34,34 +41,34 @@ class Experiment:
 	###########
 
 	def fasta_fn(self,iteration):
-		return os.path.join(experiment_name,"1_reference",self._iteration(iteration,".fa"))
+		return os.path.join(self.experiment_name,"1_reference",self._iteration(iteration,".fa"))
 
 	def fastq_fn(self,iteration):
-		return os.path.join(experiment_name,"2_reads",self._iteration(iteration,".fq"))
+		return os.path.join(self.experiment_name,"2_reads",self._iteration(iteration,".fq"))
 
 	def unsorted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"3_unsorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"3_unsorted_bam",self._iteration(iteration,".bam"))
 
 	def sorted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"4_sorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"4_sorted_bam",self._iteration(iteration,".bam"))
 
 	def converted_bam_fn(self,iteration):
-		return os.path.join(experiment_name,"5_converted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"5_converted_bam",self._iteration(iteration,".bam"))
 
 	def pileup_fn(self,iteration):
-		return os.path.join(experiment_name,"6_pileup",self._iteration(iteration,".pileup"))
+		return os.path.join(self.experiment_name,"6_pileup",self._iteration(iteration,".pileup"))
 
 	def vcf_fn(self,iteration):
-		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".vcf"))
+		return os.path.join(self.experiment_name,"7_vcf",self._iteration(iteration,".vcf"))
 
 	def bcf_fn(self,iteration):
-		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".vcf.gz"))
+		return os.path.join(self.experiment_name,"7_vcf",self._iteration(iteration,".vcf.gz"))
 
 	def chain_fn(self,iteration):
-		return os.path.join(experiment_name,"8_chain",self._iteration(iteration,".chain"))
+		return os.path.join(self.experiment_name,"8_chain",self._iteration(iteration,".chain"))
 
 	def full_inverted_chain_fn(self,iteration):
-		return os.path.join(experiment_name,"9_full_inverted_chain",self._iteration(iteration,".chain"))
+		return os.path.join(self.experiment_name,"9_full_inverted_chain",self._iteration(iteration,".chain"))
 
 	###########
 
@@ -127,7 +134,7 @@ class Experiment:
 				output=[
 						self.vcf_fn(iteration),
 						self.bcf_fn(iteration),
-					]
+					],
 				run=functools.partial(self.create_vcf,iteration=iteration),
 			)
 
@@ -223,7 +230,7 @@ class Experiment:
 						BCFTOOLS=smbl.prog.BCFTOOLS,
 						old_fasta_fn=self.fasta_fn(iteration),
 						new_fasta_fn=self.fasta_fn(iteration+1),
-						bcf_fn=self.bcf_fn=self.bcf_fn(iteration),
+						bcf_fn=self.bcf_fn(iteration),
 						chain_fn=self.chain_fn(iteration),
 					)
 			)

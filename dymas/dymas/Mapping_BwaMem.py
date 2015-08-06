@@ -15,7 +15,6 @@ class Mapping_BwaMem(Mapping):
 				smbl.prog.SAMTOOLS,
 			]
 
-	@abc.abstractmethod
 	def map_reads(self,
 				fasta_fn,
 				fastq_fn,
@@ -33,8 +32,8 @@ class Mapping_BwaMem(Mapping):
 
 		snakemake.shell(
 				"""
-					"{BWA}" mem "{fasta_fn}" "{fastq_fn}" |
-					{SAMTOOLS} view -b - > "{unsorted_bam_fn}
+					"{BWA}" mem "{fasta_fn}" "{fastq_fn}" | \
+					{SAMTOOLS} view -b - > "{unsorted_bam_fn}"
 				""".format(
 						BWA=smbl.prog.BWA,
 						SAMTOOLS=smbl.prog.SAMTOOLS,
