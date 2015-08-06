@@ -29,7 +29,7 @@ class Experiment:
 	
 	@staticmethod
 	def _iteration(iteration,suffix=""):
-		return "{}{{}}".format(iteration).zfill(5).format(suffix)
+		return "{}{{}}".format(iteration).zfill(5+2).format(suffix)
 
 	###########
 
@@ -55,7 +55,7 @@ class Experiment:
 		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".vcf"))
 
 	def bcf_fn(self,iteration):
-		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".bcf"))
+		return os.path.join(experiment_name,"7_vcf",self._iteration(iteration,".vcf.gz"))
 
 	def chain_fn(self,iteration):
 		return os.path.join(experiment_name,"8_chain",self._iteration(iteration,".chain"))
@@ -136,6 +136,7 @@ class Experiment:
 				input=[
 						self.consensus_object.required,
 						self.fasta_fn(iteration),
+						self.fasta_fn(iteration)+".fai",
 						self.vcf_fn(iteration),
 					],
 				output=self.fasta_fn(iteration+1),
@@ -190,13 +191,22 @@ class Experiment:
 	def create_bcf(self, iteration):
 		snakemake.shell(
 				"""
-					{BGZIP} \
-					{vcf]} \
-					-c > {bcf}
+					"{BGZIP}" \
+					"{vcf_fn}" \
+					-c > "{bcf_fn}" \
 				""".format(
 						BGZIP=smbl.prog.BGZIP,
-						vcf=self.vcf_fn,
-						bcf=self.bcf_fn,
+						vcf_fn=self.vcf_fn(iteration),
+						bcf_fn=self.bcf_fn(iteration),
+					)
+			)
+
+		snakemake.shell(
+				"""
+					"{TABIX}" "{bcf_fn}"
+				""".format(
+						TABIX=smbl.prog.TABIX,
+						bcf_fn=self.bcf_fn(iteration),
 					)
 			)
 
@@ -204,15 +214,17 @@ class Experiment:
 		#new_fasta_fn=self.fasta_fn(iteration+1),
 		snakemake.shell(
 				"""
-					{BCFTOOLS} consensus \
-					-f {input[0]}\
-					-c {output[1]} \ 
-					{input[1]} \
-					> {output[0]}
+					"{BCFTOOLS}" consensus \
+					-f "{old_fasta_fn}" 
+					-c "{chain_fn}" \
+					"{bcf_fn}" \
+					> "{new_fasta_fn}" \
 				""".format(
 						BCFTOOLS=smbl.prog.BCFTOOLS,
-						unsorted_bam_fn=self.unsorted_bam_fn(iteration),
-						sorted_bam_fn=self.sorted_bam_fn(iteration),
+						old_fasta_fn=self.fasta_fn(iteration),
+						new_fasta_fn=self.fasta_fn(iteration+1),
+						bcf_fn=self.bcf_fn=self.bcf_fn(iteration),
+						chain_fn=self.chain_fn(iteration),
 					)
 			)
 

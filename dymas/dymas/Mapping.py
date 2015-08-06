@@ -16,4 +16,4 @@ class Mapping:
 				fastq_fn,
 				unsorted_bam_fn,
 			):
-		return ""
+		return
