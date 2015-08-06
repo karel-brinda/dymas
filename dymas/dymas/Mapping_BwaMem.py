@@ -1,5 +1,4 @@
 import smbl
-import snakemake
 
 from .Mapping import Mapping
 
@@ -21,7 +20,7 @@ class Mapping_BwaMem(Mapping):
 				unsorted_bam_fn,
 			):
 
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{BWA}" index "{fasta_fn}"
 				""".format(
@@ -30,7 +29,7 @@ class Mapping_BwaMem(Mapping):
 					)
 			)
 
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{BWA}" mem "{fasta_fn}" "{fastq_fn}" | \
 					{SAMTOOLS} view -b - > "{unsorted_bam_fn}"

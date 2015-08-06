@@ -1,5 +1,4 @@
 import smbl
-import snakemake
 
 from .Consensus import Consensus
 
@@ -12,7 +11,7 @@ class Consensus_SamTools(Consensus):
 				pileup_fn
 			):
 
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					{SAMTOOLS} mpileup\
 						--min-MQ 1 \
@@ -33,7 +32,7 @@ class Consensus_SamTools(Consensus):
 				vcf_fn,
 			):
 
-		snakemake.shell(
+		smbl.utils.shell(
 				"""{callvariants} \
 					--calling-alg parikh \
 					--reference "{fasta_fn}" \

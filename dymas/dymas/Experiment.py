@@ -1,6 +1,5 @@
 import os
 import smbl
-import snakemake
 import functools
 import shutil
 
@@ -166,17 +165,20 @@ class Experiment:
 			)
 
 	def sort_bam(self, iteration):
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{SAMTOOLS}" sort \
 						-l 5 \
 						-@ 3 \
+						-O bam \
+						-T {prefix} \
 						"{unsorted_bam_fn}" \
 						> "{sorted_bam_fn}" \
 				""".format(
 						SAMTOOLS=smbl.prog.SAMTOOLS,
 						unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 						sorted_bam_fn=self.sorted_bam_fn(iteration),
+						prefix=self.sorted_bam_fn(iteration)+".tmp",
 					)
 			)
 
@@ -196,7 +198,7 @@ class Experiment:
 		self.create_bcf(iteration)
 
 	def create_bcf(self, iteration):
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{BGZIP}" \
 					"{vcf_fn}" \
@@ -208,7 +210,7 @@ class Experiment:
 					)
 			)
 
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{TABIX}" "{bcf_fn}"
 				""".format(
@@ -219,7 +221,7 @@ class Experiment:
 
 	def update_reference(self,iteration):
 		#new_fasta_fn=self.fasta_fn(iteration+1),
-		snakemake.shell(
+		smbl.utils.shell(
 				"""
 					"{BCFTOOLS}" consensus \
 					-f "{old_fasta_fn}" 
