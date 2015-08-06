@@ -224,9 +224,12 @@ class Experiment:
 		#new_fasta_fn=self.fasta_fn(iteration+1),
 		#			-c "{chain_fn}" \
 
+		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(chain_dir=os.path.dirname(self.chain_fn(iteration))))
+
 		smbl.utils.shell(
 				"""
 					"{BCFTOOLS}" consensus \
+					-c "{chain_fn}" \
 					-f "{old_fasta_fn}" \
 					"{bcf_fn}" \
 					> "{new_fasta_fn}" \
