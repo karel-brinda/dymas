@@ -222,11 +222,12 @@ class Experiment:
 
 	def update_reference(self,iteration):
 		#new_fasta_fn=self.fasta_fn(iteration+1),
+		#			-c "{chain_fn}" \
+
 		smbl.utils.shell(
 				"""
 					"{BCFTOOLS}" consensus \
-					-f "{old_fasta_fn}" 
-					-c "{chain_fn}" \
+					-f "{old_fasta_fn}" \
 					"{bcf_fn}" \
 					> "{new_fasta_fn}" \
 				""".format(

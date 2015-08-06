@@ -42,7 +42,7 @@ class Consensus_SamTools(Consensus):
 					< "{pileup_fn}" \
 					> "{vcf_fn}" \
 				""".format(
-						callvariants="calllvariants",
+						callvariants="call_variants",
 						fasta_fn=fasta_fn,
 						pileup_fn=pileup_fn,
 						vcf_fn=vcf_fn,

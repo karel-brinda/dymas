@@ -2,6 +2,9 @@ import smbl
 import sys
 import rnftools
 
+reads=100000
+reference=smbl.fasta.EXAMPLE_1
+
 sys.path.insert(0, "../../dymas")
 import dymas
 
@@ -10,11 +13,12 @@ import dymas
 
 rnftools.mishmash.sample("simple_example",reads_in_tuple=1)
 
-rnftools.mishmash.ArtIllumina(
-	fasta=smbl.fasta.EXAMPLE_1,
-	number_of_read_tuples=10000,
+rnftools.mishmash.DwgSim(
+	fasta=reference,
+	number_of_read_tuples=reads,
 	read_length_1=100,
 	read_length_2=0,
+	mutation_rate=0.03,
 )
 
 fq="simple_example.fq"
@@ -26,16 +30,16 @@ fq="simple_example.fq"
 bwa = dymas.Mapping_BwaMem()
 
 reads = dymas.Reads_Dyn(
-		reads=10000,
+		reads=reads,
 		fastq_1_fn=fq,
-		iterations=30,
+		iterations=3,
 	)
 
 consensus = dymas.Consensus_SamTools()
 
 experiment = dymas.Experiment(
 		experiment_name="test_experiment",
-		starting_reference_fasta_fn=smbl.fasta.EXAMPLE_1,
+		starting_reference_fasta_fn=reference,
 		mapping_object=bwa,
 		reads_object=reads,
 		consensus_object=consensus,
