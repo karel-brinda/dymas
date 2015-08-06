@@ -187,6 +187,7 @@ class Experiment:
 				fasta_fn=self.fasta_fn(iteration),				
 				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 				sorted_bam_fn=self.sorted_bam_fn(iteration),
+				pileup_fn=self.pileup_fn(iteration),				
 			)
 
 	def create_vcf(self, iteration):
