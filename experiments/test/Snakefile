@@ -35,13 +35,16 @@ reads = dymas.Reads_Dyn(
 		iterations=15,
 	)
 
-consensus = dymas.Consensus_SamTools()
+consensus = dymas.Consensus_Cpp()
+
+pileup=dymas.Pileup_SamTools()
 
 experiment = dymas.Experiment(
 		experiment_name="test_experiment",
 		starting_reference_fasta_fn=reference,
 		mapping_object=bwa,
 		reads_object=reads,
+		pileup_object=pileup,
 		consensus_object=consensus,
 	)
 

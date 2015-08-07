@@ -1,7 +1,6 @@
 import abc
-import smbl
 
-class Consensus(object):
+class Pileup(object):
 
 	__metaclass__ = abc.ABCMeta
 
@@ -14,9 +13,9 @@ class Consensus(object):
 		return
 
 	@abc.abstractmethod
-	def create_consensus(self,
+	def create_pileup(self,
 				fasta_fn,
-				pileup_fn,
-				compressed_vcf_fn,
+				unsorted_bam_fn,
+				sorted_bam_fn,
 			):
 		return

@@ -12,6 +12,7 @@ class Experiment:
 				starting_reference_fasta_fn,
 				mapping_object,
 				reads_object,
+				pileup_object,
 				consensus_object,
 			):
 
@@ -20,6 +21,7 @@ class Experiment:
 		self.starting_reference_fasta_fn=starting_reference_fasta_fn
 		self.mapping_object=mapping_object
 		self.reads_object=reads_object
+		self.pileup_object=pileup_object
 		self.consensus_object=consensus_object
 
 		self.register_smbl_rules()
@@ -81,7 +83,7 @@ class Experiment:
 			# create_reads
 			smbl.utils.Rule(
 				input=[
-						self.reads_object.required
+						self.reads_object.required,
 					],
 				output=self.fastq_fn(iteration),
 				run=functools.partial(self.create_reads,iteration=iteration),
@@ -111,7 +113,7 @@ class Experiment:
 			# create_pileup
 			smbl.utils.Rule(
 				input=[
-						self.consensus_object.required,
+						self.pileup_object.required,
 						self.fasta_fn(iteration),
 						self.unsorted_bam_fn(iteration),
 						self.sorted_bam_fn(iteration),
@@ -120,7 +122,7 @@ class Experiment:
 				run=functools.partial(self.create_pileup,iteration=iteration),
 			)
 
-			# create_compressed_vcf
+			# create_consensus
 			smbl.utils.Rule(
 				input=[
 						self.consensus_object.required,
@@ -131,7 +133,7 @@ class Experiment:
 						self.compressed_vcf_fn(iteration),
 						#self.bcf_fn(iteration),
 					],
-				run=functools.partial(self.create_compressed_vcf,iteration=iteration),
+				run=functools.partial(self.create_consensus,iteration=iteration),
 			)
 
 			# update_reference
@@ -180,15 +182,15 @@ class Experiment:
 			)
 
 	def create_pileup(self,iteration):
-		self.consensus_object.create_pileup(
+		self.pileup_object.create_pileup(
 				fasta_fn=self.fasta_fn(iteration),				
 				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 				sorted_bam_fn=self.sorted_bam_fn(iteration),
 				pileup_fn=self.pileup_fn(iteration),				
 			)
 
-	def create_compressed_vcf(self, iteration):
-		self.consensus_object.create_compressed_vcf(
+	def create_consensus(self, iteration):
+		self.consensus_object.create_consensus(
 				fasta_fn=self.fasta_fn(iteration),				
 				pileup_fn=self.pileup_fn(iteration),
 				compressed_vcf_fn=self.compressed_vcf_fn(iteration),

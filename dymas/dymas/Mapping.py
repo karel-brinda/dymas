@@ -7,9 +7,9 @@ class Mapping(object):
 	def __init__(self):
 		pass
 
-	@property
+	@abc.abstractproperty
 	def required(self):
-		return []
+		return
 
 	@abc.abstractmethod
 	def map_reads(self,
