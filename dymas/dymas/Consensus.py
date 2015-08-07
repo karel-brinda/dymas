@@ -24,12 +24,12 @@ class Consensus(object):
 				unsorted_bam_fn,
 				sorted_bam_fn,
 			):
-		return ""
+		return
 
 	@abc.abstractmethod
-	def create_vcf(self,
+	def create_compressed_vcf(self,
 				fasta_fn,
 				pileup_fn,
-				vcf_fn,
+				compressed_vcf_fn,
 			):
-		return ""
+		return

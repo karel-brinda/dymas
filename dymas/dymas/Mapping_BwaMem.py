@@ -31,8 +31,8 @@ class Mapping_BwaMem(Mapping):
 
 		smbl.utils.shell(
 				"""
-					"{BWA}" mem "{fasta_fn}" "{fastq_fn}" | \
-					{SAMTOOLS} view -b - > "{unsorted_bam_fn}"
+					"{BWA}" mem -t 3 "{fasta_fn}" "{fastq_fn}" | \
+					{SAMTOOLS} view -b -@3 - > "{unsorted_bam_fn}"
 				""".format(
 						BWA=smbl.prog.BWA,
 						SAMTOOLS=smbl.prog.SAMTOOLS,
