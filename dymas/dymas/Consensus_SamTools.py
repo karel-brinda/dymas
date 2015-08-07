@@ -1,4 +1,6 @@
 import smbl
+import snakemake
+import os
 
 from .Consensus import Consensus
 
@@ -11,18 +13,23 @@ class Consensus_SamTools(Consensus):
 				pileup_fn
 			):
 
+		filter_pileup_fn=os.path.join(os.path.dirname(__file__),'filter_pileup.pl')
+
+		#regexp=r"\(\.\|,\|\^.\|\$\)*",
 		smbl.utils.shell(
 				"""
 					{SAMTOOLS} mpileup\
 						--min-MQ 1 \
 						--fasta-ref "{fasta_fn}" \
-						"{sorted_bam_fn}" > \
-						"{pileup_fn}"
+						"{sorted_bam_fn}" |\
+						"{filter_pileup_fn}" >\
+						"{pileup_fn}" \
 				""".format(
 						SAMTOOLS=smbl.prog.SAMTOOLS,
 						sorted_bam_fn=sorted_bam_fn,
 						pileup_fn=pileup_fn,
 						fasta_fn=fasta_fn,
+						filter_pileup_fn=filter_pileup_fn,
 					)
 			)
 
