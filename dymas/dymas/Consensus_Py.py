@@ -6,7 +6,7 @@ import gzip
 from .Consensus import Consensus
 
 def vcf_line_substitution(chrom,pos,old_base,new_base):
-	return "{chrom}\t{pos}\t.\t{old_base}\t{new_base}\t100\tPASS\t.".format(
+	return "{chrom}\t{pos}\t.\t{old_base}\t{new_base}\t100\tPASS\t.{end}".format(
 										chrom=chrom,
 										pos=pos,
 										old_base=old_base,
@@ -64,6 +64,7 @@ class Consensus_Py(Consensus):
 							"##fileDate={}".format("20150000"), #FIX!!!s
 							"##reference={}".format(os.path.abspath(fasta_fn)),
 							"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO",
+							""
 						]
 						))
 
