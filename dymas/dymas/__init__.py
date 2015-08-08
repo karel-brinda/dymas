@@ -2,6 +2,7 @@ from .Experiment import *
 
 from .Consensus import *
 from .Consensus_Cpp import *
+from .Consensus_Py import *
 
 from .Mapping import *
 from .Mapping_BwaMem import *
