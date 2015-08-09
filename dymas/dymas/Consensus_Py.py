@@ -14,8 +14,8 @@ def vcf_line_substitution(chrom,pos,old_base,new_base):
 										end=os.linesep,
 									)
 
-def vcf_line_deletion(chrom,pos,base,new_base):
-	pass
+def vcf_line_deletion(chrom,pos,base):
+	return ""
 	#return "{chrom}\t{pos}\t.\t{old_base}\t{new_base}\t100\tPASS\t.".format(
 	#									chrom=chrom,
 	#									pos=pos,
@@ -45,8 +45,8 @@ class Consensus_Py(Consensus):
 		trans = {
 				"a":0,
 				"A":0,
-				"C":1,
 				"c":1,
+				"C":1,
 				"g":2,
 				"G":2,
 				"t":3,
@@ -71,7 +71,7 @@ class Consensus_Py(Consensus):
 				for line in f:
 					#print(line)
 					(chrom, pos, base, cov, nucls, _) = line.split("\t")
-					cov=float(cov)
+					cov=int(cov)
 					if int(cov)<3:
 						continue
 					trans["."]=trans[","]=trans[base]
@@ -83,26 +83,37 @@ class Consensus_Py(Consensus):
 						try:
 							char=nucls[i]
 							vector[trans[char]]+=1
+							i+=1
 						except:
 							if char=="+" or char=="-":
 								k=i+1
 								while nucls[k] in "0123456789" and k<l:
 									k+=1
 								number=int(nucls[i+1:k])
-								i=k
-						i+=1
-					vector_norm=vector/cov
+								inserted_nucls=nucls[k:k+number]
+								i=k+number
+							elif char=="^":
+								i+=2
+							elif char=="$":
+								i+=1
+								#print("xxx")
+							else:
+								raise NotImplementedError("Unknown character '{}'".format(char))
+					#vector_norm=vector/cov
+					#print(vector,cov, line)
+					#assert int(sum(vector))==int(cov)
 					for i in range(5):
-						if vector[i]>=0.6:
-							if i==5:
-									g.write(vcf_line_deletion(
-											chrom=chrom,
-											pos=pos,
-											base=base,
-										))
+						if vector[i]>=0.6*cov:
+							if i==4:
+								g.write(vcf_line_deletion(
+										chrom=chrom,
+										pos=pos,
+										base=base,
+									))
 							else:
 								new_base=trans_inv[i]
 								if base != new_base:
+									#print("{} => {}".format(base,new_base))
 									g.write(vcf_line_substitution(
 											chrom=chrom,
 											pos=pos,

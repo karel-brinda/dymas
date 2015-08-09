@@ -1,4 +1,4 @@
-#include "call_variants.h"
+#include "call_consensus.h"
 
 int main(int argc, const char* argv[])
 {

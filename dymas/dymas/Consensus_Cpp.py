@@ -23,7 +23,7 @@ class Consensus_Cpp(Consensus):
 				"""
 				{CAT} "{pileup_fn}" \
 				| \
-				{CALLVARIANTS} \
+				{CALLCONSENSUS} \
 					--calling-alg parikh \
 					--reference "{fasta_fn}" \
 					--min-coverage 2 \
@@ -34,7 +34,17 @@ class Consensus_Cpp(Consensus):
 				""".format(
 						CAT="gzcat " if pileup_fn[-3:]==".gz" else "cat",
 						BGZIP=smbl.prog.BGZIP,
-						CALLVARIANTS="call_variants",
+						CALLCONSENSUS=os.path.relpath(
+								os.path.join(
+									os.path.dirname(__file__),
+									"..",
+									"..",
+									"misc",
+									"call_consensus_cpp",
+									"call_consensus",
+								),
+								os.path.dirname(__file__),
+							),
 						fasta_fn=fasta_fn,
 						pileup_fn=pileup_fn,
 						compressed_vcf_fn=compressed_vcf_fn,
