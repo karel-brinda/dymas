@@ -9,6 +9,7 @@ from .Mapping_BwaMem import *
 
 from .Pileup import *
 from .Pileup_SamTools import *
+from .Pileup_Ordered import *
 
 from .Reads import *
 from .Reads_Dyn import *

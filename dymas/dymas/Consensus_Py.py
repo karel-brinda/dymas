@@ -3,6 +3,8 @@ import os
 import numpy
 import gzip
 
+from Bio import SeqIO
+
 from .Consensus import Consensus
 
 def vcf_line_substitution(chrom,pos,old_base,new_base):
@@ -14,18 +16,23 @@ def vcf_line_substitution(chrom,pos,old_base,new_base):
 										end=os.linesep,
 									)
 
-def vcf_line_deletion(chrom,pos,base):
-	return ""
-	#return "{chrom}\t{pos}\t.\t{old_base}\t{new_base}\t100\tPASS\t.".format(
-	#									chrom=chrom,
-	#									pos=pos,
-	#									old_base=old_base,
-	#									new_base=new_base,
-	#									end=os.linesep,
-	#								)
-
 
 class Consensus_Py(Consensus):
+
+	def __init__(self,
+				min_coverage=2,
+				accept_level=0.6,
+				call_snps=True,
+				call_ins=True,
+				call_dels=True,
+			):
+
+		self.min_coverage=min_coverage
+		self.accept_level=accept_level
+		self.call_snps=call_snps
+		self.call_ins=call_ins
+		self.call_dels=call_dels
+
 
 	@property
 	def required(self):
@@ -39,6 +46,13 @@ class Consensus_Py(Consensus):
 				pileup_fn,
 				compressed_vcf_fn,
 			):
+
+		sequences={}
+		_fasta_sequences = SeqIO.parse(open(fasta_fn),'fasta')
+		for seq in _fasta_sequences:
+			sequences[seq.name]=seq.seq
+		_fasta_sequences = None
+
 
 		vcf_fn=compressed_vcf_fn[:-3]
 
@@ -72,7 +86,7 @@ class Consensus_Py(Consensus):
 					#print(line)
 					(chrom, pos, base, cov, nucls, _) = line.split("\t")
 					cov=int(cov)
-					if int(cov)<3:
+					if int(cov)<self.min_coverage:
 						continue
 					trans["."]=trans[","]=trans[base]
 					vector = numpy.array([0, 0, 0, 0, 0])
@@ -94,38 +108,38 @@ class Consensus_Py(Consensus):
 								i=k+number
 							elif char=="^":
 								i+=2
-							elif char=="$":
+							elif char in "$<>":
 								i+=1
-								#print("xxx")
 							else:
 								raise NotImplementedError("Unknown character '{}'".format(char))
-					#vector_norm=vector/cov
-					#print(vector,cov, line)
-					#assert int(sum(vector))==int(cov)
+
 					for i in range(5):
-						if vector[i]>=0.6*cov:
+						if vector[i]>=self.accept_level*cov:
 							if i==4:
-								g.write(vcf_line_deletion(
-										chrom=chrom,
-										pos=pos,
-										base=base,
-									))
-							else:
-								new_base=trans_inv[i]
-								if base != new_base:
-									#print("{} => {}".format(base,new_base))
+								if self.call_dels:
+									old_bases=sequences[chrom][int(pos)-2:int(pos)]
 									g.write(vcf_line_substitution(
 											chrom=chrom,
-											pos=pos,
-											old_base=base,
-											new_base=new_base,
+											pos=int(pos)-1,
+											old_base=old_bases,
+											new_base=old_bases[1],
 										))
+							else:
+								if self.call_snps:
+									new_base=trans_inv[i]
+									if base != new_base:
+										g.write(vcf_line_substitution(
+												chrom=chrom,
+												pos=pos,
+												old_base=base,
+												new_base=new_base,
+											))
 							break
 
 
 		smbl.utils.shell(
 				"""
-				"{BGZIP}" "{vcf_fn}" \
+				"{BGZIP}" "{vcf_fn}"
 				""".format(
 						BGZIP=smbl.prog.BGZIP,
 						vcf_fn=vcf_fn,

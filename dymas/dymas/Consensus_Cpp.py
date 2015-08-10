@@ -5,6 +5,17 @@ from .Consensus import Consensus
 
 class Consensus_Cpp(Consensus):
 
+	def __init__(self,
+				min_coverage=2,
+				min_base_qual=0,
+				accept_level=0.6,
+			):
+
+		self.min_coverage=min_coverage
+		self.min_base_qual=min_base_qual
+		self.accept_level=accept_level
+
+
 	@property
 	def required(self):
 		return [
@@ -26,9 +37,9 @@ class Consensus_Cpp(Consensus):
 				{CALLCONSENSUS} \
 					--calling-alg parikh \
 					--reference "{fasta_fn}" \
-					--min-coverage 2 \
-					--min-base-qual 0 \
-					--accept-level 0.6 \
+					--min-coverage {min_coverage} \
+					--min-base-qual {min_base_qual} \
+					--accept-level {accept_level} \
 				| \
 				"{BGZIP}" -c > "{compressed_vcf_fn}" \
 				""".format(
@@ -48,6 +59,9 @@ class Consensus_Cpp(Consensus):
 						fasta_fn=fasta_fn,
 						pileup_fn=pileup_fn,
 						compressed_vcf_fn=compressed_vcf_fn,
+						min_coverage=self.min_coverage,
+						min_base_qual=self.min_base_qual,
+						accept_level=self.accept_level,
 					)
 			)
 

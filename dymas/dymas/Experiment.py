@@ -117,6 +117,7 @@ class Experiment:
 						self.fasta_fn(iteration),
 						self.unsorted_bam_fn(iteration),
 						self.sorted_bam_fn(iteration),
+						self.sorted_bam_fn(iteration)+".bai",
 					],
 				output=self.pileup_fn(iteration),
 				run=functools.partial(self.create_pileup,iteration=iteration),
