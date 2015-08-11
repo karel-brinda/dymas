@@ -5,7 +5,10 @@ class Chain:
 		self._chain_fo=open(chain_fn)
 		first_line=self._chain_fo.readline().strip()
 
+		parts=first_line.split(" ")
+		print(parts)
 		[
+			_,
 			self.score,
 			self.tName,
 			self.tSize,
@@ -18,7 +21,7 @@ class Chain:
 			self.qStart,
 			self.qEnd,
 			self.id,
-		]=first_line.split("\t")
+		]=parts
 
 		self._buffer=[]
 
@@ -34,26 +37,29 @@ class Chain:
 	# B = 0-0
 	def _load_next_line(self):
 		line=self._chain_fo.readline().strip()
-		parts=line.split("\t")
-		assert len(parts) in [1,3]
-		if len(parts)==1:
-			M=int(parts[0])
-			self._append_operation_to_buffer(M,"M")
-			self._done=True
-		else:
-			M=int(parts[0])
-			L=int(parts[1])
-			R=int(parts[2])
-			self._append_operation_to_buffer(M,"M")
-			self._append_operation_to_buffer(min(L,R),"B")
-			self._append_operation_to_buffer(L-min(L,R),"L",)
-			self._append_operation_to_buffer(R-min(L,R),"R")
+		print("line {}:{}".format(self._chain_fn,line))
+		if len(line)>0:
+			parts=line.split()
+			print(parts)
+			assert len(parts) in [1,3]
+			if len(parts)==1:
+				M=int(parts[0])
+				self._append_operation_to_buffer(M,"M")
+				self._done=True
+			else:
+				M=int(parts[0])
+				L=int(parts[1])
+				R=int(parts[2])
+				self._append_operation_to_buffer(M,"M")
+				self._append_operation_to_buffer(min(L,R),"B")
+				self._append_operation_to_buffer(L-min(L,R),"L",)
+				self._append_operation_to_buffer(R-min(L,R),"R")
 
 
 	def _append_operation_to_buffer(self, length, operation):
 		assert operation in ["M","B","L","R"]
 		if length>0:
-			self._buffer.append([operation,length])
+			self._buffer.append([length,operation])
 
 
 	def _prepend_operation_to_buffer(self, length, operation):
@@ -72,31 +78,37 @@ class Chain:
 
 	def prepend_B(self,length):
 		if length>0:
-			self.prepend_operation_to_buffer(length,"B")
-			self._check_buffer()
+			self._prepend_operation_to_buffer(length,"B")
+			self._update_buffer()
 
 
 	def skip(self,length):
+		print("skiping",length)
 		assert len(self._buffer)>0
 		assert self._buffer[0][0]>=length
 
-		self._buffer_blocks[0][0]-=length
-		self._check_buffer()
+		self._buffer[0][0]-=length
+		self._update_buffer()
 
 
 	@property
+	def count(self):
+		if len(self._buffer)==0:
+			self._load_next_line()			
+		assert len(self._buffer)>0
+		print(self._buffer)
+		return self._buffer[0][0]
+
+	@property
 	def operation(self):
+		if len(self._buffer)==0:
+			self._load_next_line()			
 		assert len(self._buffer)>0
 		return self._buffer[0][1]
 
 	@property
-	def count(self):
-		assert len(self._buffer)>0
-		return self._buffer[0][0]
-
-	@property
 	def done(self):
-	    return self._done and len(self._buffer_blocks)==0
+	    return self._done and len(self._buffer)==0
 
 
 	@staticmethod

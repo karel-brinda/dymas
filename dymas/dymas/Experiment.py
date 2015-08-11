@@ -30,7 +30,8 @@ class Experiment:
 
 	def input(self):
 		return [
-				self.fasta_fn(self.iterations)
+				self.fasta_fn(self.iterations),
+				self.full_chain_fn(self.iterations-1),
 			]
 
 	@property
@@ -86,17 +87,6 @@ class Experiment:
 					),
 			)
 
-		smbl.utils.Rule(
-				input=self.basic_chain_fn(0),
-				output=self.full_chain_fn(0),
-				run=lambda: shutil.copyfile(
-						self.basic_chain_fn(0),
-						self.full_chain_fn(0)
-					),
-			)
-			
-
-
 		for iteration in range(self.iterations):
 
 			# create_reads
@@ -112,6 +102,7 @@ class Experiment:
 			smbl.utils.Rule(
 				input=[
 						self.fasta_fn(iteration),
+						self.fasta_fn(iteration)+".fai",
 						self.fastq_fn(iteration),
 						self.mapping_object.required,
 					],
@@ -151,7 +142,6 @@ class Experiment:
 					],
 				output=[
 						self.compressed_vcf_fn(iteration),
-						self.basic_chain_fn(iteration),
 					],
 				run=functools.partial(self.create_consensus,iteration=iteration),
 			)
@@ -164,23 +154,25 @@ class Experiment:
 						self.fasta_fn(iteration)+".fai",
 						self.compressed_vcf_fn(iteration),
 					],
-				output=self.fasta_fn(iteration),
+				output=[
+						self.fasta_fn(iteration+1),
+						self.basic_chain_fn(iteration),
+					],
 				run=functools.partial(self.update_reference,iteration=iteration),
 			)
 
-			if iteration>0:
 
-				# create_full_chain
-				smbl.utils.Rule(
-					input=[
-							self.full_chain_fn(iteration-1),
-							self.basic_chain_fn(iteration-1),
-						],
-					output=[
-							self.full_chain_fn(iteration),
-						],
-					run=functools.partial(self.create_full_chain,iteration=iteration),
-				)
+			# create_full_chain
+			smbl.utils.Rule(
+				input=[
+						self.full_chain_fn(iteration-1),
+						self.basic_chain_fn(iteration),
+					] if iteration>0 else self.basic_chain_fn(iteration),
+				output=[
+						self.full_chain_fn(iteration),
+					],
+				run=functools.partial(self.create_full_chain,iteration=iteration),
+			)
 
 	###########
 
@@ -231,12 +223,17 @@ class Experiment:
 			)
 
 	def create_full_chain(self, iteration):
-		assert iteration>0
-		chainer=Chain_Chainer(
-				chain1_fn=self.full_chain_fn(iteration-1),
-				chain2_fn=self.basic_chain_fn(iteration),
-				new_chain_fn=self.full_chain_fn(iteration),
-			)		
+		if iteration==0:
+			shutil.copyfile(
+					self.basic_chain_fn(0),
+					self.full_chain_fn(0)
+				)
+		else:
+			chainer=Chain_Chainer(
+					chain1_fn=self.full_chain_fn(iteration-1),
+					chain2_fn=self.basic_chain_fn(iteration),
+					new_chain_fn=self.full_chain_fn(iteration),
+				)		
 
 	def create_full_inverted_chain(self, iteration):
 		pass

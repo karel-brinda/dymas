@@ -10,8 +10,9 @@ class Chain_Chainer:
 		self.chain2=Chain(chain2_fn)
 		self._buffer=[]
 
-		self.chain_out_fo.write(
+		self.chain_out_fo.write(" ".join(
 			[
+				"chain",
 				self.chain1.score,
 				self.chain1.tName,
 				self.chain1.tSize,
@@ -24,10 +25,12 @@ class Chain_Chainer:
 				self.chain2.qStart,
 				self.chain2.qEnd,
 				self.chain2.id,
-			].join("\t")+os.linesep
+			])+os.linesep
 		)
 
 		self._last_was_matching=False
+
+		self.process()
 
 	def __del__(self):
 		self.chain_out_fo.close()
@@ -42,7 +45,7 @@ class Chain_Chainer:
 				if last_op==operation:
 					self._buffer[-1][0]+=length
 				else:
-					if set([last_op,operation]).issubsetof(set(["L","R"])):
+					if set([last_op,operation]).issubset(set(["L","R"])):
 						# L/R => removing
 
 						m=min(last_len,length)
@@ -55,13 +58,13 @@ class Chain_Chainer:
 			self._flush()
 
 	def _flush_oldest_operation(self):
-		assert operation in "MLR"
 		(print_len,print_op)=self._buffer.pop(0)
+		assert print_op in "MLR", operation
 		if print_op=="M":
 			assert self._last_was_matching == False
 			self._last_was_matching = True
 
-			self.chain_out_fo.write(print_len)
+			self.chain_out_fo.write(str(print_len))
 		else:
 			assert self._last_was_matching == True
 			self._last_was_matching = False
@@ -82,43 +85,47 @@ class Chain_Chainer:
 
 	def process(self):
 
-		while self.chain1.done == False:
-			assert self.chain1.done==self.chain2.done
+		while self.chain1.done == False or self.chain2.done == False:
 
-			(o,p)=(self.chain1.operation,self.chain2.operation)
 			(c,d)=(self.chain1.count,self.chain2.count)
+			(o,p)=(self.chain1.operation,self.chain2.operation)
 			m=min(c,d)
 			assert m!=0
 
+			print(c,o," - ",d,p)
+
 			# 0-0:0-0, 0-1,1-0
 			if   (o,p) in [("B","B"),("L","R")]:
-				chain1.skip(m)
-				chain2.skip(m)
+				self.chain1.skip(m)
+				self.chain2.skip(m)
 
 			# 1-1:1-1, 1-0:0-1
 			elif  (o,p)in [("M","M"),("R","L")]:
 				self.add_operation(m,"M")
-				chain1.skip(m)
-				chain2.skip(m)
+				self.chain1.skip(m)
+				self.chain2.skip(m)
 
 			# 1-0:0-0, 1-1:1-0
 			elif (o,p) in [("R","B"),("M","R")]:
 				self.add_operation(m,"R")
-				chain1.skip(m)
-				chain2.skip(m)
+				self.chain1.skip(m)
+				self.chain2.skip(m)
 
 			# 0-0:0-1, 0-1:1-1
 			elif (o,p) in [("B","L"),("L","M")]:
 				self.add_operation(m,"L")
-				chain1.skip(m)
-				chain2.skip(m)
+				self.chain1.skip(m)
+				self.chain2.skip(m)
 
 			# 0-1:0-1, 0-1:0-0, 1-1:0-1, 1-1:0-0
 			elif (o,p) in [("L","L"),("L","B"),("M","L"),("M","B")]:
-				chain1.prepend_B(m)
+				self.chain1.prepend_B(m)
 
 			# 1-0:1-0, 0-0:1-0, 1-0:1-1, 0-0:1-1
 			elif (o,p) in [("R","R"),("B","R"),("R","M"),("B","M")]:
-				chain2.prepend_B(m)
+				self.chain2.prepend_B(m)
+
+			else:
+				assert 1==2
 
 		self._flush(final=True)
