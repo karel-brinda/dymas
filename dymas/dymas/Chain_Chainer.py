@@ -30,7 +30,17 @@ class Chain_Chainer:
 
 		self._last_was_matching=False
 
-		self.process()
+		try:
+			self.process()
+		except:
+			self.debug_status()
+			raise
+
+	def debug_status(self):
+			print("------------")
+			print("last line chain1: '{}', buffer: '{}'".format(self.chain1.last_line,self.chain1.buffer))
+			print("last line chain2: '{}', buffer: '{}'".format(self.chain2.last_line,self.chain2.buffer))
+			print("------------")
 
 	def __del__(self):
 		self.chain_out_fo.close()
@@ -127,5 +137,6 @@ class Chain_Chainer:
 
 			else:
 				assert 1==2
+			self.debug_status()
 
 		self._flush(final=True)

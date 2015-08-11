@@ -3,9 +3,10 @@ class Chain:
 	def __init__(self,chain_fn):
 		self._chain_fn=chain_fn
 		self._chain_fo=open(chain_fn)
-		first_line=self._chain_fo.readline().strip()
 
-		parts=first_line.split(" ")
+		self.last_line=self._chain_fo.readline().strip()
+
+		parts=self.last_line.split(" ")
 		print(parts)
 		[
 			_,
@@ -36,10 +37,10 @@ class Chain:
 	# R = 1-0
 	# B = 0-0
 	def _load_next_line(self):
-		line=self._chain_fo.readline().strip()
-		print("line {}:{}".format(self._chain_fn,line))
-		if len(line)>0:
-			parts=line.split()
+		self.last_line=self._chain_fo.readline().strip()
+		print("line {}:{}".format(self._chain_fn,self.last_line))
+		if len(self.last_line)>0:
+			parts=self.last_line.split()
 			print(parts)
 			assert len(parts) in [1,3]
 			if len(parts)==1:
@@ -81,7 +82,6 @@ class Chain:
 			self._prepend_operation_to_buffer(length,"B")
 			self._update_buffer()
 
-
 	def skip(self,length):
 		print("skiping",length)
 		assert len(self._buffer)>0
@@ -89,6 +89,11 @@ class Chain:
 
 		self._buffer[0][0]-=length
 		self._update_buffer()
+
+
+	@property
+	def buffer(self):
+		return self._buffer
 
 
 	@property
