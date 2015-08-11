@@ -29,8 +29,8 @@ class Chain:
 		self._chain_fo.close()
 
 	# M = 1-1
-	# L = 1-0
-	# R = 0-1
+	# L = 0-1
+	# R = 1-0
 	# B = 0-0
 	def _load_next_line(self):
 		line=self._chain_fo.readline().strip()
@@ -70,7 +70,7 @@ class Chain:
 			self._load_next_line()
 
 
-	def add_B(self,length):
+	def prepend_B(self,length):
 		if length>0:
 			self.prepend_operation_to_buffer(length,"B")
 			self._check_buffer()
