@@ -22,12 +22,7 @@ class Pileup_Ordered(Pileup):
 
 		bamfile = pysam.AlignmentFile(sorted_bam_fn, "rb")
 
-		sequences = {}
-
-		_fasta_sequences = SeqIO.parse(open(fasta_fn),'fasta')
-		for seq in _fasta_sequences:
-			sequences[seq.name]=seq.seq
-		_fasta_sequences = None
+		sequences = dymas.load_fasta_dict(fasta_fn)
 
 		with gzip.open(pileup_fn, 'w+') as f:
 			for chromosome in bamfile.references:

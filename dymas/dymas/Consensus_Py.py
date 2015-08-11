@@ -3,19 +3,8 @@ import os
 import numpy
 import gzip
 
-from Bio import SeqIO
-
 from .Consensus import Consensus
-
-def vcf_line_substitution(chrom,pos,old_base,new_base):
-	return "{chrom}\t{pos}\t.\t{old_base}\t{new_base}\t100\tPASS\t.{end}".format(
-										chrom=chrom,
-										pos=pos,
-										old_base=old_base,
-										new_base=new_base,
-										end=os.linesep,
-									)
-
+from .Vcf import Vcf
 
 class Consensus_Py(Consensus):
 
@@ -47,14 +36,12 @@ class Consensus_Py(Consensus):
 				compressed_vcf_fn,
 			):
 
-		sequences={}
-		_fasta_sequences = SeqIO.parse(open(fasta_fn),'fasta')
-		for seq in _fasta_sequences:
-			sequences[seq.name]=seq.seq
-		_fasta_sequences = None
-
-
 		vcf_fn=compressed_vcf_fn[:-3]
+
+		vcf=Vcf(
+				vcf_fn=vcf_fn,
+				fasta_fn=fasta_fn,
+			)
 
 		trans = {
 				"a":0,
@@ -71,70 +58,57 @@ class Consensus_Py(Consensus):
 		trans_inv = ["A","C","G","T","*"]
 
 		with gzip.open(pileup_fn,"tr") as f:
-			with open(vcf_fn,"w+") as g:
-				g.write(os.linesep.join(
-						[
-							"##fileformat=VCFv4.2",
-							"##fileDate={}".format("20150000"), #FIX!!!s
-							"##reference={}".format(os.path.abspath(fasta_fn)),
-							"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO",
-							""
-						]
-						))
 
-				for line in f:
-					#print(line)
-					(chrom, pos, base, cov, nucls, _) = line.split("\t")
-					cov=int(cov)
-					if int(cov)<self.min_coverage:
-						continue
-					trans["."]=trans[","]=trans[base]
-					vector = numpy.array([0, 0, 0, 0, 0])
+			for line in f:
 
-					i=0
-					l=len(nucls)
-					while i<l:
-						try:
-							char=nucls[i]
-							vector[trans[char]]+=1
+				(chrom, pos, base, cov, nucls, _) = line.split("\t")
+
+				cov=int(cov)
+				if int(cov)<self.min_coverage:
+					continue
+				trans["."]=trans[","]=trans[base]
+				vector = numpy.array([0, 0, 0, 0, 0])
+
+				i=0
+				l=len(nucls)
+				while i<l:
+					try:
+						char=nucls[i]
+						vector[trans[char]]+=1
+						i+=1
+					except:
+						if char=="+" or char=="-":
+							k=i+1
+							while nucls[k] in "0123456789" and k<l:
+								k+=1
+							number=int(nucls[i+1:k])
+							inserted_nucls=nucls[k:k+number]
+							i=k+number
+						elif char=="^":
+							i+=2
+						elif char in "$<>":
 							i+=1
-						except:
-							if char=="+" or char=="-":
-								k=i+1
-								while nucls[k] in "0123456789" and k<l:
-									k+=1
-								number=int(nucls[i+1:k])
-								inserted_nucls=nucls[k:k+number]
-								i=k+number
-							elif char=="^":
-								i+=2
-							elif char in "$<>":
-								i+=1
-							else:
-								raise NotImplementedError("Unknown character '{}'".format(char))
+						else:
+							raise NotImplementedError("Unknown character '{}'".format(char))
 
-					for i in range(5):
-						if vector[i]>=self.accept_level*cov:
-							if i==4:
-								if self.call_dels:
-									old_bases=sequences[chrom][int(pos)-2:int(pos)]
-									g.write(vcf_line_substitution(
-											chrom=chrom,
-											pos=int(pos)-1,
-											old_base=old_bases,
-											new_base=old_bases[1],
-										))
-							else:
-								if self.call_snps:
-									new_base=trans_inv[i]
-									if base != new_base:
-										g.write(vcf_line_substitution(
-												chrom=chrom,
-												pos=pos,
-												old_base=base,
-												new_base=new_base,
-											))
-							break
+				for i in range(5):
+					if vector[i]>=self.accept_level*cov:
+						if i==4:
+							if self.call_dels:
+								vcf.add_del(
+										chromosome=chrom,
+										position=int(pos),
+									)
+						else:
+							if self.call_snps:
+								new_base=trans_inv[i]
+								if base != new_base:
+									vcf.add_snp(
+											chromosome=chrom,
+											position=int(pos),
+											new_base=new_base,
+										)
+						break
 
 
 		smbl.utils.shell(

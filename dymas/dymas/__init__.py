@@ -14,3 +14,9 @@ from .Pileup_Ordered import *
 from .Reads import *
 from .Reads_Dyn import *
 from .Reads_ItRef import *
+
+from .Vcf import *
+
+from .Fasta import *
+
+from .Chain import *
