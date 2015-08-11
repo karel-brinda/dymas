@@ -18,13 +18,13 @@ class Chain_Chainer:
 	def _write_line(self,len,l,r):
 		pass
 
-	def add_matches(l):
+	def add_matching(self,length):
 		pass
 
-	def add_lgap(gap):
+	def add_lgap(self,length):
 		pass
 
-	def add_rgap(gap):
+	def add_rgap(self,length):
 		pass
 
 	def process(self):
@@ -32,102 +32,39 @@ class Chain_Chainer:
 		while self.chain1.done == False:
 			assert self.chain1.done==self.chain2.done
 
-			minimum=min(self.chain1.l_gap, self.chain1.r_gap, self.chain2.l_gap, self.chain2.r_gap, )
-			maximum=max(self.chain1.l_gap, self.chain1.r_gap, self.chain2.l_gap, self.chain2.r_gap, )
-			assert minimum>=0
-			
-			if minimum!=0:
-				# gaps everywhere
-				# 0-0  0-0
+			(o,p)=(self.chain1.operation,self.chain2.operation)
+			(c,d)=(self.chain1.count,self.chain2.count)
+			m=min(c,d)
+			assert m!=0
+
+			# 0-0:0-0, 0-1,1-0
+			if   (o,p) in [("B","B"),("L","R")]:
+				chain1.skip(m)
+				chain2.skip(m)
+
+			# 1-1:1-1, 1-0:0-1
+			elif  (o,p)in [("M","M"),("R","L")]:
+				self.add_matching(m)
+				chain1.skip(m)
+				chain2.skip(m)
+
+			# 1-0:0-0, 1-1:1-0
+			elif (o,p) in [("R","B"),("M","R")]:
+				self.add_rgap(m)
+				chain1.skip(m)
+				chain2.skip(m)
+
+			# 0-0:0-1, 0-1:1-1
+			elif (o,p) in [("B","L"),("L","M")]:
+				self.add_lgap(m)
+				chain1.skip(m)
+				chain2.skip(m)
+
+			# 0-1:0-1, 0-1:0-0, 1-1:0-1, 1-1:0-0
+			elif (o,p) in [("L","L"),("L","B"),("M","L"),("M","B")]:
+				chain1.add_B(m)
+
+			# 1-0:1-0, 0-0:1-0, 1-0:1-1, 0-0:1-1
+			elif (o,p) in [("R","R"),("B","R"),("R","M"),("B","M")]:
+				chain2.add_B(m)
 				
-				chain1.skip_gap(minimum)
-				chain2.skip_gap(minimum)
-				continue
-
-			if maximum==0:
-				# no gaps
-				# 1-1  1-1
-				
-				length=min(self.chain1.length,self.chain2.length)
-				self.add_matches(length)
-				self.chain1.skip_matching(length)
-				self.chain2.skip_matching(length)
-				continue
-
-
-			if self.chain1.r_gap>0 and self.chain2.l_gap>0:
-				# internal gap overlap => report
-				# ?-0  0-?
-				
-				if self.chain1.l_gap>0 and self.chain2.r_gap==0:
-					# 0-0  0-1
-					
-					length=min(self.chain1.l_gap,self.chain1.r_gap,self.chain2.l_gap)
-					self.add_lgap(length)
-					self.chain1.skip_gap(length)
-					self.chain2.skip_semigap(length)
-					continue
-
-				if self.chain1.l_gap==0 and self.chain2.r_gap>0:
-					# 1-0  0-0
-					
-					length=min(self.chain1.r_gap,self.chain2.l_gap,self.chain2.r_gap)
-					self.add_rgap(length)
-					self.chain1.skip_semigap(length)
-					self.chain2.skip_gap(length)
-					continue
-
-				if self.chain1.l_gap==0 and self.chain2.r_gap==0:
-					# 1-0  0-1
-
-					length=min(self.chain1.r_gap,self.chain2.l_gap)
-					self.add_matches(length)
-					chain1.skip_semigap(length)
-					chain2.skip_semigap(length)
-					continue
-
-
-				assert 1==2
-
-			if self.chain1.r_gap>0 or self.chain2.l_gap>0:
-				# no internal overlap but some gap exists
-
-				if self.chain1.r_gap>0:
-					# ?-0  1-?
-					self.chain2.insert_gap(self.chain1.r_gap)
-					continue
-
-				if self.chain2.l_gap>0:
-					# ?-1  0-?
-					self.chain1.insert_gap(self.chain2.l_gap)
-					continue
-
-				assert 1==2
-
-
-			if self.chain1.r_gap==0 and self.chain2.l_gap==0:
-				# zero gaps in overlap
-				# ?-1  1-?
-
-				if self.chain1.l_gap>0 and self.chain2.r_gap==0:
-					# 0-1  1-1
-					length=min(self.chain1.l_gap)
-					self.add_lgap(length)
-					self.chain1.skip_semigap(length)
-					self.chain2.skip_matching(length)
-
-
-
-			assert 1==2
-
-
-
-
-
-
-
-
-	
-
-
-

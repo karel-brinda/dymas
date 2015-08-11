@@ -5,20 +5,22 @@ class Chain:
 		self._chain_fo=open(chain_fn)
 		first_line=self._chain_fo.readline().strip()
 
-		[self.score,
-		self.tName,
-		self.tSize,
-		self.tStrand,
-		self.tStart,
-		self.tEnd,
-		self.qName,
-		self.qSize,
-		self.qStrand,
-		self.qStart,
-		self.qEnd,
-		self.id]=first_line.split("\t")
+		[
+			self.score,
+			self.tName,
+			self.tSize,
+			self.tStrand,
+			self.tStart,
+			self.tEnd,
+			self.qName,
+			self.qSize,
+			self.qStrand,
+			self.qStart,
+			self.qEnd,
+			self.id,
+		]=first_line.split("\t")
 
-		self._buffer_blocks=[]
+		self._buffer=[]
 
 		self._done=False
 
@@ -26,87 +28,71 @@ class Chain:
 	def __del__(self):
 		self._chain_fo.close()
 
-
+	# M = 1-1
+	# L = 1-0
+	# R = 0-1
+	# B = 0-0
 	def _load_next_line(self):
 		line=self._chain_fo.readline().strip()
 		parts=line.split("\t")
 		assert len(parts) in [1,3]
 		if len(parts)==1:
-			self._buffer_blocks.append([int(parts[0]),0,0])
+			M=int(parts[0])
+			self._append_operation_to_buffer(M,"M")
 			self._done=True
 		else:
-			self._buffer_blocks.append(map(int,parts))
+			M=int(parts[0])
+			L=int(parts[1])
+			R=int(parts[2])
+			self._append_operation_to_buffer(M,"M")
+			self._append_operation_to_buffer(min(L,R),"B")
+			self._append_operation_to_buffer(L-min(L,R),"L",)
+			self._append_operation_to_buffer(R-min(L,R),"R")
 
 
-	def _check_buffer(self):
-		if len(self._buffer_blocks)==0 and self._done==False:
+	def _append_operation_to_buffer(self, length, operation):
+		assert operation in ["M","B","L","R"]
+		if length>0:
+			self._buffer.append([operation,length])
+
+
+	def _prepend_operation_to_buffer(self, length, operation):
+		assert operation in ["M","B","L","R"]
+		if length>0:
+			self._buffer.insert(0,[length,operation])
+
+
+	def _update_buffer(self):
+		while len(self._buffer)>0 and self._buffer[0]=0:
+			del self._buffer[0]
+
+		if len(self._buffer)==0 and self._done==False:
 			self._load_next_line()
 
-		if len(self._buffer_blocks)>0:
-			while sum(self._buffer_blocks[0])=0:
-				del self._buffer_blocks[0]
+
+	def add_B(self,length):
+		if length>0:
+			self.prepend_operation_to_buffer(length,"B")
+			self._check_buffer()
 
 
+	def skip(self,length):
+		assert len(self._buffer)>0
+		assert self._buffer[0][0]>=length
 
-	def insert_gap(self,length):
-		if len(self._buffer_blocks)==0 or self._buffer_blocks[0][0]==0:
-			self._buffer_blocks.insert(0,[0,length,length])
-		else:
-			self._buffer_blocks[0][1]+=length
-			self._buffer_blocks[0][2]+=length
-
-		self._check_buffer()
-
-
-	def skip_gap(self,length):
-		assert self._buffer_blocks[0][0]==0, self._buffer_blocks[0]
-		assert self._buffer_blocks[0][1]>=length, self._buffer_blocks[0]
-		assert self._buffer_blocks[0][2]>=length, self._buffer_blocks[0]
-
-		self._buffer_blocks[0][1]-=length
-		self._buffer_blocks[0][2]-=length
-
-		self._check_buffer()
-
-
-	def skip_semigap(self,length):
-		assert self._buffer_blocks[0][0]==0,self._buffer_blocks[0] 
-		assert self._buffer_blocks[0][1]==0 or self._buffer_blocks[0][2]==0),self._buffer_blocks[0] 
-
-		if self._buffer_blocks[0][1]==0:
-			assert self._buffer_blocks[0][2]>=length, self._buffer_blocks[0] 
-			self._buffer_blocks[0][2]-=length
-		else:
-			assert self._buffer_blocks[0][1]>=length, self._buffer_blocks[0] 
-			self._buffer_blocks[0][1]-=length
-
-		self._check_buffer()
-
-
-	def skip_matching(self,length):
-		assert self._buffer_blocks[0][1]>=length, self._buffer_blocks[0]
-		self._buffer_blocks[0][1]-=length
-
+		self._buffer_blocks[0][0]-=length
 		self._check_buffer()
 
 
 	@property
-	def length(self):
-		self._check_buffer()
-		return self._buffer_blocks[0][0]
-
-
-	@property
-	def l_gap(self):
-		self._check_buffer()
-		return self._buffer_blocks[0][1]
-
+	def operation(self):
+		assert len(self._buffer)>0
+		return self._buffer[0][1]
 
 	@property
-	def r_gap(self):
-		self._check_buffer()
-		return self._buffer_blocks[0][2]
-
+	def count(self):
+		assert len(self._buffer)>0
+		return self._buffer[0][0]
 
 	@property
 	def done(self):
