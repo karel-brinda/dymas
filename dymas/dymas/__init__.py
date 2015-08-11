@@ -20,3 +20,4 @@ from .Vcf import *
 from .Fasta import *
 
 from .Chain import *
+from .Chain_Chainer import *

@@ -63,7 +63,7 @@ class Chain:
 
 
 	def _update_buffer(self):
-		while len(self._buffer)>0 and self._buffer[0]=0:
+		while len(self._buffer)>0 and self._buffer[0][0]==0:
 			del self._buffer[0]
 
 		if len(self._buffer)==0 and self._done==False:

@@ -5,6 +5,8 @@ import shutil
 
 # todo: tabix
 
+from .Chain_Chainer import Chain_Chainer
+
 class Experiment:
 
 	def __init__(self,
@@ -48,25 +50,29 @@ class Experiment:
 		return os.path.join(self.experiment_name,"2_reads",self._iteration(iteration,".fq"))
 
 	def unsorted_bam_fn(self,iteration):
-		return os.path.join(self.experiment_name,"3_unsorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"3.1_unsorted_bam",self._iteration(iteration,".bam"))
 
 	def sorted_bam_fn(self,iteration):
-		return os.path.join(self.experiment_name,"4_sorted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"3.2_sorted_bam",self._iteration(iteration,".bam"))
 
 	def converted_bam_fn(self,iteration):
-		return os.path.join(self.experiment_name,"5_converted_bam",self._iteration(iteration,".bam"))
+		return os.path.join(self.experiment_name,"3.3_converted_bam",self._iteration(iteration,".bam"))
 
 	def pileup_fn(self,iteration):
-		return os.path.join(self.experiment_name,"6_pileup",self._iteration(iteration,".pileup.gz"))
+		return os.path.join(self.experiment_name,"4_pileup",self._iteration(iteration,".pileup.gz"))
 
 	def compressed_vcf_fn(self,iteration):
-		return os.path.join(self.experiment_name,"7_vcf",self._iteration(iteration,".vcf.gz"))
+		return os.path.join(self.experiment_name,"5_vcf",self._iteration(iteration,".vcf.gz"))
 
-	def chain_fn(self,iteration):
-		return os.path.join(self.experiment_name,"8_chain",self._iteration(iteration,".chain"))
+	def basic_chain_fn(self,iteration):
+		return os.path.join(self.experiment_name,"6.1_basic_chain",self._iteration(iteration,".chain"))
+
+	def full_chain_fn(self,iteration):
+		return os.path.join(self.experiment_name,"6.2_full_chain",self._iteration(iteration,".chain"))
 
 	def full_inverted_chain_fn(self,iteration):
-		return os.path.join(self.experiment_name,"9_full_inverted_chain",self._iteration(iteration,".chain"))
+		return os.path.join(self.experiment_name,"6.3_full_inverted_chain",self._iteration(iteration,".chain"))
+
 
 	###########
 
@@ -74,8 +80,21 @@ class Experiment:
 		smbl.utils.Rule(
 				input=self.starting_reference_fasta_fn,
 				output=self.fasta_fn(0),
-				run=lambda: shutil.copyfile(self.starting_reference_fasta_fn,self.fasta_fn(0)),
+				run=lambda: shutil.copyfile(
+						self.starting_reference_fasta_fn,
+						self.fasta_fn(0)
+					),
 			)
+
+		smbl.utils.Rule(
+				input=self.basic_chain_fn(0),
+				output=self.full_chain_fn(0),
+				run=lambda: shutil.copyfile(
+						self.basic_chain_fn(0),
+						self.full_chain_fn(0)
+					),
+			)
+			
 
 
 		for iteration in range(self.iterations):
@@ -132,7 +151,7 @@ class Experiment:
 					],
 				output=[
 						self.compressed_vcf_fn(iteration),
-						#self.bcf_fn(iteration),
+						self.basic_chain_fn(iteration),
 					],
 				run=functools.partial(self.create_consensus,iteration=iteration),
 			)
@@ -145,9 +164,23 @@ class Experiment:
 						self.fasta_fn(iteration)+".fai",
 						self.compressed_vcf_fn(iteration),
 					],
-				output=self.fasta_fn(iteration+1),
+				output=self.fasta_fn(iteration),
 				run=functools.partial(self.update_reference,iteration=iteration),
 			)
+
+			if iteration>0:
+
+				# create_full_chain
+				smbl.utils.Rule(
+					input=[
+							self.full_chain_fn(iteration-1),
+							self.basic_chain_fn(iteration-1),
+						],
+					output=[
+							self.full_chain_fn(iteration),
+						],
+					run=functools.partial(self.create_full_chain,iteration=iteration),
+				)
 
 	###########
 
@@ -197,9 +230,20 @@ class Experiment:
 				compressed_vcf_fn=self.compressed_vcf_fn(iteration),
 			)
 
+	def create_full_chain(self, iteration):
+		assert iteration>0
+		chainer=Chain_Chainer(
+				chain1_fn=self.full_chain_fn(iteration-1),
+				chain2_fn=self.basic_chain_fn(iteration),
+				new_chain_fn=self.full_chain_fn(iteration),
+			)		
+
+	def create_full_inverted_chain(self, iteration):
+		pass
+
 	def update_reference(self,iteration):
 
-		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(chain_dir=os.path.dirname(self.chain_fn(iteration))))
+		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(chain_dir=os.path.dirname(self.basic_chain_fn(iteration))))
 
 		smbl.utils.shell(
 				"""
@@ -213,7 +257,7 @@ class Experiment:
 						old_fasta_fn=self.fasta_fn(iteration),
 						new_fasta_fn=self.fasta_fn(iteration+1),
 						compressed_vcf_fn=self.compressed_vcf_fn(iteration),
-						chain_fn=self.chain_fn(iteration),
+						chain_fn=self.basic_chain_fn(iteration),
 					)
 			)
 

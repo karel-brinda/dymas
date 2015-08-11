@@ -4,8 +4,8 @@ from .Chain import Chain
 
 class Chain_Chainer:
 
-	def __init__(self,chain1_fn, chain2_fn,new_chain_nf):
-		self.chain_out_fo=open(new_chain_nf,"w+")
+	def __init__(self,chain1_fn, chain2_fn,new_chain_fn):
+		self.chain_out_fo=open(new_chain_fn,"w+")
 		self.chain1=Chain(chain1_fn)
 		self.chain2=Chain(chain2_fn)
 		self._buffer=[]
@@ -58,16 +58,16 @@ class Chain_Chainer:
 		assert operation in "MLR"
 		(print_len,print_op)=self._buffer.pop(0)
 		if print_op=="M":
-			assert self._last_was_matching is False
+			assert self._last_was_matching == False
 			self._last_was_matching = True
 
 			self.chain_out_fo.write(print_len)
 		else:
-			assert self._last_was_matching is True
+			assert self._last_was_matching == True
 			self._last_was_matching = False
 			if print_op=="L":
 				self.chain_out_fo.write("\t{}\t{}{}".format(print_len,0,os.linesep))
-			else print_op=="R":
+			elif print_op=="R":
 				self.chain_out_fo.write("\t{}\t{}{}".format(0,print_len,os.linesep))
 
 	def _flush(self,final=False):
