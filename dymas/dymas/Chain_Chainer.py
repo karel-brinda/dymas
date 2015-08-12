@@ -10,8 +10,11 @@ class Chain_Chainer:
 		self.chain2=Chain(chain2_fn)
 		self._buffer=[]
 
+		assert self.chain1.qSize==self.chain2.tSize
+		assert self.chain1.tName==self.chain1.qName==self.chain2.tName==self.chain2.qName
+
 		self.chain_out_fo.write(" ".join(
-			[
+			map(str,[
 				"chain",
 				self.chain1.score,
 				self.chain1.tName,
@@ -25,7 +28,7 @@ class Chain_Chainer:
 				self.chain2.qStart,
 				self.chain2.qEnd,
 				self.chain2.id,
-			])+os.linesep
+			]))+os.linesep
 		)
 
 		self._last_was_matching=False
@@ -37,10 +40,41 @@ class Chain_Chainer:
 			raise
 
 	def debug_status(self):
-			print("------------")
-			print("last line chain1: '{}', buffer: '{}'".format(self.chain1.last_line,self.chain1.buffer))
-			print("last line chain2: '{}', buffer: '{}'".format(self.chain2.last_line,self.chain2.buffer))
-			print("------------")
+			print()
+			print("/------------")
+			print("| CHAIN CHAINER STATUS")
+			print("| chain 1: last line: '{}', buffer: '{}'".format(
+					self.chain1.last_line,
+					self.chain1.buffer
+				))
+			print("|          counters:  M={}, B={}, L={}, R={} (sum={})".format(
+					self.chain1.counter_matches,
+					self.chain1.counter_both_insertions,
+					self.chain1.counter_left_insertions,
+					self.chain1.counter_right_insertions,
+					self.chain2.counters_sum,
+				))
+			print("|          remains:  l={}, r={}".format(
+					self.chain1.remains_left,
+					self.chain1.remains_right,
+				))
+			print("| chain 2: last line: '{}', buffer: '{}'".format(
+					self.chain2.last_line,
+					self.chain2.buffer
+				))
+			print("|          counters:  M={}, B={}, L={}, R={} (sum={})".format(
+					self.chain2.counter_matches,
+					self.chain2.counter_both_insertions,
+					self.chain2.counter_left_insertions,
+					self.chain2.counter_right_insertions,
+					self.chain2.counters_sum,
+				))
+			print("|          remains:  l={}, r={}".format(
+					self.chain2.remains_left,
+					self.chain2.remains_right,
+				))
+			print("\------------")
+			print()
 
 	def __del__(self):
 		self.chain_out_fo.close()
@@ -48,7 +82,7 @@ class Chain_Chainer:
 	def add_operation(self,length,operation):
 		if length>0:
 			if len(self._buffer)==0:
-				self._buffer.append((length,operation))
+				self._buffer.append([length,operation])
 			else:
 				last_len=self._buffer[-1][0]
 				last_op=self._buffer[-1][1]
@@ -64,7 +98,7 @@ class Chain_Chainer:
 						self.add_operation(last_len-m,last_op)
 
 					else:
-						self._buffer.append((length,operation))
+						self._buffer.append([length,operation])
 			self._flush()
 
 	def _flush_oldest_operation(self):
@@ -102,10 +136,14 @@ class Chain_Chainer:
 			m=min(c,d)
 			assert m!=0
 
-			print(c,o," - ",d,p)
+			print("Processing: {}{}-{}{}".format(c,o,d,p))
 
 			# 0-0:0-0, 0-1,1-0
-			if   (o,p) in [("B","B"),("L","R")]:
+			if   (o,p) in [("B","B")]:
+				self.chain1.skip(m,update_counters=False)
+				self.chain2.skip(m,update_counters=False)
+
+			elif (o,p) in [("L","R")]:
 				self.chain1.skip(m)
 				self.chain2.skip(m)
 
@@ -137,6 +175,10 @@ class Chain_Chainer:
 
 			else:
 				assert 1==2
+
 			self.debug_status()
+			assert self.chain1.counters_sum==self.chain2.counters_sum
+			assert self.chain1.remains_right==self.chain2.remains_left
+
 
 		self._flush(final=True)
