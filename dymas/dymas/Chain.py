@@ -1,3 +1,5 @@
+import os
+
 class Chain:
 
 	def __init__(self,chain_fn):
@@ -187,8 +189,9 @@ class Chain:
 	def invert_chain(chain1_fn, chain2_fn):
 		with open(chain1_fn) as r:
 			with open(chain2_fn, "w+") as w:
-				first_line=r.readline.strip()
+				first_line=r.readline().strip()
 				[
+					_,
 					score,
 					tName,
 					tSize,
@@ -200,10 +203,12 @@ class Chain:
 					qStrand,
 					qStart,
 					qEnd,
+					idd,
 				]=first_line.split()
 
-				w.write("\t".join(
+				w.write(" ".join(
 					[
+						"chain",
 						score,
 						qName,
 						qSize,
@@ -215,16 +220,19 @@ class Chain:
 						tStrand,
 						tStart,
 						tEnd,
+						idd
 					]
 				)+os.linesep)
 
 				for l in r:
-					parts=l.strip().split("\t")
-					if len(parts)==1:
-						w.write(parts[0])
-						w.write(os.linesep)
-						return
-					else:
-						assert len(parts)==3
-						(size,dt,dq)=parts
-						w.write("".join([size,"\t",dq,"\t",dt,os.linesep]))
+					l=l.strip()
+					if l!="":
+						parts=l.split(" ")
+						if len(parts)==1:
+							w.write(parts[0])
+							w.write(os.linesep)
+							return
+						else:
+							assert len(parts)==3
+							(size,dt,dq)=parts
+							w.write("".join([size," ",dq," ",dt,os.linesep]))

@@ -6,6 +6,7 @@ import shutil
 # todo: tabix
 
 from .Chain_Chainer import Chain_Chainer
+from .Chain import Chain
 
 class Experiment:
 
@@ -31,7 +32,8 @@ class Experiment:
 	def input(self):
 		return [
 				self.fasta_fn(self.iterations),
-				self.full_chain_fn(self.iterations-1),
+				self.full_inverted_chain_fn(self.iterations-1),
+				[self.lifted_bam_fn(it) for it in range(self.iterations)]
 			]
 
 	@property
@@ -56,8 +58,8 @@ class Experiment:
 	def sorted_bam_fn(self,iteration):
 		return os.path.join(self.experiment_name,"3.2_sorted_bam",self._iteration(iteration,".bam"))
 
-	def converted_bam_fn(self,iteration):
-		return os.path.join(self.experiment_name,"3.3_converted_bam",self._iteration(iteration,".bam"))
+	def lifted_bam_fn(self,iteration):
+		return os.path.join(self.experiment_name,"3.3_lifted_bam",self._iteration(iteration,".bam"))
 
 	def pileup_fn(self,iteration):
 		return os.path.join(self.experiment_name,"4_pileup",self._iteration(iteration,".pileup.gz"))
@@ -161,7 +163,6 @@ class Experiment:
 				run=functools.partial(self.update_reference,iteration=iteration),
 			)
 
-
 			# create_full_chain
 			smbl.utils.Rule(
 				input=[
@@ -172,6 +173,29 @@ class Experiment:
 						self.full_chain_fn(iteration),
 					],
 				run=functools.partial(self.create_full_chain,iteration=iteration),
+			)
+
+			# create_full_inverted_chain
+			smbl.utils.Rule(
+				input=[
+						self.full_chain_fn(iteration),
+					],
+				output=[
+						self.full_inverted_chain_fn(iteration),
+					],
+				run=functools.partial(self.create_full_inverted_chain,iteration=iteration),
+			)
+
+			# lift alignments
+			smbl.utils.Rule(
+				input=[
+						self.full_inverted_chain_fn(iteration-1) if iteration>0 else self.unsorted_bam_fn(iteration),
+						self.unsorted_bam_fn(iteration),
+					],
+				output=[
+						self.lifted_bam_fn(iteration),
+					],
+				run=functools.partial(self.lift_alignments,iteration=iteration),
 			)
 
 	###########
@@ -236,11 +260,17 @@ class Experiment:
 				)		
 
 	def create_full_inverted_chain(self, iteration):
-		pass
+		Chain.invert_chain(
+				chain1_fn=self.full_chain_fn(iteration),
+				chain2_fn=self.full_inverted_chain_fn(iteration),
+			)
 
 	def update_reference(self,iteration):
 
-		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(chain_dir=os.path.dirname(self.basic_chain_fn(iteration))))
+		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(
+				chain_dir=os.path.dirname(self.basic_chain_fn(iteration))
+			)
+		)
 
 		smbl.utils.shell(
 				"""
@@ -259,4 +289,24 @@ class Experiment:
 			)
 
 	def lift_alignments(self, iteration):
-		pass
+		if iteration==0:
+			shutil.copyfile(
+					self.unsorted_bam_fn(0),
+					self.lifted_bam_fn(0),
+				)
+		else:
+			smbl.utils.shell(
+					"""
+						CrossMap.py \
+							bam \
+							"{chain}" \
+							"{in_bam}" \
+							"{out_bam}" \
+					""".format(
+							chain=self.full_inverted_chain_fn(iteration-1),
+							in_bam=self.unsorted_bam_fn(iteration),
+							out_bam=self.lifted_bam_fn(iteration),
+						)
+				)
+
+
