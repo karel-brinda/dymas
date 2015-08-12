@@ -47,14 +47,14 @@ class Chain_Chainer:
 					self.chain1.last_line,
 					self.chain1.buffer
 				))
-			print("|          counters:  M={}, B={}, L={}, R={} (sum={})".format(
+			print("|          counters:  M={:<8}  B={:<8}  L={:<8}  R={:<8}  (sum={})".format(
 					self.chain1.counter_matches,
 					self.chain1.counter_both_insertions,
 					self.chain1.counter_left_insertions,
 					self.chain1.counter_right_insertions,
 					self.chain2.counters_sum,
 				))
-			print("|          remains:  l={}, r={}".format(
+			print("|          remains:   l={:<8}  r={:<8}".format(
 					self.chain1.remains_left,
 					self.chain1.remains_right,
 				))
@@ -62,14 +62,14 @@ class Chain_Chainer:
 					self.chain2.last_line,
 					self.chain2.buffer
 				))
-			print("|          counters:  M={}, B={}, L={}, R={} (sum={})".format(
+			print("|          counters:  M={:<8}  B={:<8}  L={:<8}  R={:<8}  (sum={})".format(
 					self.chain2.counter_matches,
 					self.chain2.counter_both_insertions,
 					self.chain2.counter_left_insertions,
 					self.chain2.counter_right_insertions,
 					self.chain2.counters_sum,
 				))
-			print("|          remains:  l={}, r={}".format(
+			print("|          remains:   l={:<8}  r={:<8}".format(
 					self.chain2.remains_left,
 					self.chain2.remains_right,
 				))
@@ -112,20 +112,20 @@ class Chain_Chainer:
 		else:
 			assert self._last_was_matching == True
 			self._last_was_matching = False
-			if print_op=="L":
+			if print_op=="R":
 				self.chain_out_fo.write("\t{}\t{}{}".format(print_len,0,os.linesep))
-			elif print_op=="R":
+			elif print_op=="L":
 				self.chain_out_fo.write("\t{}\t{}{}".format(0,print_len,os.linesep))
 
 	def _flush(self,final=False):
 		while len(self._buffer)>1:
 			self._flush_oldest_operation()
 		if final:
-			if self_buffer[0][1]=="M":
-				self._flush_oldest_operation()
+			if len(self._buffer)==1 and self._buffer[0][1]=="M":
+				self.chain_out_fo.write("{}{}".format(self._buffer[0][0],os.linesep))
 			else:
 				self._flush_oldest_operation()
-				self.chain_out_fo.write("\t{}{}".format(0,os.linesep))
+				self.chain_out_fo.write("{}{}".format(0,os.linesep))
 
 	def process(self):
 
@@ -136,7 +136,7 @@ class Chain_Chainer:
 			m=min(c,d)
 			assert m!=0
 
-			print("Processing: {}{}-{}{}".format(c,o,d,p))
+			#print("Processing: {}{}-{}{}".format(c,o,d,p))
 
 			# 0-0:0-0, 0-1,1-0
 			if   (o,p) in [("B","B")]:
@@ -176,7 +176,7 @@ class Chain_Chainer:
 			else:
 				assert 1==2
 
-			self.debug_status()
+			#self.debug_status()
 			assert self.chain1.counters_sum==self.chain2.counters_sum
 			assert self.chain1.remains_right==self.chain2.remains_left
 

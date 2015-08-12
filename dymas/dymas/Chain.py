@@ -7,7 +7,7 @@ class Chain:
 		self.last_line=self._chain_fo.readline().strip()
 
 		parts=self.last_line.split(" ")
-		print(parts)
+		#print(parts)
 		[
 			_,
 			self.score,
@@ -66,7 +66,8 @@ class Chain:
 	# B = 0-0
 	def _load_next_line(self):
 		self.last_line=self._chain_fo.readline().strip()
-		print("loading line {}:{}".format(self._chain_fn,self.last_line))
+		#print("loading line {}:".format(self._chain_fn))
+		#print("      '{}'".format(self.last_line))
 		if len(self.last_line)>0:
 			parts=self.last_line.split()
 			assert len(parts) in [1,3]
