@@ -33,7 +33,7 @@ class Experiment:
 		return [
 				self.fasta_fn(self.iterations),
 				self.full_inverted_chain_fn(self.iterations-1),
-				[self.lifted_bam_fn(it) for it in range(self.iterations)]
+				[self.rnf_lifted_bam_fn(it) for it in range(self.iterations)]
 			]
 
 	@property
@@ -58,8 +58,8 @@ class Experiment:
 	def sorted_bam_fn(self,iteration):
 		return os.path.join(self.experiment_name,"3.2_sorted_bam",self._iteration(iteration,".bam"))
 
-	def lifted_bam_fn(self,iteration):
-		return os.path.join(self.experiment_name,"3.3_lifted_bam",self._iteration(iteration,".bam"))
+	def rnf_lifted_bam_fn(self,iteration):
+		return os.path.join(self.experiment_name,"3.3_rnf_lifted_bam",self._iteration(iteration,".bam"))
 
 	def pileup_fn(self,iteration):
 		return os.path.join(self.experiment_name,"4_pileup",self._iteration(iteration,".pileup.gz"))
@@ -193,9 +193,9 @@ class Experiment:
 						self.unsorted_bam_fn(iteration),
 					],
 				output=[
-						self.lifted_bam_fn(iteration),
+						self.rnf_lifted_bam_fn(iteration),
 					],
-				run=functools.partial(self.lift_alignments,iteration=iteration),
+				run=functools.partial(self.rnf_lift,iteration=iteration),
 			)
 
 	###########
@@ -288,24 +288,25 @@ class Experiment:
 					)
 			)
 
-	def lift_alignments(self, iteration):
+	def rnf_lift(self, iteration):
 		if iteration==0:
 			shutil.copyfile(
 					self.unsorted_bam_fn(0),
-					self.lifted_bam_fn(0),
+					self.rnf_lifted_bam_fn(0),
 				)
 		else:
 			smbl.utils.shell(
 					"""
-						CrossMap.py \
-							bam \
-							"{chain}" \
-							"{in_bam}" \
-							"{out_bam}" \
+						rnftools liftover \
+							-f "{faidx}" \
+							-c "{chain}" \
+							-i "{in_bam}" \
+							-o "{out_bam}" \
 					""".format(
-							chain=self.full_inverted_chain_fn(iteration-1),
+							faidx=self.fasta_fn(0)+".fai",
+							chain=self.full_chain_fn(iteration-1),
 							in_bam=self.unsorted_bam_fn(iteration),
-							out_bam=self.lifted_bam_fn(iteration),
+							out_bam=self.rnf_lifted_bam_fn(iteration),
 						)
 				)
 
