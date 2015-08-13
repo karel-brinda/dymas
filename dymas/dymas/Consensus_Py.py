@@ -67,14 +67,15 @@ class Consensus_Py(Consensus):
 				if int(cov)<self.min_coverage:
 					continue
 				trans["."]=trans[","]=trans[base]
-				vector = numpy.array([0, 0, 0, 0, 0])
+				vector_snps = numpy.array([0, 0, 0, 0, 0])
+				vector_ins = numpy.array([0, 0, 0, 0])
 
 				i=0
 				l=len(nucls)
 				while i<l:
 					try:
 						char=nucls[i]
-						vector[trans[char]]+=1
+						vector_snps[trans[char]]+=1
 						i+=1
 					except:
 						if char=="+" or char=="-":
@@ -82,8 +83,13 @@ class Consensus_Py(Consensus):
 							while nucls[k] in "0123456789" and k<l:
 								k+=1
 							number=int(nucls[i+1:k])
-							inserted_nucls=nucls[k:k+number]
 							i=k+number
+
+							if char=="+":
+								inserted_nucls=nucls[k:k+number]
+								for char in set(list(inserted_nucls)):
+									vector_ins[trans[char]]+=1
+
 						elif char=="^":
 							i+=2
 						elif char in "$<>":
@@ -92,7 +98,7 @@ class Consensus_Py(Consensus):
 							raise NotImplementedError("Unknown character '{}'".format(char))
 
 				for i in range(5):
-					if vector[i]>=self.accept_level*cov:
+					if vector_snps[i]>=self.accept_level*cov:
 						if i==4:
 							if self.call_dels:
 								vcf.add_del(
@@ -109,6 +115,17 @@ class Consensus_Py(Consensus):
 											new_base=new_base,
 										)
 						break
+
+				max_votes_ins=max(vector_ins)
+				if max_votes_ins>=self.accept_level*cov:
+					for i in range(4):
+						if vector_ins[i]==max_votes_ins:
+							vcf.add_ins(
+									chromosome=chrom,
+									position=int(pos),
+									new_base=trans_inv[i],
+								)
+							break
 
 
 		smbl.utils.shell(

@@ -57,6 +57,20 @@ class Vcf:
 					]
 				)
 
+	def add_ins(self,chromosome, position, new_base):
+		self._check_chromosome_and_position(chromosome,last_useful_position=position)
+		if len(self._buffer)>0 and self._buffer[-1][1]==position:
+			assert(len(self._buffer[-1][3])==1)
+			self._buffer[-1][3]+=new_base
+		else:
+			self._buffer.append(
+					[
+						chromosome,
+						position,
+						self._fasta_dict[chromosome][position-1],
+						self._fasta_dict[chromosome][position-1]+new_base,
+					]
+				)
 
 	def add_del(self,chromosome, position):
 		self._check_chromosome_and_position(chromosome,last_useful_position=position-1)
@@ -100,24 +114,6 @@ class Vcf:
 						'',
 					]
 				)
-			
-
-	def add_ins(self,chromosome, position, bases):
-		self._check_chromosome_and_position(chromosome,last_useful_position=position)
-		if len(self._buffer)==0:
-			#record for this position does not exist => add
-			self._buffer.append(
-					[
-						chromosome,
-						position,
-						self._fasta_dict[chromosome][position-1],
-						self._fasta_dict[chromosome][position-1],
-					]
-				)
-		assert(self._buffer[-1][0]==chromosome)
-		assert(self._buffer[-1][1]==position)
-		self._buffer[-1][3]=self._buffer[-1][3]+bases
-
 
 	def _check_chromosome_and_position(self,chromosome,last_useful_position):
 		if len(self._buffer)>0:
