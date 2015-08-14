@@ -32,7 +32,7 @@ class Experiment:
 	def input(self):
 		return [
 				self.fasta_fn(self.iterations),
-				self.full_inverted_chain_fn(self.iterations-1),
+				#self.full_inverted_chain_fn(self.iterations-1),
 				[self.rnf_lifted_bam_fn(it) for it in range(self.iterations)]
 			]
 
@@ -189,7 +189,7 @@ class Experiment:
 			# lift alignments
 			smbl.utils.Rule(
 				input=[
-						self.full_inverted_chain_fn(iteration-1) if iteration>0 else self.unsorted_bam_fn(iteration),
+						self.basic_chain_fn(iteration-1) if iteration>0 else self.unsorted_bam_fn(iteration),
 						self.unsorted_bam_fn(iteration),
 					],
 				output=[
@@ -289,25 +289,54 @@ class Experiment:
 			)
 
 	def rnf_lift(self, iteration):
-		if iteration==0:
-			shutil.copyfile(
-					self.unsorted_bam_fn(0),
-					self.rnf_lifted_bam_fn(0),
-				)
-		else:
-			smbl.utils.shell(
-					"""
-						rnftools liftover \
-							-f "{faidx}" \
-							-c "{chain}" \
-							-i "{in_bam}" \
-							-o "{out_bam}" \
-					""".format(
-							faidx=self.fasta_fn(0)+".fai",
-							chain=self.full_chain_fn(iteration-1),
+		#if iteration==0:
+		#	shutil.copyfile(
+		#			self.unsorted_bam_fn(0),
+		#			self.rnf_lifted_bam_fn(0),
+		#		)
+		#else:
+		smbl.utils.shell(
+				('cat "{in_bam}" '
+				+ " ".join(
+						[
+							""" | \
+								rnftools liftover \
+									-f "{faidx}" \
+									-c "{chain}" \
+									-i  -\
+									-o  -\
+							""".format(
+									faidx=self.fasta_fn(i)+".fai",
+									chain=self.basic_chain_fn(i),
+								)
+							for i in range(iteration)
+						]
+					)
+				+ ' > "{out_bam}"').format(
 							in_bam=self.unsorted_bam_fn(iteration),
 							out_bam=self.rnf_lifted_bam_fn(iteration),
 						)
-				)
+			)
 
 
+	#def rnf_lift(self, iteration):
+	#	if iteration==0:
+	#		shutil.copyfile(
+	#				self.unsorted_bam_fn(0),
+	#				self.rnf_lifted_bam_fn(0),
+	#			)
+	#	else:
+	#		smbl.utils.shell(
+	#				"""
+	#					rnftools liftover \
+	#						-f "{faidx}" \
+	#						-c "{chain}" \
+	#						-i "{in_bam}" \
+	#						-o "{out_bam}" \
+	#				""".format(
+	#						faidx=self.fasta_fn(0)+".fai",
+	#						chain=self.full_chain_fn(iteration-1),
+	#						in_bam=self.unsorted_bam_fn(iteration),
+	#						out_bam=self.rnf_lifted_bam_fn(iteration),
+	#					)
+	#			)

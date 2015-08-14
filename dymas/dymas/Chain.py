@@ -6,10 +6,34 @@ class Chain:
 		self._chain_fn=chain_fn
 		self._chain_fo=open(chain_fn)
 
-		self.last_line=self._chain_fo.readline().strip()
+		self._counter_matches=0
+		self._counter_both_insertions=0
+		self._counter_left_insertions=0
+		self._counter_right_insertions=0
 
-		parts=self.last_line.split(" ")
-		#print(parts)
+		self._buffer=[]
+
+		self.score=None
+		self.tName=None
+		self.tSize=0
+		self.tStrand=None
+		self.tStart=0
+		self.tEnd=0
+		self.qName=None
+		self.qSize=0
+		self.qStrand=None
+		self.qStart=0
+		self.qEnd=0
+		self.id=None
+
+
+	def load_next_sequence(self):
+		line=self._chain_fo.readline()
+		if line=="":
+			return None
+		line=line.strip()
+		parts=line.split(" ")
+		assert len(parts)==13
 		[
 			_,
 			self.score,
@@ -52,71 +76,79 @@ class Chain:
 
 		self._buffer=[]
 
-		self._done=False
 		self._counter_matches=0
 		self._counter_both_insertions=0
 		self._counter_left_insertions=0
 		self._counter_right_insertions=0
 
+		line=self._chain_fo.readline().strip()
+		parts=line.split()
+		while len(parts)!=1:
+			assert len(parts)==3, parts
+			M=int(parts[0])
+			L=int(parts[2])
+			R=int(parts[1])
+			self._append_operation_to_buffer(M,"M")
+
+			if L==0:
+				self._append_operation_to_buffer(R,"R")
+			elif R==0:
+				self._append_operation_to_buffer(L,"L")				
+			else:
+				if R>=L:
+					pattern= (L * (["L"] + int(1.0*R/L) * ["R"]))[:R+L]
+					assert len(pattern)==R+L
+					print (L,R,pattern)
+				else:
+					pattern= (R * (["R"] + int(1.0*L/R) * ["L"]))[:R+L]
+					assert len(pattern)==R+L
+					print (L,R,pattern)
+				for p in pattern:
+					self._append_operation_to_buffer(1,p)
+
+			line=self._chain_fo.readline().strip()
+			parts=line.split()
+		
+		assert len(parts)==1
+		M=int(parts[0])
+		self._append_operation_to_buffer(M,"M")
+		self._done=True
+
+		line=self._chain_fo.readline().strip()
+		return self.tName
 
 	def __del__(self):
 		self._chain_fo.close()
 
-	# M = 1-1
-	# L = 0-1
-	# R = 1-0
-	# B = 0-0
-	def _load_next_line(self):
-		self.last_line=self._chain_fo.readline().strip()
-		#print("loading line {}:".format(self._chain_fn))
-		#print("      '{}'".format(self.last_line))
-		if len(self.last_line)>0:
-			parts=self.last_line.split()
-			assert len(parts) in [1,3]
-			if len(parts)==1:
-				M=int(parts[0])
-				self._append_operation_to_buffer(M,"M")
-				self._done=True
-			else:
-				M=int(parts[0])
-				L=int(parts[2])
-				R=int(parts[1])
-				self._append_operation_to_buffer(M,"M")
-				self._append_operation_to_buffer(min(L,R),"B")
-				self._append_operation_to_buffer(L-min(L,R),"L",)
-				self._append_operation_to_buffer(R-min(L,R),"R")
-
-
 	def _append_operation_to_buffer(self, length, operation):
-		assert operation in ["M","B","L","R"]
+		assert operation in "LRM"
+		assert length>=0
 		if length>0:
-			self._buffer.append([length,operation])
-
+			if len(self._buffer)>0 and self._buffer[-1][1]==operation:
+				self._buffer[-1][0]+=length
+			else:
+				self._buffer.append([length,operation])
 
 	def _update_buffer(self):
 		while len(self._buffer)>0 and self._buffer[0][0]==0:
 			del self._buffer[0]
-
-		if len(self._buffer)==0 and self._done==False:
-			self._load_next_line()
-
 
 	def prepend_B(self,length):
 		assert length>0
 		self._buffer.insert(0,[length,"B"])
 
 	def skip(self,length,update_counters=True):
-		#print("skiping",length)
+		assert length>0
 		assert len(self._buffer)>0
 		assert self._buffer[0][0]>=length
 
 		op=self._buffer[0][1]
+		assert op in "MLRB"
 
 		self._buffer[0][0]-=length
 		self._update_buffer()
 
 		if update_counters:
-			assert op in "MLRB", op
 			if op=="M":
 				self._counter_matches+=length
 			elif op == "L":
@@ -124,13 +156,15 @@ class Chain:
 			elif op == "R":
 				self._counter_right_insertions+=length
 			elif op == "B":
-				self._counter_both_insertions+=length
+				pass
 
+	@property
+	def chain_fn(self):
+		return self._chain_fn
 
 	@property
 	def buffer(self):
 		return self._buffer
-
 
 	@property
 	def count(self):
