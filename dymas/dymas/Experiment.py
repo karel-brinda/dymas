@@ -296,15 +296,15 @@ class Experiment:
 		#		)
 		#else:
 		smbl.utils.shell(
-				('cat "{in_bam}" '
+				('{SAMTOOLS} view -h "{in_bam}" '
 				+ " ".join(
 						[
 							""" | \
 								rnftools liftover \
-									-f "{faidx}" \
-									-c "{chain}" \
-									-i  -\
-									-o  -\
+									--faidx "{faidx}" \
+									--chain "{chain}" \
+									-\
+									-\
 							""".format(
 									faidx=self.fasta_fn(i)+".fai",
 									chain=self.basic_chain_fn(i),
@@ -313,6 +313,7 @@ class Experiment:
 						]
 					)
 				+ ' > "{out_bam}"').format(
+							SAMTOOLS=smbl.prog.SAMTOOLS,
 							in_bam=self.unsorted_bam_fn(iteration),
 							out_bam=self.rnf_lifted_bam_fn(iteration),
 						)
