@@ -1,0 +1,75 @@
+import smbl
+import sys
+import rnftools
+
+coverage=10
+reference='/home/karel/.smbl/fa/chr1.fa'
+
+sys.path.insert(0, "../../dymas")
+import dymas
+
+dir_reads="1_reads"
+dir_alignments="2_alignments"
+
+##############################
+##############################
+
+rnftools.mishmash.sample(dir_reads,reads_in_tuple=1)
+
+rnftools.mishmash.DwgSim(
+	fasta=reference,
+	number_of_read_tuples=100000,
+	read_length_1=100,
+	read_length_2=0,
+	mutation_rate=0.07,
+)
+
+fq="{}.fq".format(dir_reads)
+
+##############################
+##############################
+
+
+bwa = dymas.Mapping_BwaMem()
+
+reads = dymas.Reads_Dyn(
+		reads=100000,
+		fastq_1_fn=fq,
+		iterations=10,
+	)
+
+consensus = dymas.Consensus_Py()
+
+pileup=dymas.Pileup_SamTools()
+
+experiment = dymas.Experiment(
+		experiment_name=dir_alignments,
+		starting_reference_fasta_fn=reference,
+		mapping_object=bwa,
+		reads_object=reads,
+		pileup_object=pileup,
+		consensus_object=consensus,
+	)
+
+##############################
+##############################
+
+# print(
+# 		[
+# 			rnftools.input(),
+# 			experiment.input(),
+# 		]
+
+
+# 	)
+
+include: rnftools.include()
+include: smbl.include()
+
+rule:
+	input:
+		[
+			rnftools.input(),
+			experiment.input(),
+		]
+

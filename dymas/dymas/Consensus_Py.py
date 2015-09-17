@@ -127,6 +127,8 @@ class Consensus_Py(Consensus):
 								)
 							break
 
+		#to flush buffer
+		del vcf
 
 		smbl.utils.shell(
 				"""
