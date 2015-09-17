@@ -10,31 +10,12 @@ class Chain_Chainer:
 		self.chain2=Chain(chain2_fn)
 		self._buffer=[]
 
-		assert self.chain1.qSize==self.chain2.tSize
-		assert self.chain1.tName==self.chain1.qName==self.chain2.tName==self.chain2.qName
-
-		self.chain_out_fo.write(" ".join(
-			map(str,[
-				"chain",
-				self.chain1.score,
-				self.chain1.tName,
-				self.chain1.tSize,
-				self.chain1.tStrand,
-				self.chain1.tStart,
-				self.chain1.tEnd,
-				self.chain2.qName,
-				self.chain2.qSize,
-				self.chain2.qStrand,
-				self.chain2.qStart,
-				self.chain2.qEnd,
-				self.chain2.id,
-			]))+os.linesep
-		)
 
 		self._last_was_matching=False
 
 		try:
-			self.process()
+			while(self.process_next_sequence()):
+				pass
 		except:
 			self.debug_status()
 			raise
@@ -43,9 +24,9 @@ class Chain_Chainer:
 			print()
 			print("/------------")
 			print("| CHAIN CHAINER STATUS")
-			print("| chain 1: last line: '{}', buffer: '{}'".format(
-					self.chain1.last_line,
-					self.chain1.buffer
+			print("| chain 1: '{}'".format(self.chain1.chain_fn))
+			print("|          buffer: '{}'...".format(
+					" ".join(map(lambda x:"{}{}".format(x[0],x[1]),self.chain1.buffer[:10]))
 				))
 			print("|          counters:  M={:<8}  B={:<8}  L={:<8}  R={:<8}  (sum={})".format(
 					self.chain1.counter_matches,
@@ -58,9 +39,9 @@ class Chain_Chainer:
 					self.chain1.remains_left,
 					self.chain1.remains_right,
 				))
-			print("| chain 2: last line: '{}', buffer: '{}'".format(
-					self.chain2.last_line,
-					self.chain2.buffer
+			print("| chain 2: '{}'".format(self.chain2.chain_fn))
+			print("|          buffer: '{}'...".format(
+					" ".join(map(lambda x:"{}{}".format(x[0],x[1]),self.chain2.buffer[:10]))
 				))
 			print("|          counters:  M={:<8}  B={:<8}  L={:<8}  R={:<8}  (sum={})".format(
 					self.chain2.counter_matches,
@@ -80,6 +61,7 @@ class Chain_Chainer:
 		self.chain_out_fo.close()
 
 	def add_operation(self,length,operation):
+		assert length>=0
 		if length>0:
 			if len(self._buffer)==0:
 				self._buffer.append([length,operation])
@@ -127,23 +109,50 @@ class Chain_Chainer:
 				self._flush_oldest_operation()
 				self.chain_out_fo.write("{}{}".format(0,os.linesep))
 
-	def process(self):
+	def process_next_sequence(self):
 
-		while self.chain1.done == False or self.chain2.done == False:
+		a=self.chain1.load_next_sequence()
+		b=self.chain2.load_next_sequence()
+		assert a==b
+
+		if a is None:
+			return False
+
+		assert self.chain1.qSize==self.chain2.tSize
+		assert self.chain1.tName==self.chain1.qName==self.chain2.tName==self.chain2.qName
+		assert self.chain1.qStart==self.chain2.tStart
+		assert self.chain1.qEnd==self.chain2.tEnd
+		assert self.chain1.qSize==self.chain2.tSize
+
+		self.chain_out_fo.write(" ".join(
+			map(str,[
+				"chain",
+				self.chain1.score,
+				self.chain1.tName,
+				self.chain1.tSize,
+				self.chain1.tStrand,
+				self.chain1.tStart,
+				self.chain1.tEnd,
+				self.chain2.qName,
+				self.chain2.qSize,
+				self.chain2.qStrand,
+				self.chain2.qStart,
+				self.chain2.qEnd,
+				self.chain2.id,
+			]))+os.linesep
+		)
+
+		while self.chain1.buffer!=[] and self.chain2.buffer!=[]:
 
 			(c,d)=(self.chain1.count,self.chain2.count)
 			(o,p)=(self.chain1.operation,self.chain2.operation)
 			m=min(c,d)
 			assert m!=0
 
-			#print("Processing: {}{}-{}{}".format(c,o,d,p))
+			print("Processing: {}{}-{}{}".format(c,o,d,p))
 
-			# 0-0:0-0, 0-1,1-0
-			if   (o,p) in [("B","B")]:
-				self.chain1.skip(m,update_counters=False)
-				self.chain2.skip(m,update_counters=False)
-
-			elif (o,p) in [("L","R")]:
+			# 0-1,1-0
+			if (o,p) in [("L","R")]:
 				self.chain1.skip(m)
 				self.chain2.skip(m)
 
@@ -154,31 +163,35 @@ class Chain_Chainer:
 				self.chain2.skip(m)
 
 			# 1-0:0-0, 1-1:1-0
-			elif (o,p) in [("R","B"),("M","R")]:
+			elif (o,p) in [("M","R")]:
 				self.add_operation(m,"R")
 				self.chain1.skip(m)
 				self.chain2.skip(m)
 
 			# 0-0:0-1, 0-1:1-1
-			elif (o,p) in [("B","L"),("L","M")]:
+			elif (o,p) in [("L","M")]:
 				self.add_operation(m,"L")
 				self.chain1.skip(m)
 				self.chain2.skip(m)
 
 			# 0-1:0-1, 0-1:0-0, 1-1:0-1, 1-1:0-0
-			elif (o,p) in [("L","L"),("L","B"),("M","L"),("M","B")]:
-				self.chain1.prepend_B(m)
+			elif (o,p) in [("L","L"),("M","L")]:
+				self.chain2.skip(m)
+				self.add_operation(m,"L")
 
 			# 1-0:1-0, 0-0:1-0, 1-0:1-1, 0-0:1-1
-			elif (o,p) in [("R","R"),("B","R"),("R","M"),("B","M")]:
-				self.chain2.prepend_B(m)
+			elif (o,p) in [("R","R"),("R","M"),]:
+				self.add_operation(m,"R")
+				self.chain1.skip(m)
 
 			else:
 				assert 1==2
 
-			#self.debug_status()
+			self.debug_status()
 			assert self.chain1.counters_sum==self.chain2.counters_sum
 			assert self.chain1.remains_right==self.chain2.remains_left
 
 
 		self._flush(final=True)
+		self.chain_out_fo.write(os.linesep)
+		return True
