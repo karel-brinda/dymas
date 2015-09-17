@@ -3,12 +3,11 @@ import rnftools
 rnftools.lavender.Report(
 	bam_dirs=[
 		"./2_alignments/3.3_rnf_lifted_bam",
-		"./2_alignments_noindels/3.3_rnf_lifted_bam",
 	],
 	name="3_evaluation",
 	keep_intermediate_files=True,
 	allowed_delta=10,
-	default_x_run=[0.03,0.3],
+	default_x_run=[0.003,0.3],
 )
 
 rule all: input: rnftools.input()
