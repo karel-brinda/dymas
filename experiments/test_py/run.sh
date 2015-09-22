@@ -1,4 +1,8 @@
 #! /usr/bin/env bash
 
-git clean -fxd && snakemake --cores && snakemake -s Snakefile.eval --cores
+set -e
+
+snakemake -s Snakefile.1_reads --cores
+snakemake -s Snakefile.2_exp --cores
+snakemake -s Snakefile.3_eval --cores
 
