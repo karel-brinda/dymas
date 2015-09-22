@@ -27,10 +27,10 @@ class Pileup_Ordered(Pileup):
 		with gzip.open(pileup_fn, 'w+') as f:
 			for chromosome in bamfile.references:
 				for column in bamfile.pileup(chromosome):
-					report=False
+					report_position=False
 					base=sequences[chromosome][column.pos]
 					out=[]
-					blocks=[]
+					blocks=[] # list of (read_name,base)
 					for read in column.pileups:
 						read_name=read.alignment.query_name.split("__")
 						if not read.is_del and not read.is_refskip:
@@ -38,13 +38,13 @@ class Pileup_Ordered(Pileup):
 							if new_base==base:
 								blocks.append([read_name,"."])
 							else:
-								report=True
+								report_position=True
 								blocks.append([read_name,new_base])
 						else:
 							out.append([read_name,"*"])
-							report=True
+							report_position=True
 					sorted(blocks,key=lambda x:x[0])
-					if report:
+					if report_position:
 						pileup_line="{chrom}\t{pos}\t{base}\t{cov}\t{pile}\t.{end}".format(
 									chrom=chromosome,
 									pos=column.pos+1,
