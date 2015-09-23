@@ -1,0 +1,25 @@
+rule all:
+	input:
+		"mouse.chr1.fa",
+		"human.chr1.fa",
+
+
+
+
+rule human:
+	output: "human.chr1.fa", temp("chr1.fa.gz")
+	shell: """
+		wget http://hgdownload.cse.ucsc.edu/goldenpath/hg19/chromosomes/chr1.fa.gz
+		gzip -c -d chr1.fa.gz > human.chr1.fa
+		"""
+
+
+#http://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes/chr1.fa.gz
+rule mouse:
+	output: "mouse.chr1.fa", temp("chr1.fa.gz")
+	shell: """
+		wget http://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes/chr1.fa.gz
+		gzip -c -d chr1.fa.gz > mouse.chr1.fa
+		"""
+
+

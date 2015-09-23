@@ -1,13 +1,18 @@
+import conf
 import rnftools
+
+sys.path.insert(0, "../../dymas")
+import dymas
 
 rnftools.lavender.Report(
 	bam_dirs=[
-		"./2_alignments/3.3_rnf_lifted_bam",
+		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments),
 	],
-	name="3_evaluation",
+	name=dymas.dir_eval,
 	keep_intermediate_files=True,
 	allowed_delta=10,
 	default_x_run=[0.003,0.3],
+	gp_style_func=conf.gp_style,
 )
 
 rule all: input: rnftools.input()

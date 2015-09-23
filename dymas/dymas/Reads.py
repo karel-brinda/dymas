@@ -5,25 +5,22 @@ class Reads:
 	__metaclass__=abc.ABCMeta
 
 	def __init__(self,
-				reads,
 				fastq_1_fn,
-				reads_per_iteration=None,
-				iterations=None,
+				coverage,
 				fastq_2_fn=None,
 			):
 
-		assert iterations is not None or reads_per_iteration is not None
-		assert reads>0
+		with open(fastq_1_fn) as fastq_1_fo:
+			for (i,line) in enumerate(fastq_1_fo):
+				if i==2:
+					self.read_length=len(line.strip())
 
-		self.reads=reads
-
-		if iterations is not None:
-			self.iterations=iterations
-		else:
-			self.reads_per_iteration=reads_per_iteration
+			self.reads=i//4
 
 		self.fastq_1_fn=fastq_1_fn
 		self.fastq_2_fn=fastq_2_fn
+
+		self.coverage=coverage
 	
 	## Reads.reads
 
@@ -37,6 +34,28 @@ class Reads:
 		self._reads=value
 
 
+	## Reads.coverage
+
+	@property
+	def coverage(self):
+		return self._coverage
+
+	@coverage.setter
+	def coverage(self,value):
+		assert value>0
+		self._coverage=value
+
+	## Reads.coverage_per_iteration
+
+	@property
+	def coverage_per_iteration(self):
+		return self._coverage_per_iteration
+
+	@coverage_per_iteration.setter
+	def coverage_per_iteration(self,value):
+		assert value>0
+		self._reads_per_iterationn=value
+
 	## Reads.reads_per_iteration
 
 	@property
@@ -45,10 +64,8 @@ class Reads:
 
 	@reads_per_iteration.setter
 	def reads_per_iteration(self,value):
-		assert reads_per_iteration>0
+		assert value>0
 		self._reads_per_iteration=value
-		self._iterations=(self.reads+value-1)//value
-
 
 	## Reads.iterations
 
@@ -60,7 +77,6 @@ class Reads:
 	def iterations(self,value):
 		assert value>0
 		self._iterations=value
-		self._reads_per_iteration=(self.reads+value-1)//value
 
 	## Reads.required
 

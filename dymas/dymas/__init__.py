@@ -21,3 +21,7 @@ from .Fasta import *
 
 from .Chain import *
 from .Chain_Chainer import *
+
+dir_reads="1_reads"
+dir_alignments="2_alignments"
+dir_eval="3_evaluation"
