@@ -321,26 +321,3 @@ class Experiment:
 							out_bam=self.rnf_lifted_bam_fn(iteration),
 						)
 			)
-
-
-	#def rnf_lift(self, iteration):
-	#	if iteration==0:
-	#		shutil.copyfile(
-	#				self.unsorted_bam_fn(0),
-	#				self.rnf_lifted_bam_fn(0),
-	#			)
-	#	else:
-	#		smbl.utils.shell(
-	#				"""
-	#					rnftools liftover \
-	#						-f "{faidx}" \
-	#						-c "{chain}" \
-	#						-i "{in_bam}" \
-	#						-o "{out_bam}" \
-	#				""".format(
-	#						faidx=self.fasta_fn(0)+".fai",
-	#						chain=self.full_chain_fn(iteration-1),
-	#						in_bam=self.unsorted_bam_fn(iteration),
-	#						out_bam=self.rnf_lifted_bam_fn(iteration),
-	#					)
-	#			)
