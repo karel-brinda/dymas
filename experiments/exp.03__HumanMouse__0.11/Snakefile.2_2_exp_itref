@@ -14,10 +14,10 @@ fq="{}.fq".format(dymas.dir_reads)
 
 bwa = dymas.Mapping_BwaMem()
 
-reads = dymas.Reads_Dyn(
+reads = dymas.Reads_ItRef(
 		fastq_1_fn=fq,
 		coverage=conf.coverage,
-		coverage_per_iteration=0.5,
+		iterations=5,
 	)
 
 consensus = dymas.Consensus_Py(
@@ -29,7 +29,7 @@ consensus = dymas.Consensus_Py(
 pileup=dymas.Pileup_SamTools()
 
 experiment = dymas.Experiment(
-		experiment_name=dymas.dir_alignments+".dyn",
+		experiment_name=dymas.dir_alignments+".itref",
 		starting_reference_fasta_fn=conf.reference,
 		mapping_object=bwa,
 		reads_object=reads,
