@@ -296,13 +296,15 @@ class Experiment:
 		#		)
 		#else:
 		smbl.utils.shell(
-				('{SAMTOOLS} view -h "{in_bam}" '
+				('"{SAMTOOLS}" view -h "{in_bam}" '
+				+ ' | "{FILTER_ALIGNMENTS}" -i 13 - -'
 				+ " ".join(
 						[
 							""" | \
 								rnftools liftover \
 									--faidx "{faidx}" \
 									--chain "{chain}" \
+									--genome-id 1 \
 									-\
 									-\
 							""".format(
@@ -313,31 +315,9 @@ class Experiment:
 						]
 					)
 				+ ' > "{out_bam}"').format(
+							FILTER_ALIGNMENTS=os.path.join(os.path.dirname(__file__),'filter_aligned_rnf_reads.py'),
 							SAMTOOLS=smbl.prog.SAMTOOLS,
 							in_bam=self.unsorted_bam_fn(iteration),
 							out_bam=self.rnf_lifted_bam_fn(iteration),
 						)
 			)
-
-
-	#def rnf_lift(self, iteration):
-	#	if iteration==0:
-	#		shutil.copyfile(
-	#				self.unsorted_bam_fn(0),
-	#				self.rnf_lifted_bam_fn(0),
-	#			)
-	#	else:
-	#		smbl.utils.shell(
-	#				"""
-	#					rnftools liftover \
-	#						-f "{faidx}" \
-	#						-c "{chain}" \
-	#						-i "{in_bam}" \
-	#						-o "{out_bam}" \
-	#				""".format(
-	#						faidx=self.fasta_fn(0)+".fai",
-	#						chain=self.full_chain_fn(iteration-1),
-	#						in_bam=self.unsorted_bam_fn(iteration),
-	#						out_bam=self.rnf_lifted_bam_fn(iteration),
-	#					)
-	#			)
