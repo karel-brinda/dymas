@@ -296,7 +296,8 @@ class Experiment:
 		#		)
 		#else:
 		smbl.utils.shell(
-				('{SAMTOOLS} view -h "{in_bam}" '
+				('"{SAMTOOLS}" view -h "{in_bam}" '
+				+ ' | "{FILTER_ALIGNMENTS}" -i 13 - -'
 				+ " ".join(
 						[
 							""" | \
@@ -314,6 +315,7 @@ class Experiment:
 						]
 					)
 				+ ' > "{out_bam}"').format(
+							FILTER_ALIGNMENTS=os.path.join(os.path.dirname(__file__),'filter_aligned_rnf_reads.py'),
 							SAMTOOLS=smbl.prog.SAMTOOLS,
 							in_bam=self.unsorted_bam_fn(iteration),
 							out_bam=self.rnf_lifted_bam_fn(iteration),

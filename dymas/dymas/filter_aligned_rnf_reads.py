@@ -32,9 +32,10 @@ for x in args.input_sam_fo:
 	#print(x)
 	if x[0]=="@" or x.strip()=="":
 		args.output_sam_fo.write(x)
+		continue
 	(left,_,_)=x.partition("\t")
 	#print(left)
 	parts=left.split("__")
-	#print(parts)
+	#print(parts,file=sys.stderr)
 	if int(parts[1],16)%args.i==0:
 		args.output_sam_fo.write(x)
