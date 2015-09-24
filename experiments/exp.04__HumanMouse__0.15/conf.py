@@ -1,7 +1,7 @@
 import smbl
 
-reference="../00.exp__data/human.chr21.fa"
-reference_contamination="../00.exp__data/mouse.chr19.fa"
+reference="../exp.00__data/human.chr21.fa"
+reference_contamination="../exp.00__data/mouse.chr19.fa"
 coverage=10
 coverage_contamination=2
 
