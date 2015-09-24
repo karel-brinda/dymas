@@ -6,10 +6,11 @@ import dymas
 
 rnftools.lavender.Report(
 	bam_dirs=[
-		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments),
+		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".dyn"),
+		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".itref"),
 	],
 	name=dymas.dir_eval,
-	keep_intermediate_files=True,
+	keep_intermediate_files=False,
 	allowed_delta=10,
 	default_x_run=[0.003,0.3],
 	gp_style_func=conf.gp_style,
