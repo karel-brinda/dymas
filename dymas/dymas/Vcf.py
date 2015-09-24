@@ -130,12 +130,13 @@ class Vcf:
 			pos=self._buffer[0][1]
 			old_bases="".join([x[2] for x in self._buffer])
 			new_bases="".join([x[3] for x in self._buffer if x[3] is not None])
-			self._vcf_fo.write(self._vcf_line_substitution(
-					chrom=chrom,
-					pos=pos,
-					old_bases=old_bases,
-					new_bases=new_bases,
-				))
+			if old_bases.upper()!=new_bases.upper():
+				self._vcf_fo.write(self._vcf_line_substitution(
+						chrom=chrom,
+						pos=pos,
+						old_bases=old_bases,
+						new_bases=new_bases,
+					))
 			self._buffer=[]
 
 
