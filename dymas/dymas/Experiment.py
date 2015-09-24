@@ -303,6 +303,7 @@ class Experiment:
 								rnftools liftover \
 									--faidx "{faidx}" \
 									--chain "{chain}" \
+									--genome-id 1 \
 									-\
 									-\
 							""".format(
