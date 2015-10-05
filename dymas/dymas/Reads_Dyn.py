@@ -24,9 +24,11 @@ class Reads_Dyn(Reads):
 		with open(self.fastq_1_fn) as inp:
 			with open(fastq_fn,"w+") as outp:
 				for i in range(self.reads_per_iteration*(iteration+1)*4):
-					outp.write(inp.readline())
+					if i%4==0:
+						read_nb=i//4
+						orig_iteration=read_nb//self.reads_per_iteration
+						outp.write("@dyn{}".format(str(orig_iteration).zfill(3)))
+						outp.write(inp.readline()[1:])
+					else:
+						outp.write(inp.readline())
 
-				#for i in range(self.reads_per_iteration*iteration*4):
-				#	_ = inp.readline()
-				#for i in range(self.reads_per_iteration*4):
-				#	outp.write(inp.readline())
