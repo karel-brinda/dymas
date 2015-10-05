@@ -1,8 +1,17 @@
+import smbl
+
 rule all:
 	input:
 		"human.chr21.fa",
 		"mouse.chr19.fa",
+		smbl.prog.SAMTOOLS,
+		smbl.prog.BCFTOOLS,
+		smbl.prog.DWGSIM,
+		smbl.prog.MASON_VARIATOR,
+		smbl.prog.GNUPLOT5,
+		smbl.prog.BWA,
 
+	
 
 
 
@@ -22,4 +31,5 @@ rule mouse:
 		gzip -c -d chr19.fa.gz > mouse.chr19.fa
 		"""
 
+include: smbl.include()
 
