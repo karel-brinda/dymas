@@ -4,6 +4,7 @@ rule all:
 	input:
 		"human.chr21.fa",
 		"mouse.chr19.fa",
+		"Borrelia_garinii.fa",
 		smbl.prog.SAMTOOLS,
 		smbl.prog.BCFTOOLS,
 		smbl.prog.DWGSIM,
@@ -13,6 +14,13 @@ rule all:
 
 	
 
+
+
+rule borrelia:
+	output: "Borrelia_garinii.fa"
+	shell: """
+		wget -O Borrelia_garinii.fa http://www.electrictoolbox.com/wget-save-different-filename/ ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Borrelia_garinii_BgVir_uid162165/NC_017717.fna
+		"""
 
 
 rule human:
