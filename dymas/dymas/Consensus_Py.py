@@ -34,6 +34,7 @@ class Consensus_Py(Consensus):
 				fasta_fn,
 				pileup_fn,
 				compressed_vcf_fn,
+				**kwargs
 			):
 
 		vcf_fn=compressed_vcf_fn[:-3]

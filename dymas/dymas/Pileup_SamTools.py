@@ -13,18 +13,19 @@ class Pileup_SamTools(Pileup):
 				fasta_fn,
 				unsorted_bam_fn,
 				sorted_bam_fn,
-				pileup_fn
+				pileup_fn,
+
 			):
 
 		filter_pileup_fn=os.path.join(os.path.dirname(__file__),'filter_pileup.pl')
 
 		smbl.utils.shell(
 				"""
-					{SAMTOOLS} mpileup\
+					"{SAMTOOLS}" mpileup\
 						--min-MQ 1 \
 						--fasta-ref "{fasta_fn}" \
 						"{sorted_bam_fn}" \
-					|\
+					| \
 					"{FILTER_PILEUP}" \
 						{possible_gziping} \
 						> "{pileup_fn}" \
