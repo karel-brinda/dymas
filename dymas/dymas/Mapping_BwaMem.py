@@ -1,11 +1,12 @@
 import smbl
+import multiprocessing
 
 from .Mapping import Mapping
 
 class Mapping_BwaMem(Mapping):
 
 	def __init__(self):
-		pass
+		self.cores=multiprocessing.cpu_count()
 
 	@property
 	def required(self):
@@ -31,13 +32,14 @@ class Mapping_BwaMem(Mapping):
 
 		smbl.utils.shell(
 				"""
-					"{BWA}" mem -t 3 "{fasta_fn}" "{fastq_fn}" | \
-					{SAMTOOLS} view -b -@3 - > "{unsorted_bam_fn}"
+					"{BWA}" mem -t {cores} "{fasta_fn}" "{fastq_fn}" | \
+					{SAMTOOLS} view -b - > "{unsorted_bam_fn}"
 				""".format(
 						BWA=smbl.prog.BWA,
 						SAMTOOLS=smbl.prog.SAMTOOLS,
 						fasta_fn=fasta_fn,
 						fastq_fn=fastq_fn,
 						unsorted_bam_fn=unsorted_bam_fn,
+						cores=self.cores,
 					)
 			)
