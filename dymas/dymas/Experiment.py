@@ -241,7 +241,8 @@ class Experiment:
 
 	def create_consensus(self, iteration):
 		self.consensus_object.create_consensus(
-				fasta_fn=self.fasta_fn(iteration),				
+				fasta_fn=self.fasta_fn(iteration),
+				sorted_bam_fn=self.sorted_bam_fn(iteration),	
 				pileup_fn=self.pileup_fn(iteration),
 				compressed_vcf_fn=self.compressed_vcf_fn(iteration),
 			)

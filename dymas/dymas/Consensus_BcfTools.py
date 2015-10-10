@@ -21,14 +21,16 @@ class Consensus_BcfTools(Consensus):
 	def required(self):
 		return [
 				smbl.prog.BCFTOOLS,
+				smbl.prog.SAMTOOLS,
 				smbl.prog.BGZIP,
 				smbl.prog.TABIX,
 			]
 
 	def create_consensus(self,
 				fasta_fn,
-				pileup_fn,
+				sorted_bam_fn,
 				compressed_vcf_fn,
+				**kwargs
 			):
 
 		vcf_fn=compressed_vcf_fn[:-3]
@@ -37,7 +39,7 @@ class Consensus_BcfTools(Consensus):
 		# ~/.smbl/bin/bcftools call -c | ~/github/dymas/dymas/dymas/filter_bcftools_consensus.pl
 		smbl.utils.shell(
 				"""
-				{CAT} "{pileup_fn}" \
+				"{SAMTOOLS}" mpileup -uf "{fasta_fn}" "{sorted_bam_fn}" \
 				| \
 				"{BCFTOOLS}" call -c \
 				| \
@@ -45,10 +47,11 @@ class Consensus_BcfTools(Consensus):
 				\
 				> "{vcf_fn}" \
 				""".format(
-						CAT="gzcat" if pileup_fn[-3:]==".gz" else "cat",
+						SAMTOOLS=smbl.prog.SAMTOOLS,
 						BCFTOOLS=smbl.prog.BCFTOOLS,
 						FILTER_BCFTOOLS_CONSENSUS=filter_bcftools_consensus_fn,
-						pileup_fn=pileup_fn,
+						fasta_fn=fasta_fn,
+						sorted_bam_fn=sorted_bam_fn,
 						vcf_fn=vcf_fn,
 					)
 			)
