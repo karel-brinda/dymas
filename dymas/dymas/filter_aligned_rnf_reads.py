@@ -33,6 +33,7 @@ for x in args.input_sam_fo:
 	if x[0]=="@" or x.strip()=="":
 		args.output_sam_fo.write(x)
 		continue
+	#print(x,file=sys.stderr)
 	(left,_,_)=x.partition("\t")
 	#print(left)
 	parts=left.split("__")
