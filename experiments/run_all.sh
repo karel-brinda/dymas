@@ -2,7 +2,7 @@
 
 #set -e
 
-for d in `ls -d exp.??__*/`; do
+for d in `ls -d exp.?.??__*/`; do
 	echo
 	echo
 	echo "================="
