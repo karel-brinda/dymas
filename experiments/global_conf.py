@@ -12,7 +12,7 @@ conf_contamination_mutrate=0.03
 
 conf_updates_indels=True
 
-conf_allowed_delta=50
+conf_allowed_delta=5
 
 conf_title=""
 conf_description=""
