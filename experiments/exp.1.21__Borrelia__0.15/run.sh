@@ -8,6 +8,6 @@ for snakefile in `ls Snakefile.*`; do
 	echo "$snakefile"
 	echo "-------------"
 	echo
-	snakemake -s $snakefile --cores
+	snakemake -s $snakefile --cores -p
 done
 

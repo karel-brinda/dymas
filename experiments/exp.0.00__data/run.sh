@@ -2,5 +2,5 @@
 
 set -e
 
-snakemake --cores
+snakemake --cores -p
 
