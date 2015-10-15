@@ -8,6 +8,14 @@ import smbl
 conf_read_length=100
 conf_contamination_coverage=0
 conf_contamination_reference=None
+conf_contamination_mutrate=0.03
+
+conf_updates_indels=True
+
+conf_allowed_delta=50
+
+conf_title=""
+conf_description=""
 
 fq_fn="{}.fq".format(dymas.dir_reads)
 
