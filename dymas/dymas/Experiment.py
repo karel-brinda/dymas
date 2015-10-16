@@ -280,7 +280,6 @@ class Experiment:
 			for line in vcf_fo:
 				line=line.decode("ascii").strip()
 				if line!="" and line[0]!="#":
-					print(line)
 					empty=False
 					break
 
