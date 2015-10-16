@@ -2,6 +2,7 @@ import os
 import smbl
 import functools
 import shutil
+import gzip
 
 # todo: tabix
 
@@ -273,21 +274,57 @@ class Experiment:
 			)
 		)
 
-		smbl.utils.shell(
-				"""
-					"{BCFTOOLS}" consensus \
-					-c "{chain_fn}" \
-					-f "{old_fasta_fn}" \
-					"{compressed_vcf_fn}" \
-					> "{new_fasta_fn}" \
-				""".format(
-						BCFTOOLS=smbl.prog.BCFTOOLS,
-						old_fasta_fn=self.fasta_fn(iteration),
-						new_fasta_fn=self.fasta_fn(iteration+1),
-						compressed_vcf_fn=self.compressed_vcf_fn(iteration),
-						chain_fn=self.basic_chain_fn(iteration),
-					)
-			)
+		empty=True
+
+		with gzip.open(self.compressed_vcf_fn(iteration),"r") as vcf_fo:
+			for line in vcf_fo:
+				line=line.decode("ascii").strip()
+				if line!="" and line[0]!="#":
+					print(line)
+					empty=False
+					break
+
+		if empty:
+			#FAI => chain
+			shutil.copyfile(self.fasta_fn(iteration),self.fasta_fn(iteration+1))
+			with open(self.basic_chain_fn(iteration),"w+") as chain_fo:
+				with open(self.fasta_fn(iteration)+".fai") as fai_fo:
+					for (i,line) in enumerate(fai_fo):
+						line=line.strip()
+						if line!="":
+							(chrom,length,_,_,_)=line.split("\t")
+							chain_fo.write(
+									os.linesep.join(
+											[
+												" ".join(["chain", "0",
+														chrom, length, "+", "0", length, 
+														chrom, length, "+", "0", length, 
+														"0",
+													]),
+												"{}".format(length),
+												"",
+											]
+										)
+								)
+
+
+		else:
+
+			smbl.utils.shell(
+					"""
+						"{BCFTOOLS}" consensus \
+						-c "{chain_fn}" \
+						-f "{old_fasta_fn}" \
+						"{compressed_vcf_fn}" \
+						> "{new_fasta_fn}" \
+					""".format(
+							BCFTOOLS=smbl.prog.BCFTOOLS,
+							old_fasta_fn=self.fasta_fn(iteration),
+							new_fasta_fn=self.fasta_fn(iteration+1),
+							compressed_vcf_fn=self.compressed_vcf_fn(iteration),
+							chain_fn=self.basic_chain_fn(iteration),
+						)
+				)
 
 	def rnf_lift(self, iteration):
 		#if iteration==0:
