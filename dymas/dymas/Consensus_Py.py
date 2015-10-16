@@ -117,16 +117,17 @@ class Consensus_Py(Consensus):
 										)
 						break
 
-				max_votes_ins=max(vector_ins)
-				if max_votes_ins>=self.accept_level*cov:
-					for i in range(4):
-						if vector_ins[i]==max_votes_ins:
-							vcf.add_ins(
-									chromosome=chrom,
-									position=int(pos),
-									new_base=trans_inv[i],
-								)
-							break
+				if self.call_ins:
+					max_votes_ins=max(vector_ins)
+					if max_votes_ins>=self.accept_level*cov:
+						for i in range(4):
+							if vector_ins[i]==max_votes_ins:
+								vcf.add_ins(
+										chromosome=chrom,
+										position=int(pos),
+										new_base=trans_inv[i],
+									)
+								break
 
 		#to flush buffer
 		del vcf
