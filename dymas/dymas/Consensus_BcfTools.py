@@ -58,7 +58,7 @@ class Consensus_BcfTools(Consensus):
 
 		smbl.utils.shell(
 				"""
-				"{BGZIP}" "{vcf_fn}"
+				"{BGZIP}" -f "{vcf_fn}"
 				""".format(
 						BGZIP=smbl.prog.BGZIP,
 						vcf_fn=vcf_fn,
@@ -67,7 +67,7 @@ class Consensus_BcfTools(Consensus):
 
 		smbl.utils.shell(
 				"""
-				"{TABIX}" "{compressed_vcf_fn}"
+				"{TABIX}" -f "{compressed_vcf_fn}"
 				""".format(
 						TABIX=smbl.prog.TABIX,
 						compressed_vcf_fn=compressed_vcf_fn,
