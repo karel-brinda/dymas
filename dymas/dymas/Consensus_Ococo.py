@@ -25,7 +25,7 @@ class Consensus_Ococo(Consensus):
 
 		os.makedirs(tmp_dir,exist_ok=True)
 
-		old_stats_line = '-s {old_stats_fn}'.format(iteration) if iteration>0 else ""
+		old_stats_line = ("-s " + os.path.join(tmp_dir,"stats_{}.ococo".format(iteration))) if iteration>0 else ""
 
 		smbl.utils.shell(
 				"""
@@ -33,6 +33,7 @@ class Consensus_Ococo(Consensus):
 					-m batch \
 					-t stochastic \
 					-i "{unsorted_bam_fn}" \
+					-f "{fasta_fn}" \
 					{old_stats_line} \
 					-S "{new_stats_fn}" \
 					-v - \
