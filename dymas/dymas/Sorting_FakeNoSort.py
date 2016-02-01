@@ -13,5 +13,3 @@ class Sorting_FakeNoSort(Sorting):
 			):
 
 		os.symlink("../../"+unsorted_bam_fn,sorted_bam_fn)
-		with open(sorted_bam_fn+".bai","w+") as f:
-			pass

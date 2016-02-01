@@ -9,6 +9,8 @@ import gzip
 from .Chain_Chainer import Chain_Chainer
 from .Chain import Chain
 
+from .Pileup_FakeEmpty import *
+
 
 class Experiment:
 
@@ -134,8 +136,7 @@ class Experiment:
 						self.pileup_object.required,
 						self.fasta_fn(iteration),
 						self.unsorted_bam_fn(iteration),
-						self.sorted_bam_fn(iteration),
-						self.sorted_bam_fn(iteration)+".bai",
+						self.sorted_bam_fn(iteration) if not isinstance(self.pileup_object,Pileup_FakeEmpty) else [],
 					],
 				output=self.pileup_fn(iteration),
 				run=functools.partial(self.create_pileup,iteration=iteration),
