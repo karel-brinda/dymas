@@ -9,6 +9,7 @@ import gzip
 from .Chain_Chainer import Chain_Chainer
 from .Chain import Chain
 
+
 class Experiment:
 
 	def __init__(self,
@@ -18,6 +19,7 @@ class Experiment:
 				reads_object,
 				pileup_object,
 				consensus_object,
+				sorting_object,
 			):
 
 		self.experiment_name=experiment_name
@@ -27,6 +29,7 @@ class Experiment:
 		self.reads_object=reads_object
 		self.pileup_object=pileup_object
 		self.consensus_object=consensus_object
+		self.sorting_object=sorting_object
 
 		self.register_smbl_rules()
 
@@ -77,6 +80,8 @@ class Experiment:
 	def full_inverted_chain_fn(self,iteration):
 		return os.path.join(self.experiment_name,"6.3_full_inverted_chain",self._iteration(iteration,".chain"))
 
+	def tmp_dir(self):
+		return os.path.join(self.experiment_name,"tmp")
 
 	###########
 
@@ -215,22 +220,7 @@ class Experiment:
 			)
 
 	def sort_bam(self, iteration):
-		smbl.utils.shell(
-				"""
-					"{SAMTOOLS}" sort \
-						-l 5 \
-						-@ 3 \
-						-O bam \
-						-T {prefix} \
-						"{unsorted_bam_fn}" \
-						> "{sorted_bam_fn}" \
-				""".format(
-						SAMTOOLS=smbl.prog.SAMTOOLS,
-						unsorted_bam_fn=self.unsorted_bam_fn(iteration),
-						sorted_bam_fn=self.sorted_bam_fn(iteration),
-						prefix=self.sorted_bam_fn(iteration)+".tmp",
-					)
-			)
+		self.sorting_object.sort_bam(self.unsorted_bam_fn(iteration),self.sorted_bam_fn(iteration));
 
 	def create_pileup(self,iteration):
 		self.pileup_object.create_pileup(
@@ -243,9 +233,12 @@ class Experiment:
 	def create_consensus(self, iteration):
 		self.consensus_object.create_consensus(
 				fasta_fn=self.fasta_fn(iteration),
+				unsorted_bam_fn=self.unsorted_bam_fn(iteration),	
 				sorted_bam_fn=self.sorted_bam_fn(iteration),	
 				pileup_fn=self.pileup_fn(iteration),
 				compressed_vcf_fn=self.compressed_vcf_fn(iteration),
+				iteration=iteration,
+				tmp_dir=self.tmp_dir(),
 			)
 
 	def create_full_chain(self, iteration):

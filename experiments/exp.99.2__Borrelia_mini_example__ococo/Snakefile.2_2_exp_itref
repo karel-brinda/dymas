@@ -3,12 +3,13 @@ from conf import *
 ##############################
 ##############################
 
+
 bwa = dymas.Mapping_BwaMem()
 
-reads = dymas.Reads_Dyn(
+reads = dymas.Reads_ItRef(
 		fastq_1_fn=fq_fn,
 		coverage=conf_coverage,
-		coverage_per_iteration=0.5,
+		iterations=2,
 	)
 
 consensus = dymas.Consensus_Py(
@@ -17,15 +18,22 @@ consensus = dymas.Consensus_Py(
 				call_dels=True,
 			)
 
+#consensus = dymas.Consensus_BcfTools(
+#			)
+
+sorting = dymas.Sorting_SamTools()
+
+
 pileup=dymas.Pileup_SamTools()
 
 experiment = dymas.Experiment(
-		experiment_name=dymas.dir_alignments+".dyn",
+		experiment_name=dymas.dir_alignments+".itref",
 		starting_reference_fasta_fn=conf_reference,
 		mapping_object=bwa,
 		reads_object=reads,
 		pileup_object=pileup,
 		consensus_object=consensus,
+		sorting_object=sorting,
 	)
 
 ##############################

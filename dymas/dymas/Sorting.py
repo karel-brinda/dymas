@@ -1,6 +1,6 @@
 import abc
 
-class Pileup(object):
+class Sorting(object):
 
 	__metaclass__ = abc.ABCMeta
 
@@ -13,10 +13,8 @@ class Pileup(object):
 		return
 
 	@abc.abstractmethod
-	def create_pileup(self,
-				fasta_fn,
+	def sort_bam(self,
 				unsorted_bam_fn,
 				sorted_bam_fn,
-				pileup_fn,
 			):
 		return

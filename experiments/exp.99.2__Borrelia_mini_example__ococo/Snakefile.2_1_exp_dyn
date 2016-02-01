@@ -1,0 +1,40 @@
+from conf import *
+
+##############################
+##############################
+
+bwa = dymas.Mapping_BwaMem()
+
+reads = dymas.Reads_Dyn(
+		fastq_1_fn=fq_fn,
+		coverage=conf_coverage,
+		coverage_per_iteration=0.5,
+	)
+
+consensus = dymas.Consensus_Ococo()
+
+pileup = dymas.Pileup_FakeEmpty()
+
+sorting = dymas.Sorting_SamTools()
+
+experiment = dymas.Experiment(
+		experiment_name=dymas.dir_alignments+".dyn",
+		starting_reference_fasta_fn=conf_reference,
+		mapping_object=bwa,
+		reads_object=reads,
+		pileup_object=pileup,
+		consensus_object=consensus,
+		sorting_object=sorting,
+	)
+
+##############################
+##############################
+
+include: smbl.include()
+
+rule:
+	input:
+		[
+			experiment.input(),
+		]
+
