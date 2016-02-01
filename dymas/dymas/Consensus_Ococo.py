@@ -6,6 +6,9 @@ from .Consensus import Consensus
 class Consensus_Ococo(Consensus):
 
 
+	def __init__(self,strategy="majority"):
+		self.strategy=strategy
+
 	@property
 	def required(self):
 		return [
@@ -31,11 +34,12 @@ class Consensus_Ococo(Consensus):
 				"""
 				"{OCOCO}" \
 					-m batch \
-					-t stochastic \
+					-t {strategy} \
 					-i "{unsorted_bam_fn}" \
 					-f "{fasta_fn}" \
 					{old_stats_line} \
 					-S "{new_stats_fn}" \
+					-w 2 \
 					-v - \
 				| \
 				"{BGZIP}" -c > "{compressed_vcf_fn}" \
@@ -48,6 +52,7 @@ class Consensus_Ococo(Consensus):
 						fasta_fn=fasta_fn,
 						pileup_fn=pileup_fn,
 						compressed_vcf_fn=compressed_vcf_fn,
+						strategy=self.strategy,
 					)
 			)
 

@@ -11,13 +11,13 @@ reads = dymas.Reads_Dyn(
 		coverage_per_iteration=1.0,
 	)
 
-consensus = dymas.Consensus_Py(
-				call_snps=True,
-				call_ins=conf_updates_indels,
-				call_dels=conf_updates_indels,
-			)
+consensus = dymas.Consensus_Ococo(
+		strategy="majority"
+	)
 
-pileup=dymas.Pileup_SamTools()
+sorting = dymas.Sorting_FakeNoSort()
+
+pileup = dymas.Pileup_FakeEmpty()
 
 experiment = dymas.Experiment(
 		experiment_name=dymas.dir_alignments+".dyn",
@@ -26,6 +26,7 @@ experiment = dymas.Experiment(
 		reads_object=reads,
 		pileup_object=pileup,
 		consensus_object=consensus,
+		sorting_object=sorting,
 	)
 
 ##############################
