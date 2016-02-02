@@ -12,10 +12,11 @@ reads = dymas.Reads_ItRef(
 	)
 
 consensus = dymas.Consensus_Ococo(
-		strategy="majority"
+		other_params="--strategy=majority -w 0"
 	)
 
-sorting = dymas.Sorting_FakeNoSort()
+sorting = dymas.Sorting_SamTools()
+#sorting = dymas.Sorting_FakeNoSort()
 
 pileup = dymas.Pileup_FakeEmpty()
 
