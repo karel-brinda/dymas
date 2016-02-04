@@ -5,6 +5,13 @@ from .Pileup import Pileup
 
 class Pileup_SamTools(Pileup):
 
+	def __init__(self,
+				min_mq=1,
+				min_bq=13,
+			):
+		self.min_mq=min_mq
+		self.min_bq=min_bq
+
 	@property
 	def required(self):
 		return [smbl.prog.SAMTOOLS]
@@ -14,7 +21,6 @@ class Pileup_SamTools(Pileup):
 				unsorted_bam_fn,
 				sorted_bam_fn,
 				pileup_fn,
-
 			):
 
 		filter_pileup_fn=os.path.join(os.path.dirname(__file__),'filter_pileup.pl')
@@ -22,7 +28,8 @@ class Pileup_SamTools(Pileup):
 		smbl.utils.shell(
 				"""
 					"{SAMTOOLS}" mpileup\
-						--min-MQ 1 \
+						--min-MQ {min_mq} \
+						--min-BQ {min_bq} \
 						--fasta-ref "{fasta_fn}" \
 						"{sorted_bam_fn}" \
 					| \
@@ -35,6 +42,8 @@ class Pileup_SamTools(Pileup):
 						sorted_bam_fn=sorted_bam_fn,
 						pileup_fn=pileup_fn,
 						fasta_fn=fasta_fn,
+						min_mq=self.min_mq,
+						min_bq=self.min_bq,
 						possible_gziping=" | gzip " if pileup_fn[-3:]==".gz" else "",
 					)
 			)

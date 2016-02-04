@@ -3,21 +3,11 @@ from conf import *
 ##############################
 ##############################
 
-bwa = dymas.Mapping_BwaMem()
-
 reads = dymas.Reads_Dyn(
 		fastq_1_fn=fq_fn,
 		coverage=conf_coverage,
 		coverage_per_iteration=1.0,
 	)
-
-consensus = dymas.Consensus_Ococo(
-		strategy="majority"
-	)
-
-sorting = dymas.Sorting_FakeNoSort()
-
-pileup = dymas.Pileup_FakeEmpty()
 
 experiment = dymas.Experiment(
 		experiment_name=dymas.dir_alignments+".dyn",
