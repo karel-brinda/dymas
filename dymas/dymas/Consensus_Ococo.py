@@ -5,7 +5,6 @@ from .Consensus import Consensus
 
 class Consensus_Ococo(Consensus):
 
-
 	def __init__(self,
 				strategy="majority",
 				min_mq=1,
@@ -53,7 +52,6 @@ class Consensus_Ococo(Consensus):
 				"""
 				"{OCOCO}" \
 					-m batch \
-					-t {strategy} \
 					-i "{unsorted_bam_fn}" \
 					{in_fasta_line} \
 					{old_stats_line} \
@@ -63,6 +61,7 @@ class Consensus_Ococo(Consensus):
 					--ref-weight {ref_weight} \
 					--min-coverage {min_coverage} \
 					-v - \
+					{other_params} \
 				| \
 				"{BGZIP}" -c > "{compressed_vcf_fn}" \
 				""".format(
