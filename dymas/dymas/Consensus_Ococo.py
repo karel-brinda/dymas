@@ -51,7 +51,6 @@ class Consensus_Ococo(Consensus):
 		smbl.utils.shell(
 				"""
 				"{OCOCO}" \
-					-m batch \
 					-i "{unsorted_bam_fn}" \
 					{in_fasta_line} \
 					{old_stats_line} \
@@ -60,8 +59,9 @@ class Consensus_Ococo(Consensus):
 					--min-BQ {min_bq} \
 					--ref-weight {ref_weight} \
 					--min-coverage {min_coverage} \
+					--strategy {strategy} \
+					--mode batch \
 					-v - \
-					{other_params} \
 				| \
 				"{BGZIP}" -c > "{compressed_vcf_fn}" \
 				""".format(

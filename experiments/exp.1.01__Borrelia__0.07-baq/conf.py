@@ -18,4 +18,4 @@ consensus = dymas.Consensus_Py(
 
 sorting = dymas.Sorting_SamTools()
 
-pileup = dymas.Pileup_SamTools()
+pileup = dymas.Pileup_SamTools(baq=True)
