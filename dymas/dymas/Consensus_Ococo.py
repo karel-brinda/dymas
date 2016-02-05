@@ -12,6 +12,7 @@ class Consensus_Ococo(Consensus):
 				variant=16,
 				ref_weight=0,
 				min_coverage=2,
+				remapping=False,
 			):
 		assert variant in [16,32], "Wrong variant ({}).".format(variant)
 
@@ -21,6 +22,7 @@ class Consensus_Ococo(Consensus):
 		self.variant=variant
 		self.ref_weight=ref_weight
 		self.min_coverage=min_coverage
+		self.remapping=remapping
 
 	@property
 	def required(self):
@@ -41,7 +43,7 @@ class Consensus_Ococo(Consensus):
 
 		os.makedirs(tmp_dir,exist_ok=True)
 
-		if iteration==0:
+		if iteration==0 or self.remapping:
 			in_fasta_line = '-f "{}"'.format(fasta_fn)
 			old_stats_line = ""
 		else:

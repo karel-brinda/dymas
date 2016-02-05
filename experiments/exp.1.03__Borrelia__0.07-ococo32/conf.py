@@ -13,6 +13,7 @@ bwa = dymas.Mapping_BwaMem()
 consensus = dymas.Consensus_Ococo(
 		strategy="majority",
 		variant=32,
+		remapping=True
 	)
 
 sorting = dymas.Sorting_FakeNoSort()
