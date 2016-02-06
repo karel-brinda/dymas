@@ -92,16 +92,12 @@ class Report:
 					\usepackage[utf8]{inputenc}
 					\usepackage{lmodern}
 					\usepackage[english]{babel}
-
 					\usepackage{amsmath}
 					\usepackage{amsfonts}
-
 					\usepackage{fullpage}
-
 					\usepackage{graphicx}
 					\usepackage{caption}
 					\usepackage{subcaption}
-
 					\begin{document}
 				""")
 
@@ -112,26 +108,20 @@ class Report:
 					\begin{figure}[h]
 						\newcommand{\DIR}{""" + os.path.join(self.auxdir,nd) + r"""}
 						\newcommand{\graph}[1]{\includegraphics[width=6cm]{#1}}
-
 						\begin{subfigure}[b]{1.0\textwidth}
 							\includegraphics[width=8cm]{\DIR/dynamic.pdf}\includegraphics[width=8cm]{\DIR/iterative.pdf}
 					        \caption{Comparison of all iterations.}
 					    \end{subfigure}
-
 					    \begin{subfigure}[b]{1.0\textwidth}
 							\graph{\DIR/detail_stat.pdf}\graph{\DIR/detail_dyn.pdf}\graph{\DIR/detail_iter.pdf}
 					        \caption{Categories of reads after ``classical mapping'', iterative referencing and dynamic mapping with unmapping.}
 					    \end{subfigure}
-
 						\caption{
 					    	caption
 					    }
 					    \label{fig:main}
 					\end{figure}
-
 					\clearpage
-
-
 					""")
 
 			f.write(r"""
@@ -144,12 +134,15 @@ class Report:
 r=Report()
 
 for exp in [
-			"exp.1.01__Borrelia__0.07",
-			"exp.1.02__Borrelia__0.07__noIndels",
-			"exp.1.03__Borrelia__0.07__consensusBcfTools",
-			"exp.1.20__Borrelia__0.11",
-			"exp.1.21__Borrelia__0.15/",
-		]:
+		"exp.1.01__Borrelia__0.07-baq",
+		"exp.1.02__Borrelia__0.07",
+		"exp.1.03__Borrelia__0.07-ococo32",
+		"exp.1.04__Borrelia__0.07-ococo16",
+		"exp.1.05__Borrelia__0.07-delstats",
+		"exp.1.06__Borrelia__0.07-indels",
+		"exp.1.07__Borrelia__0.07-delstats-baq",
+		"exp.1.08__Borrelia__0.07-dels",
+	]:
 	r.add_experiment(exp)
 
 r.latex()
