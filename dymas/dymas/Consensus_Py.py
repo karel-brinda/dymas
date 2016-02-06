@@ -14,6 +14,7 @@ class Consensus_Py(Consensus):
 				call_snps=True,
 				call_ins=True,
 				call_dels=True,
+				keep_del_stats=False,
 			):
 
 		self.min_coverage=min_coverage
@@ -21,6 +22,7 @@ class Consensus_Py(Consensus):
 		self.call_snps=call_snps
 		self.call_ins=call_ins
 		self.call_dels=call_dels
+		self.keep_del_stats=keep_del_stats
 
 
 	@property
@@ -97,7 +99,7 @@ class Consensus_Py(Consensus):
 						else:
 							raise NotImplementedError("Unknown character '{}'".format(char))
 
-				if self.call_dels:
+				if self.call_dels or self.keep_del_stats:
 					cov_2=vector_snps[0]+vector_snps[1]+vector_snps[2]+vector_snps[3]+vector_snps[4]
 				else:
 					cov_2=vector_snps[0]+vector_snps[1]+vector_snps[2]+vector_snps[3]
