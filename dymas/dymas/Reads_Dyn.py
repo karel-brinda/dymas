@@ -8,6 +8,7 @@ class Reads_Dyn(Reads):
 				coverage,
 				coverage_per_iteration,
 				fastq_2_fn=None,
+				remapping=True,
 			):
 
 		super().__init__(
@@ -19,11 +20,12 @@ class Reads_Dyn(Reads):
 		self.coverage_per_iteration=coverage_per_iteration
 		self.iterations=int(math.ceil(coverage/coverage_per_iteration))
 		self.reads_per_iteration=int(math.ceil((coverage_per_iteration/coverage)*self.reads))
+		self.remapping=remapping
 
 	def create_fastq_iteration(self,fastq_fn,iteration):
 		with open(self.fastq_1_fn) as inp:
 			with open(fastq_fn,"w+") as outp:
-				for i in range(self.reads_per_iteration*(iteration+1)*4):
+				for i in range(0 if self.remapping else self.reads_per_iteration*iteration*4, self.reads_per_iteration*(iteration+1)*4):
 					line=inp.readline()
 					if line is None or line.strip()=="":
 						continue

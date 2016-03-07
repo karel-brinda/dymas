@@ -114,7 +114,7 @@ class Report:
 					    \end{subfigure}
 					    \begin{subfigure}[b]{1.0\textwidth}
 							\graph{\DIR/detail_stat.pdf}\graph{\DIR/detail_dyn.pdf}\graph{\DIR/detail_iter.pdf}
-					        \caption{Categories of reads after ``classical mapping'', iterative referencing and dynamic mapping with unmapping.}
+					        \caption{Improvement of alignment using dynamic mapping and iterative referencing.}
 					    \end{subfigure}
 						\caption{
 					    	caption

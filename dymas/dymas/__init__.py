@@ -7,6 +7,7 @@ from .Consensus_Ococo import *
 
 from .Mapping import *
 from .Mapping_BwaMem import *
+from .Mapping_Bowtie2 import *
 
 from .Pileup import *
 from .Pileup_SamTools import *

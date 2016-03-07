@@ -22,6 +22,7 @@ class Experiment:
 				pileup_object,
 				consensus_object,
 				sorting_object,
+				remapping=True,
 			):
 
 		self.experiment_name=experiment_name
@@ -32,6 +33,7 @@ class Experiment:
 		self.pileup_object=pileup_object
 		self.consensus_object=consensus_object
 		self.sorting_object=sorting_object
+		self.remapping=remapping
 
 		self.register_smbl_rules()
 
@@ -219,6 +221,23 @@ class Experiment:
 				fastq_fn=self.fastq_fn(iteration),
 				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 			)
+		if not self.remapping and iteration>0:
+			orig_bam=self.unsorted_bam_fn(iteration)
+			prev_bam=self.unsorted_bam_fn(iteration-1)
+			tmp_bam=self.unsorted_bam_fn(iteration)+".tmp"
+			shutil.move(orig_bam, tmp_bam)
+			smbl.utils.shell(
+					"""
+						"{SAMTOOLS}" merge "{orig_bam}" \
+							"{previous_bam}"\
+							"{tmp_bam}"\
+					""".format(
+							SAMTOOLS=smbl.prog.SAMTOOLS,
+							orig_bam=orig_bam,
+							previous_bam=prev_bam,
+							tmp_bam=tmp_bam,
+						)
+				)
 
 	def sort_bam(self, iteration):
 		self.sorting_object.sort_bam(self.unsorted_bam_fn(iteration),self.sorted_bam_fn(iteration));
