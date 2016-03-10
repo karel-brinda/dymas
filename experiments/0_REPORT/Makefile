@@ -8,7 +8,7 @@ SOURCES := $(MAIN).tex $(shell find . -name "*.tex" -type f)
 all : $(MAIN).pdf
 
 $(MAIN).pdf : $(SOURCES) $(FIGURES)
-	find .. -type f -name "*.svg" -exec svg2pdf {} {}.pdf \;
+	find .. -type f -name "*.svg" -exec ./conv_svg2pdf.sh {} \;
 	./make_pdf.py
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
 
