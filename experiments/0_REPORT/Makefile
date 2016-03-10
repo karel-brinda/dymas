@@ -8,6 +8,8 @@ SOURCES := $(MAIN).tex $(shell find . -name "*.tex" -type f)
 all : $(MAIN).pdf
 
 $(MAIN).pdf : $(SOURCES) $(FIGURES)
+	find .. -type f -name "*.svg" -exec svg2pdf {} {}.pdf \;
+	./make_pdf.py
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
 
 edit: $(MAIN).pdf
@@ -21,5 +23,6 @@ view: $(MAIN).pdf
 	|| evince $(MAIN).pdf) 2> /dev/null > /dev/null &
 
 clean :
+	rm -fr aux/
 	latexmk -CA
 

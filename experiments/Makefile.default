@@ -20,13 +20,13 @@ rm4:
 run1:
 	snakemake -s Snakefile.1_reads --cores -p
 
-run2:
+run2: run1
 	snakemake -s Snakefile.2_1_exp_dyn --cores -p
 
-run3:
+run3: run1
 	snakemake -s Snakefile.2_2_exp_itref --cores -p
 
-run4:
+run4: run2 run3
 	snakemake -s Snakefile.3_eval --cores -p
 
 view:

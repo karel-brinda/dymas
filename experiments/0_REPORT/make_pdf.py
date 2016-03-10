@@ -145,8 +145,10 @@ for exp in [
 		"exp.1.09__Borrelia__0.07-bowtie2",
 		"exp.1.10__Borrelia__0.07-ins",
 		"exp.1.11__Borrelia__0.07-ococo16-noremap",
-#		"exp.1.12__Borrelia__0.11",
-		"exp.1.13__Borrelia__0.07-delta500",
+		"exp.1.12__Borrelia__0.11",
+		"exp.1.13__Borrelia__0.13",
+		"exp.1.14__Borrelia__0.15",
+		"exp.1.15__Borrelia__0.07-delta500",
 		"exp.2.04__Tuberculosis__0.07-ococo16",
 	]:
 	r.add_experiment(exp)
