@@ -2,6 +2,7 @@ import smbl
 import os
 import numpy
 import gzip
+import random
 
 from .Consensus import Consensus
 from .Vcf import Vcf
@@ -66,7 +67,10 @@ class Consensus_Py(Consensus):
 
 				(chrom, pos, base, cov, nucls, _) = line.split("\t")
 
-				trans["."]=trans[","]=trans[base]
+				try:
+					trans["."]=trans[","]=trans[base]
+				except:
+					trans["."]=trans[","]=trans[trans_inv[random.randint(0, 3)]]
 				vector_snps = numpy.array([0, 0, 0, 0, 0])
 				vector_ins = numpy.array([0, 0, 0, 0])
 

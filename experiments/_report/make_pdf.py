@@ -10,7 +10,7 @@ experiments_dir="../"
 class Report:
 	def __init__(self):
 		self.auxdir="aux"
-		self.tex="report.tex"
+		self.tex="main.tex"
 		os.makedirs(self.auxdir,exist_ok=True)
 		self.experiments=[]
 
@@ -36,12 +36,12 @@ class Report:
 		#
 
 		shutil.copy(
-				os.path.join(d,"3_evaluation/0/pdf/_combined_4.pdf"),
+				os.path.join(d,"3_evaluation/0/svg/_combined_4.svg.pdf"),
 				os.path.join(ndf,"dynamic.pdf"),
 			)
 
 		shutil.copy(
-				os.path.join(d,"3_evaluation/1/pdf/_combined_4.pdf"),
+				os.path.join(d,"3_evaluation/1/svg/_combined_4.svg.pdf"),
 				os.path.join(ndf,"iterative.pdf"),
 			)
 
@@ -53,30 +53,30 @@ class Report:
 		# Static
 
 		shutil.copy(
-				os.path.join(d,"3_evaluation/1/pdf/00000.pdf"),
+				os.path.join(d,"3_evaluation/1/svg/00000.svg.pdf"),
 				os.path.join(ndf,"detail_stat.pdf"),
 			)
 
 
 		# Dynamic
 
-		l=[x for x in os.listdir(os.path.join(d,"3_evaluation/0/pdf/")) if x[0]=="0"]
+		l=[x for x in os.listdir(os.path.join(d,"3_evaluation/0/svg/")) if x[0]=="0"]
 		l.sort()
 		last=l[-1]
 
 		shutil.copy(
-				os.path.join(d,"3_evaluation/0/pdf/"+last),
+				os.path.join(d,"3_evaluation/0/svg/"+last),
 				os.path.join(ndf,"detail_dyn.pdf"),
 			)
 
 		# Iterative referencing
 
-		l=[x for x in os.listdir(os.path.join(d,"3_evaluation/1/pdf/")) if x[0]=="0"]
+		l=[x for x in os.listdir(os.path.join(d,"3_evaluation/1/svg/")) if x[0]=="0"]
 		l.sort()
 		last=l[-1]
 
 		shutil.copy(
-				os.path.join(d,"3_evaluation/1/pdf/"+last),
+				os.path.join(d,"3_evaluation/1/svg/"+last),
 				os.path.join(ndf,"detail_iter.pdf"),
 			)
 
@@ -142,6 +142,12 @@ for exp in [
 		"exp.1.06__Borrelia__0.07-indels",
 		"exp.1.07__Borrelia__0.07-delstats-baq",
 		"exp.1.08__Borrelia__0.07-dels",
+		"exp.1.09__Borrelia__0.07-bowtie2",
+		"exp.1.10__Borrelia__0.07-ins",
+		"exp.1.11__Borrelia__0.07-ococo16-noremap",
+#		"exp.1.12__Borrelia__0.11",
+		"exp.1.13__Borrelia__0.07-delta500",
+		"exp.2.04__Tuberculosis__0.07-ococo16",
 	]:
 	r.add_experiment(exp)
 
