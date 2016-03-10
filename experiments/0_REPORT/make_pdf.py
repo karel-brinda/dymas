@@ -1,11 +1,16 @@
 #! /usr/bin/env python3
 
+import glob
+
 import os
 import shutil
 import snakemake
 
 experiments_dir="../"
 
+
+lex_min_exp = "exp.1"
+lex_max_exp = "exp.3"
 
 class Report:
 	def __init__(self):
@@ -133,25 +138,33 @@ class Report:
 
 r=Report()
 
-for exp in [
-		"exp.1.01__Borrelia__0.07-baq",
-		"exp.1.02__Borrelia__0.07",
-		"exp.1.03__Borrelia__0.07-ococo32",
-		"exp.1.04__Borrelia__0.07-ococo16",
-		"exp.1.05__Borrelia__0.07-delstats",
-		"exp.1.06__Borrelia__0.07-indels",
-		"exp.1.07__Borrelia__0.07-delstats-baq",
-		"exp.1.08__Borrelia__0.07-dels",
-		"exp.1.09__Borrelia__0.07-bowtie2",
-		"exp.1.10__Borrelia__0.07-ins",
-		"exp.1.11__Borrelia__0.07-ococo16-noremap",
-		"exp.1.12__Borrelia__0.11",
-		"exp.1.13__Borrelia__0.13",
-		"exp.1.14__Borrelia__0.15",
-		"exp.1.15__Borrelia__0.07-delta500",
-		"exp.2.04__Tuberculosis__0.07-ococo16",
-		"exp.2.06__Tuberculosis__0.07-indels",
-	]:
+exps = sorted(glob.glob("../exp.*/"))
+exps = [x[3:] for x in exps]
+print(exps)
+exps = [x for x in exps if x >= lex_min_exp and x<lex_max_exp]
+
+print(exps)
+
+for exp in exps:
+#	[
+#		"exp.1.01__Borrelia__0.07-baq",
+#		"exp.1.02__Borrelia__0.07",
+#		"exp.1.03__Borrelia__0.07-ococo32",
+#		"exp.1.04__Borrelia__0.07-ococo16",
+#		"exp.1.05__Borrelia__0.07-delstats",
+#		"exp.1.06__Borrelia__0.07-indels",
+#		"exp.1.07__Borrelia__0.07-delstats-baq",
+#		"exp.1.08__Borrelia__0.07-dels",
+#		"exp.1.09__Borrelia__0.07-bowtie2",
+#		"exp.1.10__Borrelia__0.07-ins",
+#		"exp.1.11__Borrelia__0.07-ococo16-noremap",
+#		"exp.1.12__Borrelia__0.11",
+#		"exp.1.13__Borrelia__0.13",
+#		"exp.1.14__Borrelia__0.15",
+#		"exp.1.15__Borrelia__0.07-delta500",
+#		"exp.2.04__Tuberculosis__0.07-ococo16",
+#		"exp.2.06__Tuberculosis__0.07-indels",
+#	]:
 	r.add_experiment(exp)
 
 r.latex()

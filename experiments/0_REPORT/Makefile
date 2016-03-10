@@ -17,7 +17,7 @@ edit: $(MAIN).pdf
 	|| texstudio $(MAIN).tex \
 	|| texedit $(MAIN).tex) 2> /dev/null > /dev/null &
 
-view: $(MAIN).pdf
+view:
 	(open $(MAIN).pdf \
 	|| acroread $(MAIN).pdf \
 	|| evince $(MAIN).pdf) 2> /dev/null > /dev/null &
