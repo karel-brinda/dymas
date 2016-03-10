@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, "../")
-from borrelia_conf import *
+from tuberculosis_conf import *
 
 conf_mutrate=0.07
 
