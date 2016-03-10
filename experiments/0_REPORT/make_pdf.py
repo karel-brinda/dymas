@@ -104,7 +104,7 @@ class Report:
 
 			for (name,d,nd) in self.experiments:
 
-				f.write(r"\section{Experiment: "+name.replace("_","\\_")+r"""}
+				f.write(r"\section{"+name.replace("_","\\_")+r"""}
 					\begin{figure}[h]
 						\newcommand{\DIR}{""" + os.path.join(self.auxdir,nd) + r"""}
 						\newcommand{\graph}[1]{\includegraphics[width=6cm]{#1}}
@@ -116,9 +116,9 @@ class Report:
 							\graph{\DIR/detail_stat.pdf}\graph{\DIR/detail_dyn.pdf}\graph{\DIR/detail_iter.pdf}
 					        \caption{Improvement of alignment using dynamic mapping and iterative referencing.}
 					    \end{subfigure}
-						\caption{
-					    	caption
-					    }
+						%\caption{
+					    %	caption
+					    %}
 					    \label{fig:main}
 					\end{figure}
 					\clearpage
@@ -150,6 +150,7 @@ for exp in [
 		"exp.1.14__Borrelia__0.15",
 		"exp.1.15__Borrelia__0.07-delta500",
 		"exp.2.04__Tuberculosis__0.07-ococo16",
+		"exp.2.06__Tuberculosis__0.07-indels",
 	]:
 	r.add_experiment(exp)
 
