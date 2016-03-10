@@ -2,18 +2,21 @@
 
 set -e
 
-if [ $# -ne 1 ]; then
-	echo "illegal number of parameters"
-	exit 1
-fi
+#if [ $# -ne 1 ]; then
+#	echo "illegal number of parameters"
+#	exit 1
+#fi
 
-SVG=$1
-PDF=${SVG}.pdf
+for var in "$@"
+do
+	SVG=$var
+	PDF=${SVG}.pdf
 
-if [ ! -f $PDF ];
-then
-	echo SVG $SVG
-	echo PDF $PDF
-	echo
-	svg2pdf $SVG $PDF
-fi
+	if [ ! -f $PDF ] || [ $PDF -ot $SVG ] ;
+	then
+		echo SVG $SVG
+		echo PDF $PDF
+		echo
+		svg2pdf $SVG $PDF
+	fi
+done
