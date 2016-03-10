@@ -1,0 +1,34 @@
+.PHONY: clean run run1 run2 run3 run4 rm1 rm2 rm3 rm4 view
+
+run: run1 run2 run3 run4
+
+clean:
+	git clean -fxd .
+
+rm1:
+	rm -fr 1_reads*
+
+rm2:
+	rm -fr 2_alignments.dyn/
+
+rm3:
+	rm -fr 2_alignments.itref/
+
+rm4:
+	rm -fr 3_evaluation*
+
+run1:
+	snakemake -s Snakefile.1_reads --cores -p
+
+run2:
+	snakemake -s Snakefile.2_1_exp_dyn --cores -p
+
+run3:
+	snakemake -s Snakefile.2_2_exp_itref --cores -p
+
+run4:
+	snakemake -s Snakefile.3_eval --cores -p
+
+view:
+	open 3_evaluation.html
+
