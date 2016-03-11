@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
 set -e
+set -o xtrace
 
 #if [ $# -ne 1 ]; then
 #	echo "illegal number of parameters"
@@ -17,6 +18,7 @@ do
 		echo SVG $SVG
 		echo PDF $PDF
 		echo
-		svg2pdf $SVG $PDF
+		#cat $SVG | perl -e "s/fill\ =\ 'white'/fill\ =\ 'none'/g;" | svg2pdf > $PDF
+		cat $SVG | sed -e "s/'white'/'none'/" | svg2pdf > $PDF
 	fi
 done
