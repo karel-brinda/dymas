@@ -24,14 +24,6 @@ class Report:
 		nd=name
 		ndf=os.path.join(self.auxdir,nd)
 
-		self.experiments.append(
-				[
-					name,
-					d,
-					nd,
-				]
-			)
-
 
 		os.makedirs(ndf,exist_ok=True)
 
@@ -85,6 +77,13 @@ class Report:
 				os.path.join(ndf,"detail_iter.pdf"),
 			)
 
+		self.experiments.append(
+				[
+					name,
+					d,
+					nd,
+				]
+			)
 
 
 
@@ -146,6 +145,9 @@ exps = [x for x in exps if x >= lex_min_exp and x<lex_max_exp]
 print(exps)
 
 for exp in exps:
-	r.add_experiment(exp)
+	try:
+		r.add_experiment(exp)
+	except:
+		print("Error: Experiment {} could not be added".format(exp))
 
 r.latex()

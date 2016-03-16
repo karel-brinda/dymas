@@ -1,6 +1,6 @@
-.PHONE: all
+.PHONY: main_report simplified_graphs rocs
 
-all: main_report simplified_graphs rocs
+all: main_report simplified_graphs
 
 main_report:
 	$(MAKE) -C main_report
