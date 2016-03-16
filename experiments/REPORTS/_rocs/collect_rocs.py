@@ -33,9 +33,9 @@ def copy_report(
 	shutil.copystat(dynamic_fn_o,dynamic_fn_n)
 	shutil.copystat(itref_fn_o,itref_fn_n)
 
-experiments=glob.glob('../../exp.*/')
+experiments=glob.glob('../../exp*/')
 for experiment_dir in experiments:
 	parts=experiment_dir.split("/")
 	roc_dir=parts[-2]
-	if roc_dir>"exp.1" and roc_dir<"exp.3":
+	if roc_dir>"exp1" and roc_dir<"exp3":
 		copy_report(experiment_dir,roc_dir)

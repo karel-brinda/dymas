@@ -8,9 +8,9 @@ import snakemake
 
 experiments_dir="../../"
 
-
-lex_min_exp = "exp.1"
-lex_max_exp = "exp.3"
+ex_pattern = "exp*/"
+lex_min_exp = "exp1"
+lex_max_exp = "exp3"
 
 class Report:
 	def __init__(self):
@@ -138,7 +138,7 @@ class Report:
 
 r=Report()
 
-exps = sorted(glob.glob(os.path.join(experiments_dir,"exp.*/")))
+exps = sorted(glob.glob(os.path.join(experiments_dir,exp_pattern)))
 exps = [x.replace(experiments_dir,"") for x in exps]
 print(exps)
 exps = [x for x in exps if x >= lex_min_exp and x<lex_max_exp]
