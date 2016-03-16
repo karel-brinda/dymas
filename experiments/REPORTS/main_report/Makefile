@@ -1,18 +1,17 @@
 MAIN = main
-FIGURES := $(shell find figures -name "*.pdf" -type f)
-SOURCES := $(MAIN).tex $(shell find . -name "*.tex" -type f)
+FIGURES := $(shell find aux -name "*.pdf" -type f)
 
-.PHONY: all clean
+.PHONY: all clean 
 .SILENT: all
 
 all : $(MAIN).pdf
 
-$(MAIN).pdf : $(SOURCES) $(FIGURES)
+$(MAIN).pdf : $(MAIN).tex $(FIGURES)
 	#find .. -type f -name "*.svg" -exec ./conv_svg2pdf.sh {} \;
-	find ../.. -type f -name "*.svg" | xargs ./conv_svg2pdf.sh
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
 
-$(MAIN).tex : $(SOURCES) $(FIGURES)
+$(MAIN).tex :
+	find ../.. -type f -name "*.svg" | xargs ./conv_svg2pdf.sh
 	./main_texfile.py
 
 edit: $(MAIN).pdf

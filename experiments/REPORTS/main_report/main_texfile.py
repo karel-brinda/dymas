@@ -8,7 +8,7 @@ import snakemake
 
 experiments_dir="../../"
 
-ex_pattern = "exp*/"
+exp_pattern = "exp*/"
 lex_min_exp = "exp1"
 lex_max_exp = "exp3"
 
