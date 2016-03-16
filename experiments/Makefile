@@ -9,4 +9,4 @@ $(SUBDIRS) : data
 	    $(MAKE) -C $@
 
 data :
-	$(MAKE) -C exp.0.*
+	$(MAKE) -C exp0.*
