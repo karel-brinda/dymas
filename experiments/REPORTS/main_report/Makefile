@@ -9,9 +9,11 @@ all : $(MAIN).pdf
 
 $(MAIN).pdf : $(SOURCES) $(FIGURES)
 	#find .. -type f -name "*.svg" -exec ./conv_svg2pdf.sh {} \;
-	find .. -type f -name "*.svg" | xargs ./conv_svg2pdf.sh
-	./make_pdf.py
+	find ../.. -type f -name "*.svg" | xargs ./conv_svg2pdf.sh
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
+
+$(MAIN).tex : $(SOURCES) $(FIGURES)
+	./main_texfile.py
 
 edit: $(MAIN).pdf
 	(open $(MAIN).tex \
