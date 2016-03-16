@@ -12,7 +12,8 @@ class Mapping_Bowtie2(Mapping):
 	@property
 	def required(self):
 		return [
-				#smbl.prog.BOWTIE2,
+				smbl.prog.BOWTIE2,
+				smbl.prog.BOWTIE2_BUILD,
 				smbl.prog.SAMTOOLS,
 			]
 
@@ -26,7 +27,7 @@ class Mapping_Bowtie2(Mapping):
 				"""
 					"{BOWTIE2BUILD}" "{fasta_fn}" "{fasta_fn}"
 				""".format(
-						BOWTIE2BUILD="bowtie2-build",
+						BOWTIE2BUILD=smbl.prog.BOWTIE2_BUILD,
 						fasta_fn=fasta_fn,
 					)
 			)
@@ -36,7 +37,7 @@ class Mapping_Bowtie2(Mapping):
 					"{BOWTIE2}" -p {cores} -x "{fasta_fn}" -U "{fastq_fn}" {local} | \
 					{SAMTOOLS} view -b - > "{unsorted_bam_fn}"
 				""".format(
-						BOWTIE2="bowtie2",
+						BOWTIE2=smbl.prog.BOWTIE2,
 						SAMTOOLS=smbl.prog.SAMTOOLS,
 						fasta_fn=fasta_fn,
 						fastq_fn=fastq_fn,
