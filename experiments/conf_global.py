@@ -10,7 +10,7 @@ conf_contamination_coverage=0
 conf_contamination_reference=None
 conf_contamination_mutrate=0.03
 
-conf_updates_indels=True
+#conf_updates_indels=True
 
 conf_allowed_delta=5
 
