@@ -44,7 +44,7 @@ def simple_report(
 	print(command.strip())
 	snakemake.shell(command)
 	try:
-		snakemake.shell('svg2pdf output/{pref}.svg output/{pref}.pdf'.format(pref=prefix))
+		snakemake.shell('../convert_svg2pdf output/{pref}.svg output/{pref}.pdf'.format(pref=prefix))
 	except:
 		pass
 

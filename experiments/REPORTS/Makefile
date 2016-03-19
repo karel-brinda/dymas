@@ -1,6 +1,6 @@
-.PHONY: main_report simplified_graphs rocs
+.PHONY: main_report simplified_graphs rocs clean dropbox
 
-all: main_report simplified_graphs clean
+all: main_report simplified_graphs
 
 main_report:
 	$(MAKE) -C main_report
@@ -10,6 +10,9 @@ simplified_graphs: rocs
 
 rocs:
 	$(MAKE) -C _rocs
+
+dropbox:
+	cp -ar ../REPORTS ~/Dropbox/
 
 clean:
 	git clean -fxd .

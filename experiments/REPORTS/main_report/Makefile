@@ -11,7 +11,7 @@ $(MAIN).pdf : $(MAIN).tex $(FIGURES)
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
 
 $(MAIN).tex :
-	find ../.. -type f -name "*.svg" | xargs ./conv_svg2pdf.sh
+	find ../.. -type f -name "*.svg" | xargs ../conv_svg2pdf.sh
 	./main_texfile.py
 
 edit: $(MAIN).pdf
