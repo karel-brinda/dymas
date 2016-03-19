@@ -41,5 +41,5 @@ experiments=glob.glob('../../exp*/')
 for experiment_dir in experiments:
 	parts=experiment_dir.split("/")
 	roc_dir=parts[-2]
-	if roc_dir>="exp1" and roc_dir<="exp3":
+	if roc_dir>="exp1" and roc_dir<="exp9":
 		copy_report(experiment_dir,roc_dir)

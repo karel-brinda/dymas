@@ -3,7 +3,7 @@ SUBDIRS := $(wildcard exp*/.)
 .PHONY : all $(SUBDIRS) data
 
 all : $(SUBDIRS)
-	$(MAKE) -C REPORT
+	$(MAKE) -C REPORTS
 
 $(SUBDIRS) : data 
 	    $(MAKE) -C $@

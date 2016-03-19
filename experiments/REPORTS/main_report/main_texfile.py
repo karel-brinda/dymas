@@ -10,7 +10,7 @@ experiments_dir="../../"
 
 exp_pattern = "exp*/"
 lex_min_exp = "exp1"
-lex_max_exp = "exp3"
+lex_max_exp = "exp9"
 
 class Report:
 	def __init__(self):

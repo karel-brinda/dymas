@@ -26,7 +26,7 @@ def simple_report(
 	prefix=report_name
 
 	command="""
-		gnuplot -e "par_file='output/{file}';par_title='{title}';par_dir='{dir}';par_x1='{x1}';par_x2='{x2}';par_y1='{y1}';par_y2='{y2}';" plot_graph.gp 
+		~/.smbl/bin/gnuplot5 -e "par_file='output/{file}';par_title='{title}';par_dir='{dir}';par_x1='{x1}';par_x2='{x2}';par_y1='{y1}';par_y2='{y2}';" plot_graph.gp 
 		""".format(
 			file=prefix,
 			dir=experiment_dir,
