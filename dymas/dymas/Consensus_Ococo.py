@@ -74,7 +74,7 @@ class Consensus_Ococo(Consensus):
 						BGZIP=smbl.prog.BGZIP,
 						OCOCO="ococo",
 						variant="ococo16" if self.variant==16 else "ococo32",
-						unsorted_bam_fn=unsorted_bam_fn,
+						unsorted_bam_fn=unsorted_bam_fn if self.remapping or iteration==0 else unsorted_bam_fn+".tmp",
 						in_fasta_line=in_fasta_line,
 						old_stats_line=old_stats_line,
 						new_stats_fn=os.path.join(tmp_dir,"stats_{}.ococo".format(iteration+1)),
