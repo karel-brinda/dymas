@@ -12,6 +12,8 @@ rule all:
 		"Mycobacterium_tuberculosis.fa.fai",
 		"Neisseria_meningitidis.fa",
 		"Neisseria_meningitidis.fa.fai",
+		"Solibacter_usitatus.fa",
+		"Solibacter_usitatus.fa.fai",
 		smbl.prog.SAMTOOLS,
 		smbl.prog.BCFTOOLS,
 		smbl.prog.DWGSIM,
@@ -43,6 +45,11 @@ rule meningitidis:
 		"""
 
 
+rule solibacter:
+	output: "Solibacter_usitatus.fa"
+	shell: """
+		wget -O Solibacter_usitatus.fa http://genome2d.molgenrug.nl/Bacteria/Candidatus_Solibacter_usitatus_Ellin6076_uid58139/NC_008536.fna
+		"""
 
 
 rule human:
