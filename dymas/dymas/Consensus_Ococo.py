@@ -53,6 +53,7 @@ class Consensus_Ococo(Consensus):
 		smbl.utils.shell(
 				"""
 				"{OCOCO}" \
+					-x "{variant}" \
 					-i "{unsorted_bam_fn}" \
 					{in_fasta_line} \
 					{old_stats_line} \
@@ -63,12 +64,13 @@ class Consensus_Ococo(Consensus):
 					--min-coverage {min_coverage} \
 					--strategy {strategy} \
 					--mode batch \
-					-v - \
+					-V - \
 				| \
 				"{BGZIP}" -c > "{compressed_vcf_fn}" \
 				""".format(
 						BGZIP=smbl.prog.BGZIP,
-						OCOCO="ococo16" if self.variant==16 else "ococo32",
+						OCOCO="ococo",
+						variant="ococo16" if self.variant==16 else "ococo32",
 						unsorted_bam_fn=unsorted_bam_fn,
 						old_stats_line=old_stats_line,
 						new_stats_fn=os.path.join(tmp_dir,"stats_{}.ococo".format(iteration+1)),
