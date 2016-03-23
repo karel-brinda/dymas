@@ -7,11 +7,11 @@ FIGURES := $(shell find aux -name "*.pdf" -type f)
 all : $(MAIN).pdf
 
 $(MAIN).pdf : $(MAIN).tex $(FIGURES)
-	#find .. -type f -name "*.svg" -exec ./conv_svg2pdf.sh {} \;
+	#find .. -type f -name "*.svg" -exec ./convert_svg2pdf.sh {} \;
 	latexmk -f -pdf --interaction=nonstopmode $(MAIN)
 
 $(MAIN).tex :
-	find ../.. -type f -name "*.svg" | xargs ../conv_svg2pdf.sh
+	find ../.. -type f -name "*.svg" | xargs ../convert_svg2pdf.sh
 	./main_texfile.py
 
 edit: $(MAIN).pdf

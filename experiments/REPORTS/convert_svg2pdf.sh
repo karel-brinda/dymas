@@ -20,7 +20,7 @@ do
 		echo
 		#cat $SVG | perl -e "s/fill\ =\ 'white'/fill\ =\ 'none'/g;" | svg2pdf > $PDF
 		(cat $SVG | sed -e "s/'white'/'none'/" | svg2pdf > $PDF) || \
-			convert $SVG $PDF
+		convert $SVG $PDF
 			#convert -density 300 $SVG $PDF
 	fi
 done
