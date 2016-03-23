@@ -10,6 +10,8 @@ rule all:
 		"Borrelia_garinii.fa.fai",
 		"Mycobacterium_tuberculosis.fa",
 		"Mycobacterium_tuberculosis.fa.fai",
+		"Neisseria_meningitidis.fa",
+		"Neisseria_meningitidis.fa.fai",
 		smbl.prog.SAMTOOLS,
 		smbl.prog.BCFTOOLS,
 		smbl.prog.DWGSIM,
@@ -34,13 +36,21 @@ rule tuberculosis:
 		"""
 
 
+rule meningitidis:
+	output: "Neisseria_meningitidis.fa"
+	shell: """
+		wget -O Neisseria_meningitidis.fa http://genome2d.molgenrug.nl/Bacteria/Neisseria_meningitidis_G2136_uid162085/NC_017513.fna
+		"""
+
+
+
+
 rule human:
 	output: "Human.chr21.fa", temp("chr21.fa.gz")
 	shell: """
 		wget http://hgdownload.cse.ucsc.edu/goldenpath/hg19/chromosomes/chr21.fa.gz
 		gzip -c -d chr21.fa.gz > Human.chr21.fa
 		"""
-
 
 #http://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes/chr1.fa.gz
 rule mouse:
