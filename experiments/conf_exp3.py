@@ -9,4 +9,4 @@ conf_contamination_coverage=3.0
 #conf_title+="Human chr 21 (cont. Mouse chr 19 cov. 2.5)"
 #conf_description+="cov 7.5; "
 
-conf_allowed_delta=5000
+conf_allowed_delta=5

@@ -12,7 +12,7 @@ class Consensus_Ococo(Consensus):
 				variant=16,
 				ref_weight=0,
 				min_coverage=2,
-				remapping=False,
+				remapping=True,
 			):
 		assert variant in [16,32], "Wrong variant ({}).".format(variant)
 
@@ -44,11 +44,14 @@ class Consensus_Ococo(Consensus):
 		os.makedirs(tmp_dir,exist_ok=True)
 
 		if iteration==0 or self.remapping:
+			# no statics available
 			in_fasta_line = '-f "{}"'.format(fasta_fn)
 			old_stats_line = ""
 		else:
+			# use existing statistics
 			in_fasta_line=""
 			old_stats_line = '-s "{}"'.format(os.path.join(tmp_dir,"stats_{}.ococo".format(iteration)))
+		print(iteration,self.remapping,in_fasta_line,old_stats_line)
 		
 		smbl.utils.shell(
 				"""
@@ -72,9 +75,9 @@ class Consensus_Ococo(Consensus):
 						OCOCO="ococo",
 						variant="ococo16" if self.variant==16 else "ococo32",
 						unsorted_bam_fn=unsorted_bam_fn,
+						in_fasta_line=in_fasta_line,
 						old_stats_line=old_stats_line,
 						new_stats_fn=os.path.join(tmp_dir,"stats_{}.ococo".format(iteration+1)),
-						in_fasta_line=in_fasta_line,
 						pileup_fn=pileup_fn,
 						compressed_vcf_fn=compressed_vcf_fn,
 						strategy=self.strategy,
