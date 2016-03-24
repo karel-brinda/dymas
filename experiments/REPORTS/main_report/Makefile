@@ -27,7 +27,7 @@ view:
 
 clean :
 	rm -fr aux/
-	latexmk -CA || rm main.pdf
+	latexmk -CA || rm -f main.pdf
 	cd ..
 	find . -type f -name "*.svg.pdf" | xargs rm
 

@@ -147,7 +147,8 @@ print(exps)
 for exp in exps:
 	try:
 		r.add_experiment(exp)
-	except:
+	except Exception as e:
 		print("Error: Experiment {} could not be added".format(exp))
+		print(str(e))
 
 r.latex()
