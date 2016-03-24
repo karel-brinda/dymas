@@ -3,7 +3,7 @@
 load "_init.gp"
 
 set out 'manual_exp2.svg'
-set title "Comparison of runs Exp2"
+set title "Exp2"
 
 par_x1=0.01
 par_x2=0.1
