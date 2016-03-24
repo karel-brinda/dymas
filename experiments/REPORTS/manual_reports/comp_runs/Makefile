@@ -2,8 +2,11 @@
 
 all:
 	~/.smbl/bin/gnuplot5 *.gp
-	../../convert_svg2pdf.sh manual_exp1.svg
-	../../convert_svg2pdf.sh manual_exp2.svg
+	../../convert_svg2pdf.sh *.svg
+	#../../convert_svg2pdf.sh manual_exp1.svg
+	#../../convert_svg2pdf.sh manual_exp2.svg
+	#../../convert_svg2pdf.sh manual_exp4.svg
+	#../../convert_svg2pdf.sh manual_exp5.svg
 
 clean:
 	rm -fr *.svg
