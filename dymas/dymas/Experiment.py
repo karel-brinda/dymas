@@ -3,6 +3,8 @@ import smbl
 import functools
 import shutil
 import gzip
+import inspect
+import termcolor
 
 # todo: tabix
 
@@ -10,7 +12,6 @@ from .Chain_Chainer import Chain_Chainer
 from .Chain import Chain
 
 from .Pileup_FakeEmpty import *
-
 
 class Experiment:
 
@@ -37,6 +38,22 @@ class Experiment:
 
 		self.register_smbl_rules()
 
+	def info_msg(self,iteration):
+		function=inspect.stack()[1][3]
+
+		txt_line="[{directory}] [{function}] [iteration {it}/{all_it}]".format(
+			directory=os.getcwd(),
+			function=function,
+			it=iteration,
+			all_it=self.iterations,
+		)
+		sep_line=len(txt_line)*"="
+		sep_line=termcolor.colored(sep_line,'red')
+		txt_line=termcolor.colored(txt_line,'red')
+		print(sep_line)
+		print(txt_line)
+		print(sep_line)
+
 	def input(self):
 		return [
 				self.fasta_fn(self.iterations),
@@ -47,7 +64,7 @@ class Experiment:
 	@property
 	def iterations(self):
 	    return self.reads_object.iterations
-	
+
 	@staticmethod
 	def _iteration(iteration,suffix=""):
 		return "{}{{}}".format(iteration).zfill(5+2).format(suffix)
@@ -210,12 +227,14 @@ class Experiment:
 	###########
 
 	def create_reads(self, iteration):
+		self.info_msg(iteration)
 		self.reads_object.create_fastq_iteration(
 				fastq_fn=self.fastq_fn(iteration),
 				iteration=iteration,
 			)
 
 	def map_reads(self, iteration):
+		self.info_msg(iteration)
 		self.mapping_object.map_reads(
 				fasta_fn=self.fasta_fn(iteration),
 				fastq_fn=self.fastq_fn(iteration),
@@ -240,21 +259,24 @@ class Experiment:
 				)
 
 	def sort_bam(self, iteration):
+		self.info_msg(iteration)
 		self.sorting_object.sort_bam(self.unsorted_bam_fn(iteration),self.sorted_bam_fn(iteration));
 
 	def create_pileup(self,iteration):
+		self.info_msg(iteration)
 		self.pileup_object.create_pileup(
-				fasta_fn=self.fasta_fn(iteration),				
+				fasta_fn=self.fasta_fn(iteration),
 				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
 				sorted_bam_fn=self.sorted_bam_fn(iteration),
-				pileup_fn=self.pileup_fn(iteration),				
+				pileup_fn=self.pileup_fn(iteration),
 			)
 
 	def create_consensus(self, iteration):
+		self.info_msg(iteration)
 		self.consensus_object.create_consensus(
 				fasta_fn=self.fasta_fn(iteration),
-				unsorted_bam_fn=self.unsorted_bam_fn(iteration),	
-				sorted_bam_fn=self.sorted_bam_fn(iteration),	
+				unsorted_bam_fn=self.unsorted_bam_fn(iteration),
+				sorted_bam_fn=self.sorted_bam_fn(iteration),
 				pileup_fn=self.pileup_fn(iteration),
 				compressed_vcf_fn=self.compressed_vcf_fn(iteration),
 				iteration=iteration,
@@ -262,6 +284,7 @@ class Experiment:
 			)
 
 	def create_full_chain(self, iteration):
+		self.info_msg(iteration)
 		if iteration==0:
 			shutil.copyfile(
 					self.basic_chain_fn(0),
@@ -272,16 +295,17 @@ class Experiment:
 					chain1_fn=self.full_chain_fn(iteration-1),
 					chain2_fn=self.basic_chain_fn(iteration),
 					new_chain_fn=self.full_chain_fn(iteration),
-				)		
+				)
 
 	def create_full_inverted_chain(self, iteration):
+		self.info_msg(iteration)
 		Chain.invert_chain(
 				chain1_fn=self.full_chain_fn(iteration),
 				chain2_fn=self.full_inverted_chain_fn(iteration),
 			)
 
 	def update_reference(self,iteration):
-
+		self.info_msg(iteration)
 		smbl.utils.shell('mkdir -p "{chain_dir}"'.format(
 				chain_dir=os.path.dirname(self.basic_chain_fn(iteration))
 			)
@@ -309,8 +333,8 @@ class Experiment:
 									os.linesep.join(
 											[
 												" ".join(["chain", "0",
-														chrom, length, "+", "0", length, 
-														chrom, length, "+", "0", length, 
+														chrom, length, "+", "0", length,
+														chrom, length, "+", "0", length,
 														"0",
 													]),
 												"{}".format(length),
@@ -339,6 +363,7 @@ class Experiment:
 				)
 
 	def rnf_lift(self, iteration):
+		self.info_msg(iteration)
 		#if iteration==0:
 		#	shutil.copyfile(
 		#			self.unsorted_bam_fn(0),
