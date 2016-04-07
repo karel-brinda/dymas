@@ -181,6 +181,7 @@ class Experiment:
 						self.fasta_fn(iteration),
 						self.fasta_fn(iteration)+".fai",
 						self.compressed_vcf_fn(iteration),
+						smbl.prog.BCFTOOLS,
 					],
 				output=[
 						self.fasta_fn(iteration+1),
