@@ -3,7 +3,7 @@
 load "_init.gp"
 
 set out 'manual_exp1.svg'
-set title "Exp1"
+set title "Experiment 1"
 
 par_x1=0.01
 par_x2=0.1
