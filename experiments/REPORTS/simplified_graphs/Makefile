@@ -1,4 +1,4 @@
-.PHONE: all
+.PHONY: all clean
 
 SCRIPT=./simple_report.py
 
@@ -14,3 +14,6 @@ all: $(ROCS)
 		$(SCRIPT) $$exp ; \
 	done
 
+clean:
+	rm -fr output/*.svg
+	rm -fr output/*.pdf

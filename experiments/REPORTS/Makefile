@@ -15,4 +15,7 @@ dropbox:
 	cp -ar ../REPORTS ~/Dropbox/
 
 clean:
-	git clean -fxd .
+	$(MAKE) -C main_report clean
+	$(MAKE) -C manual_reports clean
+	$(MAKE) -C simplified_graphs clean
+	$(MAKE) -C _rocs clean

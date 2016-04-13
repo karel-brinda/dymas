@@ -1,8 +1,15 @@
 .PHONY: all clean
 
 all:
-	~/.smbl/bin/gnuplot5 *.gp
+	export PATH=$PATH:~/.smbl/bin
+	gnuplot5 *.gp
 	../../convert_svg2pdf.sh *.svg
+
+	for f in *.svg ; do \
+		svg2pdf $$f $$f.pdf || \
+		convert -density 200 $$f $$f.pdf; \
+	done
+
 	rename 's/\.svg\.pdf$//\.pdf/' *.svg.pdf
 	#../../convert_svg2pdf.sh manual_exp1.svg
 	#../../convert_svg2pdf.sh manual_exp2.svg
