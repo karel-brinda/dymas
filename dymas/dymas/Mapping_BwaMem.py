@@ -6,7 +6,8 @@ from .Mapping import Mapping
 class Mapping_BwaMem(Mapping):
 
 	def __init__(self):
-		self.cores=multiprocessing.cpu_count()
+		#self.cores=multiprocessing.cpu_count()
+		self.cores=4
 
 	@property
 	def required(self):

@@ -6,7 +6,8 @@ from .Mapping import Mapping
 class Mapping_Bowtie2(Mapping):
 
 	def __init__(self,local_alignment=False):
-		self.cores=multiprocessing.cpu_count()
+		#self.cores=multiprocessing.cpu_count()
+		self.cores=4
 		self.local_alignment=local_alignment
 
 	@property
