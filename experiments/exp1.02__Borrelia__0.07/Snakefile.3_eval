@@ -1,9 +1,17 @@
 from conf import *
 
 rnftools.lavender.Report(
-	bam_dirs=[
-		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".dyn"),
-		"./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".itref"),
+	panels=[
+		{
+			"panel_dir": "3_evaluation.dyn",
+			"bam_dir": "./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".dyn"),
+			"title": "Dynamic mapping",
+		},
+		{
+			"panel_dir": "3_evaluation.itref",
+			"bam_dir": "./{}/3.3_rnf_lifted_bam".format(dymas.dir_alignments+".itref"),
+			"title": "Iterative referencing",
+		},
 	],
 	name=dymas.dir_eval,
 	keep_intermediate_files=False,
