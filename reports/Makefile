@@ -1,12 +1,15 @@
 .PHONY: all clean dropbox main_report simplified_graphs rocs
 
-all: main_report simplified_graphs
+all: main_report simplified_graphs manual_reports
 
 main_report:
 	$(MAKE) -C main_report
 
 simplified_graphs: rocs
 	$(MAKE) -C simplified_graphs
+
+manual_reports: rocs
+	$(MAKE) -C manual_reports
 
 rocs:
 	$(MAKE) -C _rocs
