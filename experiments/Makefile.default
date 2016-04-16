@@ -1,20 +1,16 @@
-.PHONY: clean run run1 run2 run3 run4 rm1 rm2 rm3 rm4 view
+.PHONY: clean run run1 run2 run3 run4 rm1 rm2 rm3 view
 
 run: run1 run2 run3 run4
 
-clean:
-	git clean -fxd .
+clean: rm1 rm2 rm3 rm4
 
 rm1:
 	rm -fr 1_reads*
 
 rm2:
-	rm -fr 2_alignments.dyn/
+	rm -fr 2_alignments.*
 
 rm3:
-	rm -fr 2_alignments.itref/
-
-rm4:
 	rm -fr 3_evaluation*
 
 run1:

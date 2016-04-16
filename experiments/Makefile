@@ -1,12 +1,14 @@
 SUBDIRS := $(wildcard exp*/.)
 
-.PHONY : all $(SUBDIRS) data
+.PHONY : all clean $(SUBDIRS) data
 
 all : $(SUBDIRS)
-	$(MAKE) -C REPORTS
 
 $(SUBDIRS) : data 
-	    $(MAKE) -C $@
+	$(MAKE) -C $@
 
 data :
 	$(MAKE) -C exp0.*
+
+clean:
+	$(MAKE) -C $(SUBDIRS) clean
