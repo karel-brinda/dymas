@@ -40,7 +40,7 @@ def copy_report(
 
 		def symlink(old,new):
 			try:
-				os.unlink(old)
+				os.unlink(new)
 			except:
 				pass
 			os.symlink("../"+old,new)
