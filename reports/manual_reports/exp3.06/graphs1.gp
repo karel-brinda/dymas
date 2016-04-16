@@ -1,5 +1,5 @@
 
-experiment_dir='../../../experiments/exp2.04__Tuberculosis__0.07-ococo16/'
+experiment_dir='../../../experiments/exp3.06__Meningitidis__0.07-indels/'
 
 set x2lab "FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}} "
 set log x
