@@ -4,7 +4,8 @@ coverage=10
 cores=8
 fa_orig=smbl.fasta.HUMAN_HG38
 fa_here="genome.fa"
-fq="reads.bwa.read1.fastq"
+fq1="reads.bwa.read1.fastq"
+fq2="reads.bwa.read2.fastq"
 
 l0="l0_reads.txt"
 l1="l1_index.txt"
@@ -20,11 +21,12 @@ rule mapping_nofile:
 	output: l21
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq} > /dev/null)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} > /dev/null)) 2>&1)>{o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				fa=fa_here,
-				fq=fq,
+				fq1=fq1,
+				fq2=fq2,
 				o=l21,
 				cores=cores,
 			)
@@ -34,12 +36,13 @@ rule mapping_unsorted:
 	output: "alignment_unsorted.bam",l22
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq} | {samtools} view -b - > alignment_unsorted.bam)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - > alignment_unsorted.bam)) 2>&1)>{o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				samtools=smbl.prog.SAMTOOLS,
 				fa=fa_here,
-				fq=fq,
+				fq1=fq1,
+				fq2=fq2,
 				o=l22,
 				cores=cores,
 			)
@@ -49,12 +52,13 @@ rule mapping_sorted:
 	output: "alignment_sorted.bam",l23
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq} | {samtools} view -b - | {samtools} sort - > alignment_sorted.bam)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - | {samtools} sort - > alignment_sorted.bam)) 2>&1)>{o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				samtools=smbl.prog.SAMTOOLS,
 				fa=fa_here,
-				fq=fq,
+				fq1=fq1,
+				fq2=fq2,
 				o=l23,
 				cores=cores,
 			)
