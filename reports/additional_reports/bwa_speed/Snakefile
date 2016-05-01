@@ -1,0 +1,93 @@
+import smbl
+
+coverage=10
+cores=8
+fa_orig=smbl.fasta.HUMAN_HG38
+fa_here="genome.fa"
+fq="reads.bwa.read1.fastq"
+
+l0="l0_reads.txt"
+l1="l1_index.txt"
+l21="l2.1_alignment_nofile.txt"
+l22="l2.2_alignment_unsorted.txt"
+l23="l2.3_alignment_sorted.txt"
+
+rule all:
+	input: l0, l1, l21, l22, l23
+
+rule mapping_nofile:
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq
+	output: l21
+	shell:
+		"""
+			((time ({bwa} mem -t {cores} {fa} {fq} > /dev/null)) 2>&1)>{o}
+		""".format(
+				bwa=smbl.prog.BWA,
+				fa=fa_here,
+				fq=fq,
+				o=l21,
+				cores=cores,
+			)
+
+rule mapping_unsorted:
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq, smbl.prog.SAMTOOLS
+	output: "alignment_unsorted.bam",l22
+	shell:
+		"""
+			((time ({bwa} mem -t {cores} {fa} {fq} | {samtools} view -b - > alignment_unsorted.bam)) 2>&1)>{o}
+		""".format(
+				bwa=smbl.prog.BWA,
+				samtools=smbl.prog.SAMTOOLS,
+				fa=fa_here,
+				fq=fq,
+				o=l22,
+				cores=cores,
+			)
+
+rule mapping_sorted:
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq, smbl.prog.SAMTOOLS
+	output: "alignment_sorted.bam",l23
+	shell:
+		"""
+			((time ({bwa} mem -t {cores} {fa} {fq} | {samtools} view -b - | {samtools} sort - > alignment_sorted.bam)) 2>&1)>{o}
+		""".format(
+				bwa=smbl.prog.BWA,
+				samtools=smbl.prog.SAMTOOLS,
+				fa=fa_here,
+				fq=fq,
+				o=l23,
+				cores=cores,
+			)
+
+rule index:
+	input: fa_here, smbl.prog.BWA
+	output: fa_here+".bwt", l1
+	shell:
+		"""
+			((time {bwa} index {fa}) 2>&1) > {o}
+		""".format(
+				bwa=smbl.prog.BWA,
+				fa=fa_here,
+				o=l1,
+			)
+
+rule reads:
+	input: fa_here, smbl.prog.DWGSIM
+	output: fq, l0
+	shell:
+		"""
+			((time {dwgsim} -C {c} {fa} reads) 2>&1) >{o}
+		""".format(
+				dwgsim=smbl.prog.DWGSIM,
+				fa=fa_here,
+				o=l0,
+				c=coverage,
+			)
+
+rule genome:
+	input: fa_orig
+	output: fa_here
+	shell: 'cp "{}" "{}"'.format(fa_orig,fa_here)
+
+include:
+	smbl.include()
