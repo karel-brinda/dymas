@@ -17,7 +17,7 @@ rule all:
 	input: l0, l1, l21, l22, l23
 
 rule mapping_nofile:
-	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq1, fq2
 	output: l21
 	shell:
 		"""
@@ -32,7 +32,7 @@ rule mapping_nofile:
 			)
 
 rule mapping_unsorted:
-	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq, smbl.prog.SAMTOOLS
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq1, fq2, smbl.prog.SAMTOOLS
 	output: "alignment_unsorted.bam",l22
 	shell:
 		"""
@@ -48,7 +48,7 @@ rule mapping_unsorted:
 			)
 
 rule mapping_sorted:
-	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq, smbl.prog.SAMTOOLS
+	input: fa_here, fa_here+".bwt", smbl.prog.BWA, fq1, fq2, smbl.prog.SAMTOOLS
 	output: "alignment_sorted.bam",l23
 	shell:
 		"""
@@ -77,7 +77,7 @@ rule index:
 
 rule reads:
 	input: fa_here, smbl.prog.DWGSIM
-	output: fq, l0
+	output: fq1, fq2, l0
 	shell:
 		"""
 			((time {dwgsim} -C {c} {fa} reads) 2>&1) >{o}
