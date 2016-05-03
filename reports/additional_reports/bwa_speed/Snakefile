@@ -21,7 +21,7 @@ rule mapping_nofile:
 	output: l21
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} > /dev/null)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} > /dev/null)) 2>&1) | tee {o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				fa=fa_here,
@@ -36,7 +36,7 @@ rule mapping_unsorted:
 	output: "alignment_unsorted.bam",l22
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - > alignment_unsorted.bam)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - > alignment_unsorted.bam)) 2>&1) | tee {o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				samtools=smbl.prog.SAMTOOLS,
@@ -52,7 +52,7 @@ rule mapping_sorted:
 	output: "alignment_sorted.bam",l23
 	shell:
 		"""
-			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - | {samtools} sort - > alignment_sorted.bam)) 2>&1)>{o}
+			((time ({bwa} mem -t {cores} {fa} {fq1} {fq2} | {samtools} view -b - | {samtools} sort - > alignment_sorted.bam)) 2>&1) | tee {o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				samtools=smbl.prog.SAMTOOLS,
@@ -68,7 +68,7 @@ rule index:
 	output: fa_here+".bwt", l1
 	shell:
 		"""
-			((time {bwa} index {fa}) 2>&1) > {o}
+			((time {bwa} index {fa}) 2>&1) | tee {o}
 		""".format(
 				bwa=smbl.prog.BWA,
 				fa=fa_here,
@@ -80,7 +80,7 @@ rule reads:
 	output: fq1, fq2, l0
 	shell:
 		"""
-			((time {dwgsim} -C {c} {fa} reads) 2>&1) >{o}
+			((time {dwgsim} -C {c} {fa} reads) 2>&1) | tee {o}
 		""".format(
 				dwgsim=smbl.prog.DWGSIM,
 				fa=fa_here,
