@@ -1,4 +1,4 @@
 #! /usr/bin/env bash
 
-grep "s$"  l*.txt
+grep "[0-9]s$"  l*.txt
 
