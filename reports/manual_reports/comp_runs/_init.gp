@@ -1,8 +1,8 @@
 set log x
 set log x2
 
-set key bottom right
-set x2lab "FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  "
+set key bottom left
+set x2lab "FDR {{/:Italic(#wrongly mapped reads / #mapped reads)}}  "
 set ylab "#correctly mapped reads / #reads which should be mapped"
 
 set key spacing 0.8 opaque
