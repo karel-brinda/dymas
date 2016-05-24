@@ -20,9 +20,10 @@ set datafile separator "\t"
 set palette negative
 
 set termin svg size 640,640 enhanced
-set key box off
+set key nobox
 set key spacing 0.8 opaque
 set key bottom right
+set key title "{/:Bold Iterations}"
 
 set xran [.008:.15]
 set x2ran [.008:.15]
