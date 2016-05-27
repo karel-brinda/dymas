@@ -1,0 +1,30 @@
+.PHONY: clean run run1 run2 run3 run4 rm1 rm2 rm3 view
+
+run: run1 run2 run3 run4
+
+clean: rm1 rm2 rm3
+
+rm1:
+	rm -fr 1_reads*
+
+rm2:
+	rm -fr 2_alignments.*
+
+rm3:
+	rm -fr 3_evaluation*
+
+run1:
+	snakemake -s Snakefile.1_reads --cores -p
+
+run2: run1
+	snakemake -s Snakefile.2_1_exp_dyn --cores -p
+
+run3: run1
+	snakemake -s Snakefile.2_2_exp_itref --cores -p
+
+run4: run2 run3
+	snakemake -s Snakefile.3_eval --cores -p
+
+view:
+	open 3_evaluation.html || google-chrome 3_evaluation.html
+

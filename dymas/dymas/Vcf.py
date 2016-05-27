@@ -40,7 +40,7 @@ class Vcf:
 		return self._fasta_fn
 
 
-	def add_snp(self,chromosome, position, new_base):
+	def add_snp(self,chromosome, position, new_base, flush_immediately=False):
 		self._check_chromosome_and_position(chromosome,last_useful_position=position-1)
 		if len(self._buffer)>0 and self._buffer[-1][1]==position:
 			#record for this position already exists => modify
@@ -56,6 +56,8 @@ class Vcf:
 						new_base,
 					]
 				)
+		if flush_immediately:
+			self._flush()
 
 	def add_ins(self,chromosome, position, new_base):
 		self._check_chromosome_and_position(chromosome,last_useful_position=position)

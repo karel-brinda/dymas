@@ -17,5 +17,6 @@ class Pileup(object):
 				fasta_fn,
 				unsorted_bam_fn,
 				sorted_bam_fn,
+				pileup_fn,
 			):
 		return

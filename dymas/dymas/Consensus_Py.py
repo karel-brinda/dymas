@@ -2,6 +2,7 @@ import smbl
 import os
 import numpy
 import gzip
+import random
 
 from .Consensus import Consensus
 from .Vcf import Vcf
@@ -14,6 +15,7 @@ class Consensus_Py(Consensus):
 				call_snps=True,
 				call_ins=True,
 				call_dels=True,
+				keep_del_stats=False,
 			):
 
 		self.min_coverage=min_coverage
@@ -21,6 +23,7 @@ class Consensus_Py(Consensus):
 		self.call_snps=call_snps
 		self.call_ins=call_ins
 		self.call_dels=call_dels
+		self.keep_del_stats=keep_del_stats
 
 
 	@property
@@ -64,13 +67,15 @@ class Consensus_Py(Consensus):
 
 				(chrom, pos, base, cov, nucls, _) = line.split("\t")
 
-				cov=int(cov)
-				if int(cov)<self.min_coverage:
-					continue
-				trans["."]=trans[","]=trans[base]
+				try:
+					trans["."]=trans[","]=trans[base]
+				except:
+					trans["."]=trans[","]=trans[trans_inv[random.randint(0, 3)]]
 				vector_snps = numpy.array([0, 0, 0, 0, 0])
 				vector_ins = numpy.array([0, 0, 0, 0])
 
+				# filling vector_snps and vector_ins
+				cov=int(cov)
 				i=0
 				l=len(nucls)
 				while i<l:
@@ -98,25 +103,39 @@ class Consensus_Py(Consensus):
 						else:
 							raise NotImplementedError("Unknown character '{}'".format(char))
 
+				if self.call_dels or self.keep_del_stats:
+					cov_2=vector_snps[0]+vector_snps[1]+vector_snps[2]+vector_snps[3]+vector_snps[4]
+				else:
+					cov_2=vector_snps[0]+vector_snps[1]+vector_snps[2]+vector_snps[3]
+
+				if cov_2<self.min_coverage:
+					continue
+
 				for i in range(5):
-					if vector_snps[i]>=self.accept_level*cov:
+					if vector_snps[i]>=self.accept_level*cov_2:
+						# calling deletions
 						if i==4:
 							if self.call_dels:
 								vcf.add_del(
 										chromosome=chrom,
 										position=int(pos),
 									)
+						# calling snps
 						else:
 							if self.call_snps:
 								new_base=trans_inv[i]
+								# debugging (want to have 1 snp / line)
+								call_some_indels = self.call_dels or self.call_ins
 								if base != new_base:
 									vcf.add_snp(
 											chromosome=chrom,
 											position=int(pos),
 											new_base=new_base,
+											flush_immediately=not call_some_indels,
 										)
 						break
 
+				# calling insertions
 				if self.call_ins:
 					max_votes_ins=max(vector_ins)
 					if max_votes_ins>=self.accept_level*cov:
