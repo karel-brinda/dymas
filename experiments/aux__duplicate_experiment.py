@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+# then rename 's/Borrelia/4bonacci/' exp5.*
+
 import sys
 import snakemake
 import os
