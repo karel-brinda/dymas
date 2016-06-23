@@ -2,24 +2,23 @@
 
 ## Introduction
 
-This is a repository with Supporting Information for paper
-K. Břinda, V. Boeva, G. Kucherov: Dynamic read mapping and online consensus calling for better variant detection.
+This is repository contains Dynamic Mapping Simulator and supporting information for the paper
+K. Břinda, V. Boeva, G. Kucherov: *Dynamic read mapping and online consensus calling for better variant detection* ([arXiv:1605.09070](http://arxiv.org/abs/1605.09070)).
 
 
 Dynamic mapping is mapping to a reference, which is continuously corrected according to alignments computed so far. *Dynamic Mapping Simulator* is a pipeline to simulate dynamic mapping using existing software to evaluate its benefits in comparison to standard *static mapping* and *iterative referencing*. For more details, see the paper.
 
 ## Simulation algorithm
 
-Simulation of dynamic mapping:
-
-
-
-
 Scheme of the simulation pipeline:
+
 ![](docs/simulation_pipeline.png)
 
-Reads:
+Reads are taken in the following way:
+
 ![](docs/reads.png)
+
+SM = static mapping, DM = dynamic mapping without remapping, DM-remap = dynamic mapping with remapping, IR = iterative referencing
 
 ## Structure of this repository
 
@@ -78,7 +77,7 @@ pip install -r requirements.txt
 	source activate dymas
   ```
 
-1. Clean existing data
+1. Remove computed data
 
   ```bash
   make clean
@@ -95,6 +94,7 @@ pip install -r requirements.txt
   ```bash
   make -C experiments -j 10
   ```
+
 4. Generate reports
 
   ```bash
