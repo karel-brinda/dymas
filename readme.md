@@ -54,7 +54,7 @@ Environment installation:
 	conda create -y --name dymas \
 	  -c bioconda \
 		python==3.4 \
-		snakemake samtools git cmake gnuplot
+		snakemake samtools git cmake gnuplot ococo
 ```
 
 Environment activation:
