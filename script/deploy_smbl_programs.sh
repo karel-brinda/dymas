@@ -10,7 +10,7 @@ cp gnuplot5 ~/.smbl/bin
 
 cd ~/.smbl/bin
 
-progs="bwa samtools bcftools dwgsim bowtie2"
+progs="bwa samtools bcftools dwgsim bowtie2 tabix bgzip"
 
 for x in $progs; do
 	echo linking $x
