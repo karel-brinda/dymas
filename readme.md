@@ -69,6 +69,12 @@ Installation of Python packages (in the activated environment)
 pip install -r requirements.txt
 ```
 
+Install SMBL handlers for Conda
+
+```
+./script/deploy_smbl_programs.sh
+```
+
 ### Replication steps
 
 0. Install all required software and activate the corresponding Conda environment.
