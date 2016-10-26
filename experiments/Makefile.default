@@ -1,8 +1,8 @@
-.PHONY: clean run run1 run2 run3 run4 rm1 rm2 rm3 view
+.PHONY: clean run run1 run2 run3 run4 run5 rm1 rm2 rm3 rm5 view
 
-run: run1 run2 run3 run4
+run: run1 run2 run3 run4 run5
 
-clean: rm1 rm2 rm3
+clean: rm1 rm2 rm3 rm5
 
 rm1:
 	rm -fr 1_reads*
@@ -12,6 +12,9 @@ rm2:
 
 rm3:
 	rm -fr 3_evaluation*
+
+rm5:
+	rm -fr *.tsv
 
 run1:
 	snakemake -s Snakefile.1_reads --cores -p
@@ -24,6 +27,9 @@ run3: run1
 
 run4: run2 run3
 	snakemake -s Snakefile.3_eval --cores -p
+
+run5: run2 run3
+	../../scripts/run_edit_distances.sh
 
 view:
 	open 3_evaluation.html || google-chrome 3_evaluation.html
