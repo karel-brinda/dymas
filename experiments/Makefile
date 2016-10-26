@@ -6,6 +6,7 @@ all : $(SUBDIRS)
 
 $(SUBDIRS) : data 
 	$(MAKE) -C $@
+	tail -n +1 */*.tsv > results_edit_distance.tsv
 
 data :
 	$(MAKE) -C exp0.*
