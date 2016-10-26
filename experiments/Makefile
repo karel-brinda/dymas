@@ -12,7 +12,7 @@ data :
 
 clean:
 	@for a in $$(ls); do \
-		if [ -d $$a ]; then \
+		if [ -e $$a/Makefile ]; then \
 			$(MAKE) -C $$a clean; \
 		fi; \
 	done;	
