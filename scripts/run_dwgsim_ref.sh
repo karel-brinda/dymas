@@ -4,7 +4,7 @@
 # can be run when experiment is finished
 
 set -o pipefail
-set -x
+#set -x
 
 if [ "$#" -ne 1 ]; then
 	echo "Illegal number of parameters"
@@ -20,5 +20,5 @@ else
 	tabix dwgsim_files.pe.1.mutations.vcf.gz
 fi
 
-bcftools consensus -i -f ../../2_alignments.itref/1_reference/00000.fa dwgsim_files.pe.1.mutations.vcf.gz
+bcftools consensus -f ../../2_alignments.itref/1_reference/00000.fa dwgsim_files.pe.1.mutations.vcf.gz
 
