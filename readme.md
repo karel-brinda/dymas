@@ -54,7 +54,7 @@ Environment installation:
 	conda create -y --name dymas \
 	  -c bioconda \
 		python==3.4 \
-		snakemake samtools git cmake gnuplot ococo numpy biopython
+		snakemake samtools git cmake gnuplot ococo numpy biopython pysam==0.8.4 edlib
 ```
 
 Environment activation:
@@ -72,7 +72,7 @@ pip install -r requirements.txt
 Install SMBL handlers for Conda
 
 ```
-./script/deploy_smbl_programs.sh
+./scripts/deploy_smbl_programs.sh
 ```
 
 ### Replication steps
