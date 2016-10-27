@@ -13,11 +13,13 @@ freqs={
 	"S":0,
 	"H":0,
 	"=":0,
+	"nm":0,
 }
 
 
 r=re.compile(r'[0-9]*.')
 r_md=re.compile(r'MD:Z:([0-9A-Z\^]*)')	
+r_nm=re.compile(r'NM:i:([0-9]*)')	
 
 for line in sys.stdin:
 	if line[0]=="@":
@@ -38,6 +40,7 @@ for line in sys.stdin:
 		"S":0,
 		"H":0,
 		"=":0,
+		"nm":0,
 	}
 
 
@@ -50,8 +53,17 @@ for line in sys.stdin:
 		count=int(x[:-1])
 		freqs_aln[op]+=count
 
-	#correction - = vs. X
-	ops2=r_md.findall(line)
+	#
+	# NM - Edit distance to the reference, including ambiguous bases but excluding clipping.
+	#
+	nm=r_nm.findall(line)
+	nm=int(nm[0])
+	freqs_aln["nm"]=nm
+
+
+	#
+	# correction - = vs. X
+	#
 	md=r_md.findall(line)
 	md=md[0]
 	dels_mismatches=md.count("A")+md.count("C")+md.count("G")+md.count("T")
