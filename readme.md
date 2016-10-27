@@ -46,7 +46,7 @@ SM = static mapping, DM = dynamic mapping without remapping, DM-remap = dynamic 
 * Inkscape
 * Gnuplot 5
 
-#### Recommended way of installation using [Anaconda](https://www.continuum.io/downloads)
+#### Recommended way of installation using [Miniconda](http://conda.pydata.org/miniconda.html)
 
 Environment installation:
 
@@ -63,13 +63,13 @@ Environment activation:
 source activate dymas
 ```
 
-Installation of Python packages (in the activated environment)
+Installation of the last version of RNFtools (in the activated environment)
 
 ```bash
-pip install -r requirements.txt
+pip install git+git://github.com/karel-brinda/rnftools
 ```
 
-Install SMBL handlers for Conda
+Installation of SMBL handlers for Conda
 
 ```
 ./scripts/deploy_smbl_programs.sh
