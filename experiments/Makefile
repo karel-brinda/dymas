@@ -2,10 +2,13 @@ SUBDIRS := $(wildcard exp*/.)
 
 .PHONY : all clean $(SUBDIRS) data
 
+V=1
+SHELL:=/bin/bash -o pipefail
+
 all : $(SUBDIRS)
 
 $(SUBDIRS) : data 
-	$(MAKE) -C $@
+	$(MAKE) -j 5 -C $@
 	tail -n +1 */*.tsv > results_edit_distance.tsv
 
 data :
