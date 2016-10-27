@@ -3,7 +3,7 @@
 V=1
 SHELL:=/bin/bash -o pipefail
 
-run: run1 run2 run3 run4 run5
+run: run1 run2 run3 run4 .edit_dist.compl
 
 clean: rm1 rm2 rm3 rm5
 
@@ -31,8 +31,9 @@ run3: run1
 run4: run2 run3
 	snakemake -s Snakefile.3_eval --cores -p
 
-run5: run2 run3
+.edit_dist.compl: run2 run3
 	../../scripts/run_edit_distances.sh .
+	touch $@
 
 view:
 	open 3_evaluation.html || google-chrome 3_evaluation.html
