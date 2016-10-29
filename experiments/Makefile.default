@@ -1,11 +1,13 @@
-.PHONY: clean run run1 run2 run3 run4 run5 rm1 rm2 rm3 rm5 view
+.PHONY: clean run rm1 rm2 rm3 rm5 view
 
 V=1
 SHELL:=/bin/bash -o pipefail
 
-run: run1 run2 run3 run4 .edit_dist.compl
+run: 1_reads.fq .dyn.complete .itref.complete evaluation.html .edit_dist.compl
 
 clean: rm1 rm2 rm3 rm5
+	rm -fr .*.compl
+	rm -fr .*.complete
 
 rm1:
 	rm -fr 1_reads*
@@ -19,19 +21,19 @@ rm3:
 rm5:
 	rm -fr *.tsv
 
-run1:
+1_reads.fq:
 	snakemake -s Snakefile.1_reads --cores -p
 
-run2: run1
+.dyn.complete: 1_reads.fq
 	snakemake -s Snakefile.2_1_exp_dyn --cores -p
 
-run3: run1
+.itref.complete: 1_reads.fq
 	snakemake -s Snakefile.2_2_exp_itref --cores -p
 
-run4: run2 run3
+evaluation.html: .dyn.complete .itref.complete
 	snakemake -s Snakefile.3_eval --cores -p
 
-.edit_dist.compl: run2 run3
+.edit_dist.compl: .dyn.complete .itref.complete
 	../../scripts/run_edit_distances.sh .
 	touch $@
 

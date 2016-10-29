@@ -7,7 +7,7 @@ SHELL:=/bin/bash -o pipefail
 
 all : $(SUBDIRS)
 
-$(SUBDIRS) : data 
+$(SUBDIRS): data 
 	$(MAKE) -C $@
 	tail -n +1 */*.tsv > results_edit_distance.tsv
 
