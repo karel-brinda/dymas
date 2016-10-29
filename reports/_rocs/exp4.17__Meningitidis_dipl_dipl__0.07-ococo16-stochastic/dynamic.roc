@@ -1,1 +1,0 @@
-../../../experiments/exp4.17__Meningitidis_dipl_dipl__0.07-ococo16-stochastic/3_evaluation.dyn/roc/00019.roc
