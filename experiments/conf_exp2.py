@@ -9,3 +9,5 @@ conf_contamination_coverage=5
 conf_title+="Mycobacterium tuberculosis (cont. Borrelia garinii)"
 #conf_description+="cov 5; "
 conf_allowed_delta=5
+
+haploid_mode=True
