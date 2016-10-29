@@ -1,5 +1,7 @@
 .PHONY: all clean
 
+SHELL:=/bin/bash -o pipefail
+
 ROCS := $(shell find ../_rocs/ -type f -name "*.roc")
 
 all: $(ROCS)

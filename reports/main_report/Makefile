@@ -1,6 +1,8 @@
 MAIN = main
 FIGURES := $(shell find aux -name "*.pdf" -type f)
 
+SHELL:=/bin/bash -o pipefail
+
 .PHONY: all clean
 
 all : $(MAIN).pdf

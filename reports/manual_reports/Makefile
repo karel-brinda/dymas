@@ -2,6 +2,8 @@
 
 .PHONY: clean all
 
+SHELL:=/bin/bash -o pipefail
+
 all:
 	@for a in $$(ls); do \
 		if [ -d $$a ]; then \

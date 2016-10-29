@@ -1,5 +1,7 @@
 .PHONY: all clean experiments reports
 
+SHELL:=/bin/bash -o pipefail
+
 all: experiments reports
 
 clean:
