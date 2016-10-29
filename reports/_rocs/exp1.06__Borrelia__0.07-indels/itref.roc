@@ -1,1 +1,0 @@
-../../../experiments/exp1.06__Borrelia__0.07-indels/3_evaluation.itref/roc/00004.roc

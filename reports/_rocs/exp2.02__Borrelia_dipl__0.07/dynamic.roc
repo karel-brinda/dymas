@@ -1,1 +1,0 @@
-../../../experiments/exp2.02__Borrelia_dipl__0.07/3_evaluation.dyn/roc/00019.roc

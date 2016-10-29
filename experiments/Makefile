@@ -20,3 +20,5 @@ clean:
 			$(MAKE) -C $$a clean; \
 		fi; \
 	done;	
+	
+	rm -f *.tsv

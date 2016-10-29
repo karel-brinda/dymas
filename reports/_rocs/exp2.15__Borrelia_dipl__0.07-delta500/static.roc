@@ -1,1 +1,0 @@
-../../../experiments/exp2.15__Borrelia_dipl__0.07-delta500/3_evaluation.itref/roc/00000.roc

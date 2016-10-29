@@ -1,1 +1,0 @@
-../../../experiments/exp3.16__Meningitidis__0.07-bowtie2local/3_evaluation.itref/roc/00004.roc

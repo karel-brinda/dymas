@@ -1,1 +1,0 @@
-../../../experiments/exp4.15__Meningitidis_dipl__0.07-delta500/3_evaluation.itref/roc/00004.roc
