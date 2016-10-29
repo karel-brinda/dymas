@@ -1,1 +1,0 @@
-../../../experiments/exp4.08__Solibacter__0.07-dels/3_evaluation.dyn/roc/00019.roc

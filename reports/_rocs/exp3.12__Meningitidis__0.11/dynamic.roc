@@ -1,1 +1,0 @@
-../../../experiments/exp3.12__Meningitidis__0.11/3_evaluation.dyn/roc/00019.roc

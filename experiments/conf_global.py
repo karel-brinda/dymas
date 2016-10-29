@@ -14,8 +14,6 @@ conf_coverage_per_iteration=0.5
 
 #conf_updates_indels=True
 
-conf_allowed_delta=5
-
 conf_title=""
 conf_description=""
 

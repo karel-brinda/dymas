@@ -1,1 +1,0 @@
-../../../experiments/exp4.17__Solibacter__0.07-ococo16-stochastic/3_evaluation.dyn/roc/00019.roc

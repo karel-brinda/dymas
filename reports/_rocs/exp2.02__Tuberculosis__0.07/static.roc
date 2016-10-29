@@ -1,1 +1,0 @@
-../../../experiments/exp2.02__Tuberculosis__0.07/3_evaluation.itref/roc/00000.roc

@@ -1,1 +1,0 @@
-../../../experiments/exp2.08__Tuberculosis__0.07-dels/3_evaluation.dyn/roc/00019.roc
