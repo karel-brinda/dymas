@@ -5,17 +5,20 @@ load "_init.gp"
 set out 'manual_exp3.svg'
 set title "Experiment 3"
 
-par_x1=0.01
-par_x2=0.1
+#par_x1=0.01
+#par_x2=0.1
+#
+#par_y1=80
+#par_y2=100
+#
+#set xran [par_x1:par_x2]
+#set x2ran [par_x1:par_x2]
+#
+#set yran [par_y1:par_y2]
+#set y2ran [par_y1:par_y2]
 
-par_y1=80
-par_y2=100
-
-set xran [par_x1:par_x2]
-set x2ran [par_x1:par_x2]
-
-set yran [par_y1:par_y2]
-set y2ran [par_y1:par_y2]
+set autoscale x
+set autoscale y
 
 
 plot \
