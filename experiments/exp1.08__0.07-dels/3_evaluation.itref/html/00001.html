@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+			<html>
+			<head>
+				<meta charset="UTF-8" />
+				<title>00001</title>
+				<style type="text/css">
+				
+table            {border-collapse:collapse;}
+td               {border: solid #aaaaff 1px;padding:4px;text-align:right;}
+colgroup, thead  {border: solid black 2px;padding 2px;}
+.link_to_top     {font-size:10pt;}
+.desc            {color:#aaa;}
+.formats         {text-align:left;margin-bottom:20px;}
+
+				</style>
+			</head>
+			<body>
+				<h1 id="top">
+					00001
+					<span class="link_to_top">
+						[<a href="../../3_evaluation.html">Back to main report</a>]
+					</span>
+				</h1>
+
+				<p>
+					<a href="#info_eval">Information about evaluation</a> -
+					<a href="#info_prog">Information about program</a> -
+					<a href="#roctable">ROC table</a> -
+					<a href="#graphs">Graphs</a>
+				</p>
+
+				<h2 id="info_eval">
+					Information about evaluation
+					
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="../../3_evaluation.html">Back to main report</a>]
+						</span>
+					
+				</h2>
+
+				<table>
+<tr><td style="font-weight:bold">BAM file:</td><td style="text-align:left">./2_alignments.itref/3.3_rnf_lifted_bam/00001.bam</td></tr>
+<tr><td style="font-weight:bold">Allowed delta:</td><td style="text-align:left">5</td></tr>
+</table>
+
+				<h2 id="info_prog">
+					Information about program
+					
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="../../3_evaluation.html">Back to main report</a>]
+						</span>
+					
+				</h2>
+
+
+				<table>
+<tr><td style="font-weight:bold">ID:</td><td style="text-align:left">bwa</td></tr>
+<tr><td style="font-weight:bold">PN:</td><td style="text-align:left">bwa</td></tr>
+<tr><td style="font-weight:bold">VN:</td><td style="text-align:left">0.7.15-r1140</td></tr>
+<tr><td style="font-weight:bold">CL:</td><td style="text-align:left">bwa mem -t 4 2_alignments.itref/1_reference/00001.fa 2_alignments.itref/2_reads/00001.fq</td></tr>
+</table>
+
+				<h2 id="roctable">
+					ROC table
+					
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="../../3_evaluation.html">Back to main report</a>]
+						</span>
+					
+				</h2>
+
+				<p style="font-size:80%">
+					<strong>M</strong>:
+						mapped correctly
+						<span class="desc">
+							(all segments of tuple are mapped once and correctly),
+						</span>
+					<strong>w</strong>:
+						mapped to wrong position
+						<span class="desc">
+							(at least one segment was mapped to a wrong position),
+						</span>
+					<strong>m</strong>:
+						mapped but should be unmapped
+						<span class="desc">
+							(at least one segment was mapped but the read should not be mapped),
+						</span>
+					<strong>P</strong>:
+						multimapped
+						<span class="desc">
+							(read should be mapped but it at least one segment was mapped several
+							times and all segments were mapped correctly at least once),
+						</span>
+					<strong>U</strong>:
+						unmapped correctly
+						<span class="desc">
+							(all segments of the read were correctly marked as unmapped),
+						</span>
+					<strong>u</strong>:
+						unmapped but should be mapped
+						<span class="desc">
+							(at least one segment was mapped but entire read should be unmapped),
+						</span>
+					<strong>T</strong>:	
+						thresholded correctly
+						<span class="desc">
+							(read shoud not be mapped),
+						</span>
+					<strong>t</strong>:
+						thresholded incorrectly
+						<span class="desc">
+							(read should be mapped),
+						</span>
+					<strong>x</strong>:
+						unknown
+						<span class="desc">
+							(read is probably not reported by mapper)
+						</span>
+				</p>
+				<table>
+					<colgroup span="1" style="">
+					<colgroup span="2" style="background-color:#ddd">
+					<colgroup span="8" style="">
+					<colgroup span="2" style="background-color:#ddd">
+					<colgroup span="10" style="">
+					<colgroup span="1" style="background-color:#ddd">
+					<colgroup span="1" style="">
+					<thead style="font-weight:bold;background-color:#ddddff">
+						<tr style="font-weight:bold;background-color:#ddddff">
+							<td>q</td>
+							<td>mapped</td>
+							<td>%</td>
+							<td>M</td>
+							<td>%</td>
+							<td>w</td>
+							<td>%</td>
+							<td>m</td>
+							<td>%</td>
+							<td>P</td>
+							<td>%</td>
+							<td>unmapped</td>
+							<td>%</td>
+							<td>U</td>
+							<td>%</td>
+							<td>u</td>
+							<td>%</td>
+							<td>T</td>
+							<td>%</td>
+							<td>t</td>
+							<td>%</td>
+							<td>x</td>
+							<td>%</td>
+							<td>sum</td>
+							<td>prec. (%)</td>
+						</tr>
+					</thead>
+					<tbody>
+						
+					<tr>
+						<td>        0                   </td>
+						<td>        7035                    </td>
+						<td><small> 99.58   </small></td>
+						<td>        6931                         </td>
+						<td><small> 98.52        </small></td>
+						<td>        104                         </td>
+						<td><small> 1.48        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                  </td>
+						<td><small> 0.42 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 100.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.522              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        1                   </td>
+						<td>        7015                    </td>
+						<td><small> 99.29   </small></td>
+						<td>        6918                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        50                  </td>
+						<td><small> 0.71 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 60.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        20                         </td>
+						<td><small> 40.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.617              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        16                   </td>
+						<td>        7014                    </td>
+						<td><small> 99.28   </small></td>
+						<td>        6917                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        51                  </td>
+						<td><small> 0.72 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 58.82        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        21                         </td>
+						<td><small> 41.18        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.617              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        18                   </td>
+						<td>        7013                    </td>
+						<td><small> 99.26   </small></td>
+						<td>        6916                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        52                  </td>
+						<td><small> 0.74 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 57.69        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        22                         </td>
+						<td><small> 42.31        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.617              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        21                   </td>
+						<td>        7012                    </td>
+						<td><small> 99.25   </small></td>
+						<td>        6915                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        53                  </td>
+						<td><small> 0.75 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 56.60        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        23                         </td>
+						<td><small> 43.40        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.617              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        26                   </td>
+						<td>        7011                    </td>
+						<td><small> 99.24   </small></td>
+						<td>        6914                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        54                  </td>
+						<td><small> 0.76 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 55.56        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        24                         </td>
+						<td><small> 44.44        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.616              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        28                   </td>
+						<td>        7009                    </td>
+						<td><small> 99.21   </small></td>
+						<td>        6912                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        56                  </td>
+						<td><small> 0.79 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 53.57        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        26                         </td>
+						<td><small> 46.43        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.616              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        30                   </td>
+						<td>        7008                    </td>
+						<td><small> 99.19   </small></td>
+						<td>        6911                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        57                  </td>
+						<td><small> 0.81 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 52.63        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        27                         </td>
+						<td><small> 47.37        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.616              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        35                   </td>
+						<td>        7007                    </td>
+						<td><small> 99.18   </small></td>
+						<td>        6910                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        58                  </td>
+						<td><small> 0.82 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 51.72        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        28                         </td>
+						<td><small> 48.28        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.616              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        36                   </td>
+						<td>        7006                    </td>
+						<td><small> 99.16   </small></td>
+						<td>        6909                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        59                  </td>
+						<td><small> 0.84 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 50.85        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        29                         </td>
+						<td><small> 49.15        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.615              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        37                   </td>
+						<td>        7004                    </td>
+						<td><small> 99.14   </small></td>
+						<td>        6907                         </td>
+						<td><small> 98.62        </small></td>
+						<td>        97                         </td>
+						<td><small> 1.38        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        61                  </td>
+						<td><small> 0.86 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 49.18        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        31                         </td>
+						<td><small> 50.82        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.615              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        39                   </td>
+						<td>        7001                    </td>
+						<td><small> 99.09   </small></td>
+						<td>        6905                         </td>
+						<td><small> 98.63        </small></td>
+						<td>        96                         </td>
+						<td><small> 1.37        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        64                  </td>
+						<td><small> 0.91 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 46.88        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        34                         </td>
+						<td><small> 53.12        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.629              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        41                   </td>
+						<td>        6996                    </td>
+						<td><small> 99.02   </small></td>
+						<td>        6902                         </td>
+						<td><small> 98.66        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.34        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        69                  </td>
+						<td><small> 0.98 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 43.48        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        39                         </td>
+						<td><small> 56.52        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.656              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        43                   </td>
+						<td>        6994                    </td>
+						<td><small> 99.00   </small></td>
+						<td>        6900                         </td>
+						<td><small> 98.66        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.34        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        71                  </td>
+						<td><small> 1.00 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 42.25        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        41                         </td>
+						<td><small> 57.75        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.656              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        44                   </td>
+						<td>        6993                    </td>
+						<td><small> 98.98   </small></td>
+						<td>        6899                         </td>
+						<td><small> 98.66        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.34        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        72                  </td>
+						<td><small> 1.02 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 41.67        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        42                         </td>
+						<td><small> 58.33        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.656              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        45                   </td>
+						<td>        6990                    </td>
+						<td><small> 98.94   </small></td>
+						<td>        6896                         </td>
+						<td><small> 98.66        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.34        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        75                  </td>
+						<td><small> 1.06 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 40.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        45                         </td>
+						<td><small> 60.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.655              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        47                   </td>
+						<td>        6986                    </td>
+						<td><small> 98.88   </small></td>
+						<td>        6892                         </td>
+						<td><small> 98.65        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.35        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        79                  </td>
+						<td><small> 1.12 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 37.97        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        49                         </td>
+						<td><small> 62.03        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.654              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        48                   </td>
+						<td>        6984                    </td>
+						<td><small> 98.85   </small></td>
+						<td>        6890                         </td>
+						<td><small> 98.65        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.35        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        81                  </td>
+						<td><small> 1.15 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 37.04        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        51                         </td>
+						<td><small> 62.96        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.654              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        49                   </td>
+						<td>        6982                    </td>
+						<td><small> 98.83   </small></td>
+						<td>        6888                         </td>
+						<td><small> 98.65        </small></td>
+						<td>        94                         </td>
+						<td><small> 1.35        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        83                  </td>
+						<td><small> 1.17 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 36.14        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        53                         </td>
+						<td><small> 63.86        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.654              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        51                   </td>
+						<td>        6978                    </td>
+						<td><small> 98.77   </small></td>
+						<td>        6885                         </td>
+						<td><small> 98.67        </small></td>
+						<td>        93                         </td>
+						<td><small> 1.33        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        87                  </td>
+						<td><small> 1.23 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 34.48        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        57                         </td>
+						<td><small> 65.52        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.667              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        52                   </td>
+						<td>        6977                    </td>
+						<td><small> 98.75   </small></td>
+						<td>        6885                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        88                  </td>
+						<td><small> 1.25 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 34.09        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        58                         </td>
+						<td><small> 65.91        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.681              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        53                   </td>
+						<td>        6975                    </td>
+						<td><small> 98.73   </small></td>
+						<td>        6883                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        90                  </td>
+						<td><small> 1.27 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 33.33        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        60                         </td>
+						<td><small> 66.67        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.681              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        55                   </td>
+						<td>        6969                    </td>
+						<td><small> 98.64   </small></td>
+						<td>        6877                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        96                  </td>
+						<td><small> 1.36 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 31.25        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        66                         </td>
+						<td><small> 68.75        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.680              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        56                   </td>
+						<td>        6968                    </td>
+						<td><small> 98.63   </small></td>
+						<td>        6876                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        97                  </td>
+						<td><small> 1.37 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 30.93        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        67                         </td>
+						<td><small> 69.07        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.680              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        57                   </td>
+						<td>        6965                    </td>
+						<td><small> 98.58   </small></td>
+						<td>        6873                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        100                  </td>
+						<td><small> 1.42 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 30.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        70                         </td>
+						<td><small> 70.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.679              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        58                   </td>
+						<td>        6963                    </td>
+						<td><small> 98.56   </small></td>
+						<td>        6871                         </td>
+						<td><small> 98.68        </small></td>
+						<td>        92                         </td>
+						<td><small> 1.32        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        102                  </td>
+						<td><small> 1.44 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 29.41        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        72                         </td>
+						<td><small> 70.59        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.679              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        59                   </td>
+						<td>        6962                    </td>
+						<td><small> 98.54   </small></td>
+						<td>        6871                         </td>
+						<td><small> 98.69        </small></td>
+						<td>        91                         </td>
+						<td><small> 1.31        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        103                  </td>
+						<td><small> 1.46 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 29.13        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        73                         </td>
+						<td><small> 70.87        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.693              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        60                   </td>
+						<td>        6958                    </td>
+						<td><small> 98.49   </small></td>
+						<td>        6867                         </td>
+						<td><small> 98.69        </small></td>
+						<td>        91                         </td>
+						<td><small> 1.31        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        107                  </td>
+						<td><small> 1.51 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 28.04        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        77                         </td>
+						<td><small> 71.96        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        98.692              </td>
+					</tr>
+				
+
+					<tr>
+						<td>        61                   </td>
+						<td>        0                    </td>
+						<td><small> 0.00   </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                  </td>
+						<td><small> 100.00 </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        30                         </td>
+						<td><small> 0.42        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7035                         </td>
+						<td><small> 99.58        </small></td>
+						<td>        0                         </td>
+						<td><small> 0.00        </small></td>
+						<td>        7065                       </td>
+						<td>        0.000              </td>
+					</tr>
+				
+					</tbody>
+				</table>
+
+				<h2 id="graphs">
+					Graphs
+					
+						<span class="link_to_top">
+							[<a href="#top">Top of this page</a>]
+							[<a href="../../3_evaluation.html">Back to main report</a>]
+						</span>
+					
+				</h2>
+
+				<div class="formats">
+					<img src="../graphics/00001.svg" />
+					<br />
+					<a href="../graphics/00001.svg">SVG version</a>
+					|
+					<a href="../roc/00001.roc" type="text/csv">ROC file</a>
+					|
+					<a href="../gp/00001.gp" type="text/plain">GP file</a>
+				</div>
+
+
+			</body>
+			</html>			
+			
