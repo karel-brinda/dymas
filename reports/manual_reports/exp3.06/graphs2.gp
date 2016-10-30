@@ -1,4 +1,4 @@
-experiment_dir='../../../experiments/exp3.06__Meningitidis__0.07-indels/'
+experiment_dir='../../../experiments/exp3.06__0.07-indels/'
 
 
 set log x
