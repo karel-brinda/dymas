@@ -3,7 +3,7 @@
 V=1
 SHELL:=/bin/bash -o pipefail
 
-run: 1_reads.fq .dyn.complete .itref.complete evaluation.html .edit_dist.compl
+run: 1_reads.fq .dyn.complete .itref.complete evaluation.html .edit_dist.compl .updates.compl
 
 clean: rm1 rm2 rm3 rm5
 	rm -fr .*.compl
@@ -35,6 +35,10 @@ evaluation.html: .dyn.complete .itref.complete
 
 .edit_dist.compl: .dyn.complete .itref.complete
 	../../scripts/run_edit_distances.sh .
+	touch $@
+
+.updates.compl: .dyn.complete .itref.complete
+	../../scripts/run_updates.sh .
 	touch $@
 
 view:
