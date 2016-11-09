@@ -26,3 +26,20 @@ set style line 11 lt 1 pt 11 ps 0.5 lc rgb "#67B7F7" lw 1;
 set style line 12 lt 1 pt 12 ps 0.5 lc rgb "#FFC127" lw 1;
 set style line 13 lt 1 pt 13 ps 0.5 lc rgb "#000000" lw 1;
 set style line 14 lt 1 pt 14 ps 0.5 lc rgb "#9F0000" lw 1;
+
+
+par_x1=0.001
+par_x2=0.5
+
+par_y1=85
+par_y2=100
+
+set xran [par_x1:par_x2]
+set x2ran [par_x1:par_x2]
+
+set yran [par_y1:par_y2]
+set y2ran [par_y1:par_y2]
+
+#set autoscale x
+#set autoscale y
+

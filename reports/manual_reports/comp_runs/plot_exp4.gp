@@ -5,22 +5,6 @@ load "_init.gp"
 set out 'manual_exp4.svg'
 set title "Experiment 4"
 
-#par_x1=0.01
-#par_x2=0.1
-#
-#par_y1=80
-#par_y2=100
-#
-#set xran [par_x1:par_x2]
-#set x2ran [par_x1:par_x2]
-#
-#set yran [par_y1:par_y2]
-#set y2ran [par_y1:par_y2]
-
-set autoscale x
-set autoscale y
-
-
 plot \
 "../../_rocs/exp4.04__0.07-ococo16/static.roc" using (($3+$4)/($2+$3+$4)):(($2/($2+$4+$10+$7+$9+$5))*100) with lp ls 1 title "SM" noenhanced,\
 "../../_rocs/exp4.11__0.07-ococo16-noremap/dynamic.roc" using (($3+$4)/($2+$3+$4)):(($2/($2+$4+$10+$7+$9+$5))*100) with lp ls 2 title "DM (noremap)" noenhanced,\
