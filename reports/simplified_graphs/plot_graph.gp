@@ -15,11 +15,14 @@ set key bottom right
 set x2lab "FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}}  "
 set ylab "#correctly mapped reads / #reads which should be mapped"
 
-set xran [par_x1:par_x2]
-set x2ran [par_x1:par_x2]
+#set xran [par_x1:par_x2]
+#set x2ran [par_x1:par_x2]
 
-set yran [par_y1:par_y2]
-set y2ran [par_y1:par_y2]
+#set yran [par_y1:par_y2]
+#set y2ran [par_y1:par_y2]
+
+set autoscale x
+set autoscale y
 
 set style line 1 lt 1 pt 1 lc rgb "#00cc00"
 set style line 2 lt 1 pt 1 lc rgb "#ff0000"
