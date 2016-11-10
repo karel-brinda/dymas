@@ -1,7 +1,7 @@
 set log x
 set log x2
 
-set key bottom left
+set key bottom right
 set x2lab "FDR {{/:Italic(#wrongly mapped reads / #mapped reads)}}  "
 set ylab "#correctly mapped reads / #reads which should be mapped"
 
