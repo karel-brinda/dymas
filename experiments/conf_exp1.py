@@ -12,3 +12,4 @@ conf_allowed_delta=5
 
 haploid_mode=True
 
+bwa = dymas.Mapping_BwaMem()

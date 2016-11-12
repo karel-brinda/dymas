@@ -4,8 +4,6 @@ from conf_exp1 import *
 
 #################
 
-bwa = dymas.Mapping_BwaMem()
-
 consensus = dymas.Consensus_Py(
 				call_snps=True,
 				call_ins=False,
