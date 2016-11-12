@@ -1,0 +1,37 @@
+# Numbers of reads in several categories in dependence
+# on the applied threshold on mapping quality q
+# 
+# Categories:
+#        M: Mapped correctly.
+#        w: Mapped to a wrong position.
+#        m: Mapped but should be unmapped.
+#        P: Multimapped.
+#        U: Unmapped and should be unmapped.
+#        u: Unmapped but should be mapped.
+#        T: Thresholded correctly.
+#        t: Thresholded incorrectly.
+#        x: Unknown.
+#
+# q	M	w	m	P	U	u	T	t	x	all
+0	73085	2542	0	0	0	121	0	0	0	75748
+2	73039	2173	0	0	0	121	0	415	0	75748
+12	72700	1458	0	0	0	121	0	1469	0	75748
+15	72136	852	0	0	0	121	0	2639	0	75748
+18	71519	444	0	0	0	121	0	3664	0	75748
+19	71183	347	0	0	0	121	0	4097	0	75748
+22	70952	313	0	0	0	121	0	4362	0	75748
+23	70952	312	0	0	0	121	0	4363	0	75748
+26	70780	301	0	0	0	121	0	4546	0	75748
+32	70702	245	0	0	0	121	0	4680	0	75748
+33	70607	188	0	0	0	121	0	4832	0	75748
+34	70530	166	0	0	0	121	0	4931	0	75748
+35	70483	160	0	0	0	121	0	4984	0	75748
+36	70452	157	0	0	0	121	0	5018	0	75748
+37	70451	155	0	0	0	121	0	5021	0	75748
+38	70316	150	0	0	0	121	0	5161	0	75748
+39	70169	146	0	0	0	121	0	5312	0	75748
+40	69921	145	0	0	0	121	0	5561	0	75748
+41	69657	144	0	0	0	121	0	5826	0	75748
+42	69647	139	0	0	0	121	0	5841	0	75748
+43	69024	127	0	0	0	121	0	6476	0	75748
+45	0	0	0	0	0	121	0	75627	0	75748

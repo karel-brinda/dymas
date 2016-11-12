@@ -1,0 +1,37 @@
+# Numbers of reads in several categories in dependence
+# on the applied threshold on mapping quality q
+# 
+# Categories:
+#        M: Mapped correctly.
+#        w: Mapped to a wrong position.
+#        m: Mapped but should be unmapped.
+#        P: Multimapped.
+#        U: Unmapped and should be unmapped.
+#        u: Unmapped but should be mapped.
+#        T: Thresholded correctly.
+#        t: Thresholded incorrectly.
+#        x: Unknown.
+#
+# q	M	w	m	P	U	u	T	t	x	all
+0	59318	2112	0	0	0	116	0	0	0	61546
+2	59274	1748	0	0	0	116	0	408	0	61546
+12	58980	1153	0	0	0	116	0	1297	0	61546
+15	58528	683	0	0	0	116	0	2219	0	61546
+18	58042	374	0	0	0	116	0	3014	0	61546
+19	57782	289	0	0	0	116	0	3359	0	61546
+22	57595	263	0	0	0	116	0	3572	0	61546
+23	57595	260	0	0	0	116	0	3575	0	61546
+26	57461	253	0	0	0	116	0	3716	0	61546
+32	57404	213	0	0	0	116	0	3813	0	61546
+33	57331	166	0	0	0	116	0	3933	0	61546
+34	57267	143	0	0	0	116	0	4020	0	61546
+35	57234	139	0	0	0	116	0	4057	0	61546
+36	57209	137	0	0	0	116	0	4084	0	61546
+37	57207	136	0	0	0	116	0	4087	0	61546
+38	57104	131	0	0	0	116	0	4195	0	61546
+39	56988	127	0	0	0	116	0	4315	0	61546
+40	56788	126	0	0	0	116	0	4516	0	61546
+41	56570	125	0	0	0	116	0	4735	0	61546
+42	56559	119	0	0	0	116	0	4752	0	61546
+43	55988	104	0	0	0	116	0	5338	0	61546
+45	0	0	0	0	0	116	0	61430	0	61546
