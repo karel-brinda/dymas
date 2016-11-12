@@ -1,5 +1,4 @@
-experiment_dir='../../../experiments/exp3.06__0.07-indels/'
-
+experiment_dir='../../../experiments/exp1.06__0.07-indels/'
 
 set log x
 set log x2
@@ -25,10 +24,10 @@ set key spacing 0.8 opaque
 set key bottom right
 set key title "{/:Bold Iterations}"
 
-set xran [.008:.15]
-set x2ran [.008:.15]
-set yran [80:100]
-set y2ran [80:100]
+set xran [.0008:.15]
+set x2ran [.0008:.15]
+set yran [85:100]
+set y2ran [85:100]
 
 set x2lab "FDR in mapping {{/:Italic(#wrongly mapped reads / #mapped reads)}} "
 set ylab "#correctly mapped reads / #reads which should be mapped"
