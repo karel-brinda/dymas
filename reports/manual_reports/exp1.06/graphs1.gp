@@ -31,21 +31,11 @@ set termin svg size 500,500 enhanced
 
 set key off
 
-#experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($6+$7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ee82ee" with filledcurve x1 title "Unmapped correctly", \
-#experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#00ff00" with filledcurve x1 title "Thresholded correctly", \
-set title "{/:Bold Dynamic mapping with remapping}"
-set out "dm.svg"
-plot \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ff0000" with filledcurve x1 title "Unmapped incorrectly", \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#008800" with filledcurve x1 title "Thresholded incorrectly", \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($5+$4+$10+$3+$2)*100/$11) lt rgb "#ffff00" with filledcurve x1 title "Multimapped", \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($4+$10+$3+$2)*100/$11) lt rgb "#7f7f7f" with filledcurve x1 title "Mapped, should be unmapped", \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($3+$2)*100/$11) lt rgb "#000000" with filledcurve x1 title "Mapped to wrong position", \
-experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($2)*100/$11) lt rgb "#0000ff" with filledcurve x1 title "Mapped correctly", \
 
 #experiment_dir."3_evaluation.itref/roc/00000.roc" using (( (($3+$4)/($2+$3+$4)) )):(($6+$7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ee82ee" with filledcurve x1 title "Unmapped correctly", \
 #experiment_dir."3_evaluation.itref/roc/00000.roc" using (( (($3+$4)/($2+$3+$4)) )):(($8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#00ff00" with filledcurve x1 title "Thresholded correctly", \
-set title "{/:Bold Static mapping}"
+
+#set title "{/:Bold Static mapping}"
 set out "sm.svg"
 plot \
 experiment_dir."3_evaluation.itref/roc/00000.roc" using (( (($3+$4)/($2+$3+$4)) )):(($7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ff0000" with filledcurve x1 title "Unmapped incorrectly", \
@@ -56,13 +46,28 @@ experiment_dir."3_evaluation.itref/roc/00000.roc" using (( (($3+$4)/($2+$3+$4)) 
 experiment_dir."3_evaluation.itref/roc/00000.roc" using (( (($3+$4)/($2+$3+$4)) )):(($2)*100/$11) lt rgb "#0000ff" with filledcurve x1 title "Mapped correctly", \
 
 
+#experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($6+$7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ee82ee" with filledcurve x1 title "Unmapped correctly", \
+#experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#00ff00" with filledcurve x1 title "Thresholded correctly", \
+
+#set title "{/:Bold Dynamic mapping with remapping}"
+set out "dm.svg"
+plot \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ff0000" with filledcurve x1 title "Unmapped incorrectly", \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#008800" with filledcurve x1 title "Thresholded incorrectly", \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($5+$4+$10+$3+$2)*100/$11) lt rgb "#ffff00" with filledcurve x1 title "Multimapped", \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($4+$10+$3+$2)*100/$11) lt rgb "#7f7f7f" with filledcurve x1 title "Mapped, should be unmapped", \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($3+$2)*100/$11) lt rgb "#000000" with filledcurve x1 title "Mapped to wrong position", \
+experiment_dir."3_evaluation.dyn/roc/00019.roc" using (( (($3+$4)/($2+$3+$4)) )):(($2)*100/$11) lt rgb "#0000ff" with filledcurve x1 title "Mapped correctly", \
+
+
 set key bottom right
 set key spacing 0.8 opaque width -5
 set key box
 
 #experiment_dir."3_evaluation.itref/roc/00004.roc" using (( (($3+$4)/($2+$3+$4)) )):(($6+$7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ee82ee" with filledcurve x1 title "Unmapped correctly", \
 #experiment_dir."3_evaluation.itref/roc/00004.roc" using (( (($3+$4)/($2+$3+$4)) )):(($8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#00ff00" with filledcurve x1 title "Thresholded correctly", \
-set title "{/:Bold Iterative referencing}"
+
+#set title "{/:Bold Iterative referencing}"
 set out "ir.svg"
 plot \
 experiment_dir."3_evaluation.itref/roc/00004.roc" using (( (($3+$4)/($2+$3+$4)) )):(($7+$8+$9+$5+$4+$10+$3+$2)*100/$11) lt rgb "#ff0000" with filledcurve x1 title "Unmapped incorrectly", \
