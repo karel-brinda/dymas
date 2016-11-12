@@ -1,1 +1,0 @@
-../../../experiments/exp2.09__0.07-bowtie2/3_evaluation.dyn/roc/00019.roc
