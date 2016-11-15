@@ -1,7 +1,7 @@
 #! /usr/bin/env perl
 
-use strict;
-use warnings;
+#use strict;
+#use warnings;
 
 while (<>) {
 	my @t = split("\t");

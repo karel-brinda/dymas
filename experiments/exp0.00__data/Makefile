@@ -13,8 +13,12 @@ all: .yeast.complete .chr21.complete
 	touch $@
 
 .chr21.complete:
+	echo ">chr21" > ch21.fa
 	curl -0 http://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz | \
-		gunzip -c > chr21.fa
+		gunzip -c | \
+		grep -v ">" | \
+		perl -pi -e 's/\n//' | \
+		fold -w80 \
 	touch $@
 
 clean:
