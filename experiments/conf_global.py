@@ -6,6 +6,7 @@ import rnftools
 import smbl
 
 conf_read_length=100
+conf_allowed_delta=100
 conf_contamination_coverage=0
 conf_contamination_reference=None
 conf_contamination_mutrate=0.03
