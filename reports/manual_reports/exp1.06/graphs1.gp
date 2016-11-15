@@ -7,8 +7,8 @@ set log x2
 
 set format x "10^{%L}"
 set format x2 "10^{%L}"
-set xran [.0008:.15]
-set x2ran [.0008:.15]
+set xran [.0001:.15]
+set x2ran [.0001:.15]
 set x2tics
 unset xtics
 
