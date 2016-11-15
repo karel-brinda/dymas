@@ -1,6 +1,6 @@
 from conf_global import *
 
-conf_reference="../exp0.00__data/yeast.fa"
+conf_reference="../exp0.00__data/chr21.fa"
 conf_coverage=10
 
 conf_mutrate=0.03

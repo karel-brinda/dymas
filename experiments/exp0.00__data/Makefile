@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-all: .yeast.complete
+all: .yeast.complete .chr21.complete
 
 .yeast.complete:
 	echo ">Saccharomyces_cerevisiae.R64-1-1" > yeast.fa
@@ -12,6 +12,10 @@ all: .yeast.complete
 	>> yeast.fa
 	touch $@
 
+.chr21.complete:
+	curl -0 http://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz | \
+		gunzip -c > chr21.fa
+	touch $@
 
 clean:
 	rm -fr *.fa .*complete
