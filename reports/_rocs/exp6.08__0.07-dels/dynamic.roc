@@ -1,1 +1,0 @@
-../../../experiments/exp6.08__0.07-dels/3_evaluation.dyn/roc/00019.roc

@@ -1,5 +1,7 @@
 .PHONY: all clean dropbox main_report simplified_graphs rocs
 
+SHELL:=/bin/bash -o pipefail
+
 all: main_report simplified_graphs manual_reports
 
 main_report:

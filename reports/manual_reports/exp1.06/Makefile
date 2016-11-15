@@ -1,5 +1,7 @@
 .PHONY: all clean
 
+SHELL:=/bin/bash -o pipefail
+
 all:
 	gnuplot *.gp
 	find . -name '*.gp' | parallel --no-notice gnuplot {}

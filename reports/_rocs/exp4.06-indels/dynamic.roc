@@ -1,0 +1,1 @@
+../../../experiments/exp4.06-indels/3_evaluation.dyn/roc/00019.roc
