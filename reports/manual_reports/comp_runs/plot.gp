@@ -33,13 +33,13 @@ set style line 14 lt 1 pt 14 ps 0.5 lc rgb "#9F0000" lw 1;
 #set autoscale y
 
 
-do for [it=1:6] {
+do for [it=1:1] {
 	set output sprintf('manual_exp%d.svg',it)
 	set title sprintf('Experiment %d',it)
 
 
 	set xran [0.00001:0.5]
-	set yran [85:100]
+	set yran [70:100]
 
 	if (it>2){
 		if (it<5){
