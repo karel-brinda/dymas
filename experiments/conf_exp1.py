@@ -6,7 +6,7 @@ conf_coverage=10
 conf_mutrate=0.03
 conf_description+="mutrate {}; ".format(conf_mutrate)
 
-conf_title+="Yeast (saccharomyces_cerevisiae)"
+conf_title+="Human chr21"
 #conf_description+="cov 5; "
 
 haploid_mode=True
