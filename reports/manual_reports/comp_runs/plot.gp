@@ -38,7 +38,7 @@ do for [it=1:1] {
 	set title sprintf('Experiment %d',it)
 
 
-	set xran [0.0001:0.5]
+	set xran [0.00001:0.5]
 	set yran [70:100]
 
 	if (it>2){
